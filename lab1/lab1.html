@@ -1,0 +1,55 @@
+<!-- FIXA SÅ ATT SÖKFÄLTET TÖMS EFTER SÖKNING  -->
+<!--  SÄTT BORDER RUNT MEDDELANDEFÄLTET -->
+<!-- SÄRSKILJA INMATNINGSFÄLT OCH KNAPP -->
+<!-- JS, HTML OCH CSS I VARSIN FIL -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>  -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+   <script src="scripts.js"></script> 
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body onload="listAllMessagesFromCookies()">
+  <!-- The Modal -->
+  <div id="myModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <p>Invalid message length :(</p>
+    </div>
+
+  </div>
+
+  
+  <div class="container">
+
+    <div class="row">
+      <div class="col-lg-4 col-lg-offset-4">
+          <div class="input-group">
+              <input type="text" class="form-control" id="messageTextInputForm" /> 
+              <span class="input-group-btn">
+                  <button class="btn btn-default" type="button" onclick="addNewMessageToMessageList()">Go!</button>
+              </span>
+          </div>
+          <div id="messageList"> </div> 
+      </div>
+    </div>     
+  </div>
+
+
+
+
+  </body>
+</html>
+
+
