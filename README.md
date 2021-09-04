@@ -15,14 +15,14 @@ När användaren postar ett nytt meddelande anropas _addMsg_ funktionen som koll
 
 Om användarens meddelande har fel längd anropas _tooLongMessage_ funktionen som gör att en informerande ruta kommer fram på skärmen.
 
-Om användarens meddelande är lagom långt anropas sparas meddelandet i en cookie, och _createMessage_ anropas vilket skapar en ny ruta på sidan med användarens meddelande.
+Om användarens meddelande är lagom långt sparas meddelandet i en cookie, och _createMessage_ anropas vilket skapar en ny ruta på sidan med användarens meddelande.
 
 När sidan laddas om anropas funktionen _listMsgs_ som anropar _createMessage_ för varje meddelande sparat i användarens cookie.
 
 
-- **Är det bra eller dåligt att webbläsaren automatiskt förändrar utseende och beteende på vissa HTML-element (ex. raadionknappar)?**
+- **Är det bra eller dåligt att webbläsaren automatiskt förändrar utseende och beteende på vissa HTML-element (ex. radioknappar)?**
 
-Dåligt för utvecklaren, mer jobb att se till så att sidan ser bra ut i olika webbläsare.
+Dåligt för utvecklaren, mer jobb att se till så att sidan fungerar i olika webbläsare.
 
 
 - **Vad är en cookie?**
