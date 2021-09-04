@@ -1,85 +1,99 @@
-<script>
+function enter(event) {
+  if (event.keyCode == 13)
+  {
+    addMsg();
+  }
+}
 
-function messageIsTooLongPopup()
+function tooLongMessage()
 {
-  var popUpTheme = document.getElementById("myModal");
-  popUpTheme.style.display = "block";
+  var modal = document.getElementById("myModal");
+  modal.style.display = "block";
 
   var span = document.getElementsByClassName("close")[0];
 
   // When the user clicks on <span> (x), close the modal
   span.onclick = function() {
-    popUpTheme.style.display = "none";
+    modal.style.display = "none";
   }
 }
 
-// Changed the message box color depending on change of checkbox.
-function changeColorOfMessageBoxIfRead(messageDateID)
+// Changed the msgbox color depending on change of checkbox.
+function markRead(dateID)
 {
-  let messageBox = document.getElementById(messageDateID);
-  if (messageBox.childNodes[0].checked)
+  let msg = document.getElementById(dateID);
+  //alert(`DateID: ${dateID}`);
+  //alert(`${msg} test`);
+  if (msg.childNodes[0].checked == true)
   {
-    messageBox.setAttribute("class", "readColorMessageBox");
-    // Blir knas i utskriften
-    //document.cookie = `${messageBox.id}=${messageBox.innerHTML}`;
+    msg.setAttribute("class", "readMsgBox");
+    document.cookie = `${msg.id}=${msg.textContent}:rd`;
   }
   else
   {
-    messageBox.setAttribute("class", "defaultColorMessageBox");
-    //document.cookie = `${messageBox.id}=${messageBox.innerHTML}`;
+    msg.setAttribute("class", "msgBox");
+    document.cookie = `${msg.id}=${msg.textContent}:ud`;
   }
 }
 
-function createMessage(keyValueOfCookie)
+function createMessage(keyValue)
 {
   // Lägger in meddelanden på rad.
-  let messageDateID = keyValueOfCookie.split('=')[0];
-  let messageText = keyValueOfCookie.split('=')[1];
-  let newDynamicDivMessage = document.createElement('div');
-  newDynamicDivMessage.setAttribute("class", "defaultColorMessageBox");
-  newDynamicDivMessage.setAttribute("checked", false);
-  newDynamicDivMessage.setAttribute("id", messageDateID);
-  newDynamicDivMessage.innerHTML = `<p>${messageText}</p>`;
-  
-  checkbox = document.createElement('input');
-  checkbox.type = 'checkbox';
-  checkbox.setAttribute( "onchange", `changeColorOfMessageBoxIfRead(${newDynamicDivMessage.id});`); // Adds a function dynamically to the checkbox.
-  // Puts checkbox before the text in the defaultColorMessageBox.
-  newDynamicDivMessage.insertBefore(checkbox, newDynamicDivMessage.firstChild);
+  let dateId = keyValue.split('=')[0];
+  let message = keyValue.split('=')[1];
+  let msgRead = message.substr(message.length - 2);
+  let msgBox = document.createElement('div');
+  msgBox.setAttribute("id", dateId);
+  msgBox.textContent = message.substr(0, message.length - 3);  
 
-  // Makes sure last message is seen at the top of messageList.
-  let messages = document.getElementById('messageList');
-  messages.insertBefore(newDynamicDivMessage, messages.firstChild);
+  let checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.setAttribute("onchange", `markRead(${msgBox.id});`); // Adds a function dynamically to the checkbox.
+  
+  if (msgRead == 'rd')
+  {
+    msgBox.setAttribute("class", "readMsgBox");
+    checkbox.checked = true;
+  }
+  else if (msgRead == 'ud')
+  {
+    msgBox.setAttribute("class", "msgBox");
+    checkbox.checked = false;
+  }
+
+  // Puts checkbox before the text in the msgbox.
+  msgBox.insertBefore(checkbox, msgBox.firstChild);
+
+  // Makes sure last message is seen at the top of msgs.
+  let messages = document.getElementById('messages');
+  messages.insertBefore(msgBox, messages.firstChild);
 }
 
-function addNewMessageToMessageList()
+function addMsg()
 {
-  let newMessageFromTextInputForm = document.getElementById('messageTextInputForm').value;
-  if (newMessageFromTextInputForm.length == 0 || newMessageFromTextInputForm.length > 140)
+  let textField = document.getElementById('postText');
+  let msg = textField.value;
+  if (msg.length == 0 || msg.length > 140)
   {
-    messageIsTooLongPopup();
+    tooLongMessage();
   }
   else
   {
-    keyValueOfCookie = `${Date.now()}=${newMessageFromTextInputForm}`;
-    document.cookie = keyValueOfCookie;
+    keyValue = `${Date.now()}=${msg}:ud`;
+    document.cookie = keyValue;
 
-    createMessage(keyValueOfCookie);
+    createMessage(keyValue);
   }
+
+  textField.value=''
 }
 
-function listAllMessagesFromCookies()
+function listMsgs()
 {  
-  //alert(document.cookie);
   
   if (document.cookie != "")
   {
-    let cookies = document.cookie.split(";");
-    
-    cookies.forEach(keyValueOfCookie => createMessage(keyValueOfCookie));
-    
+    let keyValues = document.cookie.split("; ");
+    keyValues.sort().forEach(keyValue => createMessage(keyValue));
   }
 }
-
-
-</script> 
