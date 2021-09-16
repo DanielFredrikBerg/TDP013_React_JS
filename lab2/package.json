@@ -1,23 +1,26 @@
 {
-  "name": "lab2",
-  "version": "0.0.0",
-  "private": true,
+  "name": "my-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "test": "mocha",
-    "coverage": "nyc --reporter=html npm test",
-    "start": "node ./bin/www"
+    "start": "nodemon --exec node app.js",
+    "test": "nyc --reporter=html mocha"
   },
-  "dependencies": {
-    "cookie-parser": "~1.4.4",
-    "debug": "~2.6.9",
-    "express": "~4.16.1",
-    "http-errors": "~1.6.3",
-    "jade": "~1.11.0",
-    "morgan": "~1.9.1",
-    "superagent": "^6.1.0"
-  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "devDependencies": {
     "mocha": "^9.1.1",
+    "nodemon": "^2.0.12",
+    "nyc": "^15.1.0",
     "should": "^13.2.3"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "mongodb": "^4.1.1",
+    "superagent": "^6.1.0"
   }
 }
