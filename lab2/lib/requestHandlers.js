@@ -13,7 +13,6 @@ function saveMessage(req, res) {
 
 function flagMessage(req, res) {
     MongoClient.connect(url, (err, db) => {
-        
         let dbo = db.db("tdp013");
         dbo.collection("messages").findOne({_id : ObjectId(req.body.id_)}, (err, result) => {
             flag = true
