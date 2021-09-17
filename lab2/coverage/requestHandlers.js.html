@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">10.71% </span>
+                <span class="strong">10.34% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>3/28</span>
+                <span class='fraction'>3/29</span>
             </div>
         
             
@@ -109,7 +109,9 @@
 <a name='L50'></a><a href='#L50'>50</a>
 <a name='L51'></a><a href='#L51'>51</a>
 <a name='L52'></a><a href='#L52'>52</a>
-<a name='L53'></a><a href='#L53'>53</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -154,6 +156,8 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -164,25 +168,25 @@
 <span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">const {MongoClient, ObjectId} = require('mongodb');
 let url = "mongodb://localhost:27017";
 &nbsp;
-function <span class="fstat-no" title="function not covered" >saveMessage(</span>req, res) {
+function <span class="fstat-no" title="function not covered" >saveMessage(</span>message, res) {
 <span class="cstat-no" title="statement not covered" >    MongoClient.connect(url, <span class="fstat-no" title="function not covered" >(e</span>rr, db) =&gt; {</span>
         let dbo = <span class="cstat-no" title="statement not covered" >db.db("tdp013");</span>
-<span class="cstat-no" title="statement not covered" >        dbo.collection("messages").insertOne(req.body, <span class="fstat-no" title="function not covered" >(e</span>rr, result) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        dbo.collection("messages").insertOne(message, <span class="fstat-no" title="function not covered" >(e</span>rr, result) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >            db.close();</span>
 <span class="cstat-no" title="statement not covered" >            res.status(200).send();</span>
         });   
     });
 }
 &nbsp;
-function <span class="fstat-no" title="function not covered" >flagMessage(</span>req, res) {
+function <span class="fstat-no" title="function not covered" >flagMessage(</span>id, res) {
 <span class="cstat-no" title="statement not covered" >    MongoClient.connect(url, <span class="fstat-no" title="function not covered" >(e</span>rr, db) =&gt; {</span>
         let dbo = <span class="cstat-no" title="statement not covered" >db.db("tdp013");</span>
-<span class="cstat-no" title="statement not covered" >        dbo.collection("messages").findOne({_id : ObjectId(req.body.id_)}, <span class="fstat-no" title="function not covered" >(e</span>rr, result) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        dbo.collection("messages").findOne({_id : ObjectId(id)}, <span class="fstat-no" title="function not covered" >(e</span>rr, result) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >            flag = true</span>
 <span class="cstat-no" title="statement not covered" >            if (result.Flag == true) {</span>
 <span class="cstat-no" title="statement not covered" >                flag = false</span>
             }
-<span class="cstat-no" title="statement not covered" >            dbo.collection("messages").updateOne({_id : ObjectId(req.body.id_)}, {$set: {"Flag" : flag }}, <span class="fstat-no" title="function not covered" >(e</span>rr, result) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >            dbo.collection("messages").updateOne({_id : ObjectId(id)}, {$set: {"Flag" : flag }}, <span class="fstat-no" title="function not covered" >(e</span>rr, result) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >                db.close();</span>
 <span class="cstat-no" title="statement not covered" >                res.status(200).send();</span>
             }); 
@@ -190,10 +194,10 @@ function <span class="fstat-no" title="function not covered" >flagMessage(</span
     });
 }
 &nbsp;
-function <span class="fstat-no" title="function not covered" >getMessage(</span>req, res) {
+function <span class="fstat-no" title="function not covered" >getMessage(</span>id, res) {
 <span class="cstat-no" title="statement not covered" >    MongoClient.connect(url, <span class="fstat-no" title="function not covered" >(e</span>rr, db) =&gt; {</span>
         let dbo = <span class="cstat-no" title="statement not covered" >db.db("tdp013");</span>
-<span class="cstat-no" title="statement not covered" >        dbo.collection("messages").findOne({_id : ObjectId(req.query.id)}, <span class="fstat-no" title="function not covered" >(e</span>rr, result) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        dbo.collection("messages").findOne({_id : ObjectId(id)}, <span class="fstat-no" title="function not covered" >(e</span>rr, result) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >            db.close();</span>
 <span class="cstat-no" title="statement not covered" >            res.send(result);</span>
         }); 
@@ -202,9 +206,11 @@ function <span class="fstat-no" title="function not covered" >getMessage(</span>
 &nbsp;
 &nbsp;
 &nbsp;
-function <span class="fstat-no" title="function not covered" >getAllMessages(</span>req, res) {
+function <span class="fstat-no" title="function not covered" >getAllMessages(</span>res) {
 <span class="cstat-no" title="statement not covered" >    MongoClient.connect(url, <span class="fstat-no" title="function not covered" >(e</span>rr, db) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >        if(err) { <span class="cstat-no" title="statement not covered" >throw err; </span>}</span>
+<span class="cstat-no" title="statement not covered" >        if(err) { </span>
+<span class="cstat-no" title="statement not covered" >            throw err; </span>
+        }
         let dbo = <span class="cstat-no" title="statement not covered" >db.db("tdp013");</span>
 <span class="cstat-no" title="statement not covered" >        dbo.collection("messages").find({}).toArray(<span class="fstat-no" title="function not covered" >(e</span>rr, result) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >            db.close();</span>
@@ -220,7 +226,7 @@ module.exports = {saveMessage, flagMessage, getMessage, getAllMessages}</pre></t
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Thu Sep 16 2021 21:06:40 GMT+0200 (Central European Summer Time)
+                at Fri Sep 17 2021 08:27:04 GMT+0200 (Central European Summer Time)
             </div>
         </div>
         <script src="prettify.js"></script>

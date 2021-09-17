@@ -2,11 +2,32 @@ const assert = require('assert')
 //const should = require('should')
 const superagent = require('superagent');
 var server = require('../lib/server')
+//var handlers = require('../lib/requestHandlers')
 const {MongoClient, ObjectId} = require('mongodb');
 let url = "mongodb://localhost:27017";
 
 
-describe('backend', function() {
+describe('Routes', function() {
+
+    describe('saveMessage', function() {
+        message = {_id : 1, msg : "Hello there!", flag : false}
+        it("Should save one message in the db and return status code 200", function(done) {
+            superagent.post('http://localhost:3000/save').set('accept', 'json').send(message).end(function(err, res) {
+                assert(res.status == 200)
+                MongoClient.connect(url, function(err, db) {
+                    db.close()
+                })
+                done()
+            })    
+        })
+    }) 
+
+
+    
+
+})
+
+describe('Request handlers', function() {
 
     afterEach(function(done) {
         MongoClient.connect(url, function(err, db) {
@@ -17,19 +38,6 @@ describe('backend', function() {
             })
         })
     })
-    
-    describe('saveMessage', function() {
-        message = {_id : 1, msg : "Hello there!", flag : false}
-        it("should save one message in the db and return status code 200", function(done) {
-            superagent.post('http://localhost:3000/save').set('accept', 'json').send(message).end(function(err, res) {
-                assert(res.status == 200)
-                MongoClient.connect(url, function(err, db) {
-                        
-                })
-                done()
-            })    
-        })
-    }) 
 
     describe('getAllMessages', function() {
 
@@ -56,7 +64,6 @@ describe('backend', function() {
     
         })
     })
-    
 
 })
 
