@@ -30,8 +30,7 @@ module.exports = function(app){
 
     app.post('/flag', function(req, res) {
         try {
-            req.body.id_ = "6142018f420a40306dcf2447"
-            handlers.flagMessage(req.body.id_);
+            handlers.flagMessage(req.body.id);
             res.status(200).send();
         } catch {
             res.status(500).send("Status Internal Server Error")
@@ -45,12 +44,12 @@ module.exports = function(app){
 
     app.get('/get', function(req, res) {
         try {
-            message = handlers.getMessage(req.body.id_);
-            res.send(message)
+            handlers.getMessage(req.query.id).then(function(message) {
+                res.send(message)
+            })    
         } catch {
             res.status(500).send("Status Internal Server Error")
-        }
-        
+        }   
     })
     app.all('/get', function(req, res) {
         res.status(405).send("Status 405 Method Not Allowed")
@@ -59,13 +58,12 @@ module.exports = function(app){
 
     app.get('/getall', function(req, res) {
         try {
-            messages = handlers.getAllMessages();
-            res.send(messages)
+            handlers.getAllMessages().then(function(value) {
+                res.send(value)
+            })   
         } catch {
             res.status(500).send("Status Internal Server Error")
-        }
-
-        
+        }   
     })
     app.all('/getall', function(req, res) {
         res.status(405).send("Status 405 Method Not Allowed")
