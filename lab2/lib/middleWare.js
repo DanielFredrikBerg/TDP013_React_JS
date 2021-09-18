@@ -1,13 +1,11 @@
 const Joi = require('joi');
 const middleware = function(schema, property) {
     return function(req, res, next) {
-        const { error } = schema.validate(req.body);
-        //Joi.validate(req.body, schema);
+        const { error } = schema.validate(req[property]);
         const valid = error == null;
         
-        if (valid) {
-            next();
-        } else {
+        if (valid) { next(); }
+        else { // måste ändra här om kravspecen ska uppfyllas.
             const { details } = error;
             const message = details.map(i => i.message).join(',');
 

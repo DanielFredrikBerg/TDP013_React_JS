@@ -20,9 +20,9 @@ module.exports = function(app){
                   </html>`)
     })
 
-    app.post('/save', middleware(schemas.message), function(req, res) {
+    app.post('/save', middleware(schemas.message, 'body'), function(req, res) {
         handlers.saveMessage(req.body).then(function(result) {
-            res.status(200).send()
+            res.status(200).send();
         }).catch(function(err) {
             res.status(500).send("Status Internal Server Error");
         })        
@@ -44,7 +44,7 @@ module.exports = function(app){
     })
 
 
-    app.get('/get', function(req, res) {
+    app.get('/get', middleware(schemas.getQUERY, 'query'), function(req, res) {
         handlers.getMessage(req.query.id).then(function(message) {
             res.send(message)
         }).catch(function(err) {
