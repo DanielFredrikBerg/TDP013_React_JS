@@ -15,13 +15,11 @@ module.exports = function(app){
     })
 
     app.post('/save', function(req, res) {
-        try {
-            handlers.saveMessage(req.body);
+        handlers.saveMessage(req.body).then(function(result) {
             res.status(200).send()
-        } catch {
+        }).catch(function(err) {
             res.status(500).send("Status Internal Server Error")
-        }
-        
+        })
     })
     app.all('/save', function(req, res) {
         res.status(405).send("Status 405 Method Not Allowed")
@@ -29,13 +27,11 @@ module.exports = function(app){
 
 
     app.post('/flag', function(req, res) {
-        try {
-            handlers.flagMessage(req.body.id);
-            res.status(200).send();
-        } catch {
+        handlers.flagMessage(req.body.id).then(function(result) {
+            res.status(200).send()
+        }).catch(function(err) {
             res.status(500).send("Status Internal Server Error")
-        }
-
+        })
     })
     app.all('/flag', function(req, res) {
         res.status(405).send("Status 405 Method Not Allowed")
@@ -43,13 +39,11 @@ module.exports = function(app){
 
 
     app.get('/get', function(req, res) {
-        try {
-            handlers.getMessage(req.query.id).then(function(message) {
-                res.send(message)
-            })    
-        } catch {
+        handlers.getMessage(req.query.id).then(function(message) {
+            res.send(message)
+        }).catch(function(err) {
             res.status(500).send("Status Internal Server Error")
-        }   
+        })   
     })
     app.all('/get', function(req, res) {
         res.status(405).send("Status 405 Method Not Allowed")
@@ -57,13 +51,11 @@ module.exports = function(app){
 
 
     app.get('/getall', function(req, res) {
-        try {
-            handlers.getAllMessages().then(function(value) {
-                res.send(value)
-            })   
-        } catch {
+        handlers.getAllMessages().then(function(value) {
+            res.send(value)
+        }).catch(function(err) {
             res.status(500).send("Status Internal Server Error")
-        }   
+        })   
     })
     app.all('/getall', function(req, res) {
         res.status(405).send("Status 405 Method Not Allowed")
