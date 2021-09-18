@@ -10,21 +10,36 @@ function insertMessage() {
     const message = {_id : 1, msg : "Hello there!", flag : false}
     return new Promise(function(resolve, reject) {
         MongoClient.connect(url, function(err, db) {
-            var dbo = db.db("tdp013");
+            let dbo = db.db("tdp013");
             dbo.collection("messages").insertOne(message, function(err, result) {
                 db.close()
                 resolve()
             })
         })
     })
+}
 
+function insertInvalidMessage() {
+    const message = {_id : 1, msg : "the incumbent will administer the spending of kindergarden milk money \
+    and exercise responsibility for making change he or she will share responsibility for the task of managing\
+     the money with the assistant whose skill and expertise shall ensure the successful spending exercise . \
+    this individual must have the skill to perform a heart transplant and expertise in rocket science"}
+    return new Promise(function(resolve, reject) {
+        MongoClient.connect(url, function(err, db) {
+            let dbo = db.db("tdp013");
+            dbo.collection("messages").insertOne(message, function(err, result) {
+                db.close()
+                resolve()
+            })
+        })
+    })
 }
 
 function insertThreeMessages() {
     const messages = [{_id : 1, msg : "test_msg_1"},{_id : 2, msg : "test_msg_2"},{_id : 3, msg : "test_msg_3"}]
     return new Promise(function(resolve, reject) {
         MongoClient.connect(url, function(err, db) {
-            var dbo = db.db("tdp013");
+            let dbo = db.db("tdp013");
             dbo.collection("messages").insertMany(messages, function(err, result) {
                 db.close()
                 resolve()
@@ -37,7 +52,7 @@ function insertThreeMessages() {
 function clearDb() {
     return new Promise(function(resolve, reject) {
         MongoClient.connect(url, function(err, db) {
-            var dbo = db.db("tdp013");
+            let dbo = db.db("tdp013");
             dbo.collection("messages").deleteMany({}, async function(err, result) {
                 db.close()
                 resolve()

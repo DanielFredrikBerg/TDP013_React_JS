@@ -1,7 +1,9 @@
-const {MongoClient, ObjectId} = require('mongodb')
+const {MongoClient, ObjectId} = require('mongodb');
 let url = "mongodb://localhost:27017"
 
+
 function saveMessage(message) {
+    //if(message.len)
     return new Promise(function(resolve, reject) {
         MongoClient.connect(url, (err, db) => {
             if(err) { return reject(err) }

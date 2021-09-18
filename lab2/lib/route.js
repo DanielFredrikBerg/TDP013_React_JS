@@ -1,7 +1,13 @@
 
 const handlers = require('./requestHandlers');
+const express = require('express');
+const schemas = require('./schemas'); 
+const middleware = require('./middleware'); 
+var bodyParser = require("body-parser"); 
+
 
 module.exports = function(app){
+    app.use(express.json()); 
 
     app.get('/', function(req, res, next) {
         res.send(`<html>
@@ -14,12 +20,12 @@ module.exports = function(app){
                   </html>`)
     })
 
-    app.post('/save', function(req, res) {
+    app.post('/save', middleware(schemas.message), function(req, res) {
         handlers.saveMessage(req.body).then(function(result) {
             res.status(200).send()
         }).catch(function(err) {
-            res.status(500).send("Status Internal Server Error")
-        })
+            res.status(500).send("Status Internal Server Error");
+        })        
     })
     app.all('/save', function(req, res) {
         res.status(405).send("Status 405 Method Not Allowed")
