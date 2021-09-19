@@ -1,7 +1,6 @@
 const Joi = require('joi');
 const middleware = function(schema, property) {
     return function(req, res, next) {
-        console.log(req[property])
         const { error } = schema.validate(req[property]);
         const valid = error == null;
         

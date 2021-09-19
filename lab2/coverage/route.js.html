@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">47.06% </span>
+                <span class="strong">50% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>16/34</span>
+                <span class='fraction'>18/36</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">5.26% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/19</span>
+                <span class='fraction'>0/18</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">47.06% </span>
+                <span class="strong">50% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>16/34</span>
+                <span class='fraction'>18/36</span>
             </div>
         
             
@@ -55,7 +55,7 @@
             Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
         </p>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -129,36 +129,27 @@
 <a name='L70'></a><a href='#L70'>70</a>
 <a name='L71'></a><a href='#L71'>71</a>
 <a name='L72'></a><a href='#L72'>72</a>
-<a name='L73'></a><a href='#L73'>73</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -197,90 +188,108 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">&nbsp;
 const handlers = require('./requestHandlers');
 const express = require('express');
 const schemas = require('./schemas'); 
 const middleware = require('./middleWare'); 
+const sanitize = require('mongo-sanitize')
+const router = express.Router();
+&nbsp;
+router.use(express.json()); 
+&nbsp;
+router.get('/', <span class="fstat-no" title="function not covered" >fu</span>nction(req, res, next) {
+<span class="cstat-no" title="statement not covered" >    res.send(`&lt;html&gt;</span>
+                &lt;body&gt;
+                    &lt;form action='/save' method='post'&gt;
+                        &lt;input type='text' name='msg' /&gt;&lt;br/&gt;
+                        &lt;input type="submit" value="Send"&gt;
+                    &lt;/form&gt;
+                &lt;/body&gt;
+                &lt;/html&gt;`)
+})
+&nbsp;
+router.post('/save', middleware(schemas.message, 'body'), <span class="fstat-no" title="function not covered" >fu</span>nction(req, res) {
+<span class="cstat-no" title="statement not covered" >    handlers.saveMessage(sanitize(req.body)).then(<span class="fstat-no" title="function not covered" >fu</span>nction(result) {</span>
+<span class="cstat-no" title="statement not covered" >        res.status(200).send();</span>
+    }).catch(<span class="fstat-no" title="function not covered" >fu</span>nction(err) {
+<span class="cstat-no" title="statement not covered" >        res.status(500).send("Status Internal Server Error");</span>
+    })        
+})
+router.all('/save', <span class="fstat-no" title="function not covered" >fu</span>nction(req, res) {
+<span class="cstat-no" title="statement not covered" >    res.status(405).send("Status 405 Method Not Allowed")</span>
+})
 &nbsp;
 &nbsp;
-module.exports = function(app){
-    app.use(express.json()); 
-&nbsp;
-    app.get('/', <span class="fstat-no" title="function not covered" >fu</span>nction(req, res, next) {
-<span class="cstat-no" title="statement not covered" >        res.send(`&lt;html&gt;</span>
-                    &lt;body&gt;
-                        &lt;form action='/save' method='post'&gt;
-                            &lt;input type='text' name='msg' /&gt;&lt;br/&gt;
-                            &lt;input type="submit" value="Send"&gt;
-                        &lt;/form&gt;
-                    &lt;/body&gt;
-                  &lt;/html&gt;`)
+router.post('/flag', <span class="fstat-no" title="function not covered" >fu</span>nction(req, res) {
+<span class="cstat-no" title="statement not covered" >    handlers.flagMessage(req.body._id).then(<span class="fstat-no" title="function not covered" >fu</span>nction(result) {</span>
+<span class="cstat-no" title="statement not covered" >        res.status(200).send()</span>
+    }).catch(<span class="fstat-no" title="function not covered" >fu</span>nction(err) {
+<span class="cstat-no" title="statement not covered" >        res.status(500).send("Status Internal Server Error")</span>
     })
-&nbsp;
-    app.post('/save', middleware(schemas.message, 'body'), <span class="fstat-no" title="function not covered" >fu</span>nction(req, res) {
-<span class="cstat-no" title="statement not covered" >        handlers.saveMessage(req.body).then(<span class="fstat-no" title="function not covered" >fu</span>nction(result) {</span>
-<span class="cstat-no" title="statement not covered" >            res.status(200).send();</span>
-        }).catch(<span class="fstat-no" title="function not covered" >fu</span>nction(err) {
-<span class="cstat-no" title="statement not covered" >            res.status(500).send("Status Internal Server Error");</span>
-        })        
-    })
-    app.all('/save', <span class="fstat-no" title="function not covered" >fu</span>nction(req, res) {
-<span class="cstat-no" title="statement not covered" >        res.status(405).send("Status 405 Method Not Allowed")</span>
-    })
+})
+router.all('/flag', <span class="fstat-no" title="function not covered" >fu</span>nction(req, res) {
+<span class="cstat-no" title="statement not covered" >    res.status(405).send("Status 405 Method Not Allowed")</span>
+})
 &nbsp;
 &nbsp;
-    app.post('/flag', <span class="fstat-no" title="function not covered" >fu</span>nction(req, res) {
-<span class="cstat-no" title="statement not covered" >        handlers.flagMessage(req.body.id).then(<span class="fstat-no" title="function not covered" >fu</span>nction(result) {</span>
-<span class="cstat-no" title="statement not covered" >            res.status(200).send()</span>
-        }).catch(<span class="fstat-no" title="function not covered" >fu</span>nction(err) {
-<span class="cstat-no" title="statement not covered" >            res.status(500).send("Status Internal Server Error")</span>
-        })
-    })
-    app.all('/flag', <span class="fstat-no" title="function not covered" >fu</span>nction(req, res) {
-<span class="cstat-no" title="statement not covered" >        res.status(405).send("Status 405 Method Not Allowed")</span>
-    })
+router.get('/get', middleware(schemas.getQUERY, 'query'), <span class="fstat-no" title="function not covered" >fu</span>nction(req, res) {
+<span class="cstat-no" title="statement not covered" >    handlers.getMessage(req.query.id).then(<span class="fstat-no" title="function not covered" >fu</span>nction(message) {</span>
+<span class="cstat-no" title="statement not covered" >        res.send(message)</span>
+    }).catch(<span class="fstat-no" title="function not covered" >fu</span>nction(err) {
+<span class="cstat-no" title="statement not covered" >        res.status(500).send("Status Internal Server Error")</span>
+    })   
+})
+router.all('/get', <span class="fstat-no" title="function not covered" >fu</span>nction(req, res) {
+<span class="cstat-no" title="statement not covered" >    res.status(405).send("Status 405 Method Not Allowed")</span>
+})
 &nbsp;
 &nbsp;
-    app.get('/get', middleware(schemas.getQUERY, 'query'), <span class="fstat-no" title="function not covered" >fu</span>nction(req, res) {
-<span class="cstat-no" title="statement not covered" >        handlers.getMessage(req.query.id).then(<span class="fstat-no" title="function not covered" >fu</span>nction(message) {</span>
-<span class="cstat-no" title="statement not covered" >            res.send(message)</span>
-        }).catch(<span class="fstat-no" title="function not covered" >fu</span>nction(err) {
-<span class="cstat-no" title="statement not covered" >            res.status(500).send("Status Internal Server Error")</span>
-        })   
-    })
-    app.all('/get', <span class="fstat-no" title="function not covered" >fu</span>nction(req, res) {
-<span class="cstat-no" title="statement not covered" >        res.status(405).send("Status 405 Method Not Allowed")</span>
-    })
+router.get('/getall', <span class="fstat-no" title="function not covered" >fu</span>nction(req, res) {
+<span class="cstat-no" title="statement not covered" >    handlers.getAllMessages().then(<span class="fstat-no" title="function not covered" >fu</span>nction(value) {</span>
+<span class="cstat-no" title="statement not covered" >        res.send(value)</span>
+    }).catch(<span class="fstat-no" title="function not covered" >fu</span>nction(err) {
+<span class="cstat-no" title="statement not covered" >        res.status(500).send("Status Internal Server Error")</span>
+    })   
+})
+router.all('/getall', <span class="fstat-no" title="function not covered" >fu</span>nction(req, res) {
+<span class="cstat-no" title="statement not covered" >    res.status(405).send("Status 405 Method Not Allowed")</span>
+})
+&nbsp;
+router.all('*', <span class="fstat-no" title="function not covered" >fu</span>nction(req, res) {
+<span class="cstat-no" title="statement not covered" >    res.status(404).send("Status 404 Not Found")</span>
+})
 &nbsp;
 &nbsp;
-    app.get('/getall', <span class="fstat-no" title="function not covered" >fu</span>nction(req, res) {
-<span class="cstat-no" title="statement not covered" >        handlers.getAllMessages().then(<span class="fstat-no" title="function not covered" >fu</span>nction(value) {</span>
-<span class="cstat-no" title="statement not covered" >            res.send(value)</span>
-        }).catch(<span class="fstat-no" title="function not covered" >fu</span>nction(err) {
-<span class="cstat-no" title="statement not covered" >            res.status(500).send("Status Internal Server Error")</span>
-        })   
-    })
-    app.all('/getall', <span class="fstat-no" title="function not covered" >fu</span>nction(req, res) {
-<span class="cstat-no" title="statement not covered" >        res.status(405).send("Status 405 Method Not Allowed")</span>
-    })
+module.exports = router
 &nbsp;
-    app.all('*', <span class="fstat-no" title="function not covered" >fu</span>nction(req, res) {
-<span class="cstat-no" title="statement not covered" >        res.status(404).send("Status 404 Not Found")</span>
-    })
-&nbsp;
-}</pre></td></tr></table></pre>
+&nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Sun Sep 19 2021 16:47:38 GMT+0200 (Central European Summer Time)
+                at Sun Sep 19 2021 18:55:49 GMT+0200 (Central European Summer Time)
             </div>
         </div>
         <script src="prettify.js"></script>

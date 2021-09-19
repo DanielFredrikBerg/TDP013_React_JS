@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">81.13% </span>
+                <span class="strong">87.5% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>43/53</span>
+                <span class='fraction'>35/40</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">50% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>10/20</span>
+                <span class='fraction'>5/10</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>18/18</span>
+                <span class='fraction'>17/17</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>43/43</span>
+                <span class='fraction'>35/35</span>
             </div>
         
             
@@ -121,23 +121,11 @@
 <a name='L62'></a><a href='#L62'>62</a>
 <a name='L63'></a><a href='#L63'>63</a>
 <a name='L64'></a><a href='#L64'>64</a>
-<a name='L65'></a><a href='#L65'>65</a>
-<a name='L66'></a><a href='#L66'>66</a>
-<a name='L67'></a><a href='#L67'>67</a>
-<a name='L68'></a><a href='#L68'>68</a>
-<a name='L69'></a><a href='#L69'>69</a>
-<a name='L70'></a><a href='#L70'>70</a>
-<a name='L71'></a><a href='#L71'>71</a>
-<a name='L72'></a><a href='#L72'>72</a>
-<a name='L73'></a><a href='#L73'>73</a>
-<a name='L74'></a><a href='#L74'>74</a>
-<a name='L75'></a><a href='#L75'>75</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L65'></a><a href='#L65'>65</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -158,13 +146,7 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -183,14 +165,12 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -210,12 +190,10 @@ let url = "mongodb://localhost:27017"
 &nbsp;
 &nbsp;
 function saveMessage(message) {
-    //if(message.len)
     return new Promise(function(resolve, reject) {
-        MongoClient.connect(url, (err, db) =&gt; {
-            <span class="missing-if-branch" title="if path not taken" >I</span>if(err) { <span class="cstat-no" title="statement not covered" >return reject(err) </span>}
+        MongoClient.connect(url, function(err, db) {
             let dbo = db.db("tdp013")
-            dbo.collection("messages").insertOne(message, (err, result) =&gt; {
+            dbo.collection("messages").insertOne(message, function(err, result) {
                 <span class="missing-if-branch" title="if path not taken" >I</span>if(err) { <span class="cstat-no" title="statement not covered" >return reject(err) </span>}
                 db.close()
                 resolve(result)
@@ -227,19 +205,13 @@ function saveMessage(message) {
 function flagMessage(id) {
     return new Promise(function(resolve, reject) {
         let flag = true
-        MongoClient.connect(url, (err, db) =&gt; {
-            <span class="missing-if-branch" title="if path not taken" >I</span>if(err) { <span class="cstat-no" title="statement not covered" >return reject(err) </span>}
+        MongoClient.connect(url, function(err, db) {
             let dbo = db.db("tdp013")
             dbo.collection("messages").findOne({_id : parseInt(id)}, (err, result) =&gt; {
                 <span class="missing-if-branch" title="if path not taken" >I</span>if(err) { <span class="cstat-no" title="statement not covered" >return reject(err) </span>}
-                db.close()
                 flag = !result.flag
             })
-        })
-        MongoClient.connect(url, (err, db) =&gt; {
-            <span class="missing-if-branch" title="if path not taken" >I</span>if(err) { <span class="cstat-no" title="statement not covered" >return reject(err) </span>}
-            let dbo = db.db("tdp013")
-            dbo.collection("messages").updateOne({_id : parseInt(id)}, {$set: {"flag" : flag}}, (err, result) =&gt; {
+            dbo.collection("messages").updateOne({_id : parseInt(id)}, {$set: {"flag" : flag}}, function(err, result) {
                 <span class="missing-if-branch" title="if path not taken" >I</span>if(err) { <span class="cstat-no" title="statement not covered" >return reject(err) </span>}
                 db.close() 
                 resolve(result)
@@ -251,10 +223,9 @@ function flagMessage(id) {
 &nbsp;
 function getMessage(id) {
     return new Promise(function(resolve, reject) {
-        MongoClient.connect(url, (err, db) =&gt; {
-            <span class="missing-if-branch" title="if path not taken" >I</span>if(err) { <span class="cstat-no" title="statement not covered" >return reject(err) </span>}
+        MongoClient.connect(url, function(err, db) {
             let dbo = db.db("tdp013")
-            dbo.collection("messages").findOne({_id : parseInt(id)}, (err, result) =&gt; {
+            dbo.collection("messages").findOne({_id : parseInt(id)}, function(err, result) {
                 <span class="missing-if-branch" title="if path not taken" >I</span>if(err) { <span class="cstat-no" title="statement not covered" >return reject(err) </span>}
                 db.close()
                 resolve(result)
@@ -265,10 +236,9 @@ function getMessage(id) {
 &nbsp;
 function getAllMessages() {
     return new Promise(function(resolve, reject) {
-        MongoClient.connect(url, (err, db) =&gt; {
-            <span class="missing-if-branch" title="if path not taken" >I</span>if(err) { <span class="cstat-no" title="statement not covered" >return reject(err) </span>}
+        MongoClient.connect(url, function(err, db) {
             let dbo = db.db("tdp013");
-            dbo.collection("messages").find({}).toArray( (err, result) =&gt; {
+            dbo.collection("messages").find({}).toArray( function(err, result) {
                 <span class="missing-if-branch" title="if path not taken" >I</span>if(err) { <span class="cstat-no" title="statement not covered" >return reject(err) </span>}
                 db.close()
                 resolve(result)
@@ -286,7 +256,7 @@ module.exports = {saveMessage, flagMessage, getMessage, getAllMessages}</pre></t
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Sun Sep 19 2021 16:47:38 GMT+0200 (Central European Summer Time)
+                at Sun Sep 19 2021 18:55:49 GMT+0200 (Central European Summer Time)
             </div>
         </div>
         <script src="prettify.js"></script>

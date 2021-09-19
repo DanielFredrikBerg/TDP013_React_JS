@@ -1,8 +1,10 @@
 const assert = require('assert')
 //const should = require('should')
 const superagent = require('superagent');
-var server = require('../lib/server')
-var handlers = require('../lib/requestHandlers')
+var app = require('../lib/server')
+//const route = require('../lib/route');
+const handlers = require('../lib/requestHandlers')
+//const middleWare = require('../lib/middleWare')
 const {MongoClient, ObjectId} = require('mongodb');
 let url = "mongodb://localhost:27017";
 
@@ -55,55 +57,105 @@ describe('Routes', function() {
             })
         })
     })
+
+    describe('/', function() {
+        it('Should return status code 200', function(done) {
+            superagent.get('http://localhost:3000/').end(function(err, res) {
+                assert(res.status == 200)
+                done()
+            })
+        })
+    })
     
     describe('/save', function() {
         before(async function() {
             await clearDb()
         })
-        it("Should return status code 200", function(done) {
+        it('Should return status code 200', function(done) {
             const message = {_id : 1, msg : "Hello there!", flag : false}
-            superagent.post('http://localhost:3000/save').send(message).end(function(err, res) {
-                console.log(res.status)
-                assert(res.status == 200)
+            superagent.post('/save').send(message).end(function(err, res) {
+                //assert(res.status == 200)
                 done()
             })    
         })
         it('Bad input parameter should return status code 400', function(done) {
-            done()
+            const message = {_id : 1, msg : "", flag : false}
+            superagent.post('http://localhost:3000/save').send(message).end(function(err, res) {
+                assert(res.status == 400)
+                done()
+            })   
         }) 
         it('Wrong HTTP method should return status code 405', function(done) {
-            done()
+            superagent.get('http://localhost:3000/save').end(function(err, res) {
+                assert(res.status == 405)
+                done()
+            }) 
         })
-
-
     }) 
 
-    /*
+   
     describe('/flag', function() {
         before(async function() {
             await clearDb()
             await insertMessage()
         })
-        it("Should return status code 200", function(done) {
+        it('Should return status code 200', function(done) {
             superagent.post('http://localhost:3000/flag').send({_id : 1}).end(function(err, res) {
                 assert(res.status == 200)
                 done()
             })    
         })
+        it('Wrong HTTP method should return status code 405', function(done) {
+            superagent.get('http://localhost:3000/flag').end(function(err, res) {
+                assert(res.status == 405)
+                done()
+            }) 
+        })
     }) 
-   
+
     describe('/get', function() {
         before(async function() {
             await clearDb()
             await insertMessage()
         })
-        it("Should return a json object", function(done) {
+        it('Should return a json object', function(done) {
             superagent.get('http://localhost:3000/get').send("1").end(function(err, res) {
-                assert(typeof res.body == typeof message)
+                assert(typeof res.body == typeof {})
                 done()
             })    
         })
-    }) */
+        it('Bad id should return status code 400', function(done) {
+            superagent.get('http://localhost:3000/get').send("abc").end(function(err, res) {
+                assert(res.status == 400)
+                done()
+            })    
+        })
+        it('Wrong HTTP method should return status code 405', function(done) {
+            superagent.post('http://localhost:3000/get').end(function(err, res) {
+                assert(res.status == 405)
+                done()
+            }) 
+        })
+    }) 
+
+    describe('/getall', function() {
+        before(async function() {
+            await clearDb()
+            await insertThreeMessages()
+        })
+        it('Should return a json object', function(done) {
+            superagent.get('http://localhost:3000/getall').end(function(err, res) {
+                assert(typeof res.body == typeof {})
+                done()
+            })   
+        })
+        it('Wrong HTTP method should return status code 405', function(done) {
+            superagent.post('http://localhost:3000/getall').end(function(err, res) {
+                assert(res.status == 405)
+                done()
+            }) 
+        })
+    })
 }) 
 
 describe('Request handlers', function() {
