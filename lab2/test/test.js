@@ -19,22 +19,6 @@ function insertMessage() {
     })
 }
 
-function insertInvalidMessage() {
-    const message = {_id : 1, msg : "the incumbent will administer the spending of kindergarden milk money \
-    and exercise responsibility for making change he or she will share responsibility for the task of managing\
-     the money with the assistant whose skill and expertise shall ensure the successful spending exercise . \
-    this individual must have the skill to perform a heart transplant and expertise in rocket science"}
-    return new Promise(function(resolve, reject) {
-        MongoClient.connect(url, function(err, db) {
-            let dbo = db.db("tdp013");
-            dbo.collection("messages").insertOne(message, function(err, result) {
-                db.close()
-                resolve()
-            })
-        })
-    })
-}
-
 function insertThreeMessages() {
     const messages = [{_id : 1, msg : "test_msg_1"},{_id : 2, msg : "test_msg_2"},{_id : 3, msg : "test_msg_3"}]
     return new Promise(function(resolve, reject) {
@@ -46,7 +30,6 @@ function insertThreeMessages() {
             })
         })
     })
-
 }
 
 function clearDb() {
@@ -74,7 +57,11 @@ describe('Routes', function() {
                 done()
             })    
         })
+       it('should send the proper input parameters', async function() {
+            
+        }) 
     }) 
+
 /*
     describe('/flag', function() {
         before(async function() {
@@ -104,7 +91,6 @@ describe('Routes', function() {
 }) */
 
 describe('Request handlers', function() {
-
     describe('saveMessage', function() {
         before(async function() {
             await clearDb()
@@ -116,6 +102,7 @@ describe('Request handlers', function() {
         })
     })
 
+    //describe('saveMessage')
     
     describe('flagMessage', function() {
         before(async function() {
@@ -158,4 +145,3 @@ describe('Request handlers', function() {
         })
     })
 })
-

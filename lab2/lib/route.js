@@ -2,8 +2,7 @@
 const handlers = require('./requestHandlers');
 const express = require('express');
 const schemas = require('./schemas'); 
-const middleware = require('./middleware'); 
-var bodyParser = require("body-parser"); 
+const middleware = require('./middleWare'); 
 
 
 module.exports = function(app){
