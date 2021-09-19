@@ -44,25 +44,41 @@ function clearDb() {
     })
 }
 
-/*
+
 describe('Routes', function() {
+
+    describe('Unsupported url', function() {
+        it('Should return status code 404', function(done) {
+            superagent.get('http://localhost:3000/asdf').end(function(err, res) {
+                assert(res.status == 404)
+                done()
+            })
+        })
+    })
     
     describe('/save', function() {
         before(async function() {
             await clearDb()
         })
         it("Should return status code 200", function(done) {
+            const message = {_id : 1, msg : "Hello there!", flag : false}
             superagent.post('http://localhost:3000/save').send(message).end(function(err, res) {
+                console.log(res.status)
                 assert(res.status == 200)
                 done()
             })    
         })
-       it('should send the proper input parameters', async function() {
-            
+        it('Bad input parameter should return status code 400', function(done) {
+            done()
         }) 
+        it('Wrong HTTP method should return status code 405', function(done) {
+            done()
+        })
+
+
     }) 
 
-/*
+    /*
     describe('/flag', function() {
         before(async function() {
             await clearDb()
@@ -87,8 +103,8 @@ describe('Routes', function() {
                 done()
             })    
         })
-    }) 
-}) */
+    }) */
+}) 
 
 describe('Request handlers', function() {
     describe('saveMessage', function() {
@@ -101,8 +117,6 @@ describe('Request handlers', function() {
             assert(result["acknowledged"])
         })
     })
-
-    //describe('saveMessage')
     
     describe('flagMessage', function() {
         before(async function() {
