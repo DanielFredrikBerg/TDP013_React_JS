@@ -33,10 +33,3 @@ Datafiler som skapas av en webserver och lagras på användarens dator när anv�
 - **Använder ni asynkrona eller synkrona anrop i er JavaScript?**
 
 Synkrona.
-
-
-
-
-## Lab2
-
-TODO
