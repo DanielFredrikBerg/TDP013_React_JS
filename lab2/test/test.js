@@ -48,7 +48,7 @@ function clearDb() {
 describe('Routes', function() {
 
     describe('Unsupported url', function() {
-        it('Should return status code 404', function(done) {
+        it('Accessing unsupported url should return status code 404', function(done) {
             superagent.get('http://localhost:3000/asdf').end(function(err,res) {
                 assert(res.status == 404)
                 done()
@@ -57,7 +57,7 @@ describe('Routes', function() {
     })
 
     describe('/', function() {
-        it('Should return status code 200', function(done) {
+        it('Accessing / should return status code 200', function(done) {
             superagent.get('http://localhost:3000/').end(function(err, res) {
                 assert(res.status == 200)
                 done()
@@ -69,10 +69,20 @@ describe('Routes', function() {
         before(async function() {
             await clearDb()
         })
-        it('Should return status code 200', function(done) {
+        it('Message ok should return status code 200', function(done) {
             const message = {_id : 1, msg : "Hello there!", flag : false}
             superagent.post('http://localhost:3000/save').send(message).end(function(err, res) {
                 assert(res.status == 200)
+                done()
+            })    
+        })
+        it('Message too long should return status code 400', function(done) {
+            const message = {_id : 1, msg : "the incumbent will administer the spending of kindergarden milk money\
+            and exercise responsibility for making change he or she will share\
+            responsibility for the task of managing the money with the assistant\
+            whose skill and expertise shall ensure the successful spending exercise", flag : false}
+            superagent.post('http://localhost:3000/save').send(message).end(function(err, res) {
+                assert(res.status == 400)
                 done()
             })    
         })
@@ -97,7 +107,7 @@ describe('Routes', function() {
             await clearDb()
             await insertMessage()
         })
-        it('Should return status code 200', function(done) {
+        it('Accessing /flag should return status code 200', function(done) {
             superagent.post('http://localhost:3000/flag').send({_id : 1}).end(function(err, res) {
                 assert(res.status == 200)
                 done()
@@ -116,13 +126,13 @@ describe('Routes', function() {
             await clearDb()
             await insertMessage()
         })
-        it('Should return a json object', function(done) {
+        it('Accessing existing message should return a json object', function(done) {
             superagent.get('http://localhost:3000/get').send("1").end(function(err, res) {
                 assert(typeof res.body == typeof {})
                 done()
             })    
         })
-        it('Bad id should return status code 400', function(done) {
+        it('Accessing bad id should return status code 400', function(done) {
             superagent.get('http://localhost:3000/get').send("abc").end(function(err, res) {
                 assert(res.status == 400)
                 done()
@@ -141,7 +151,7 @@ describe('Routes', function() {
             await clearDb()
             await insertThreeMessages()
         })
-        it('Should return a json object', function(done) {
+        it('Accessing /getall should return all json objects', function(done) {
             superagent.get('http://localhost:3000/getall').end(function(err, res) {
                 assert(typeof res.body == typeof {})
                 done()
