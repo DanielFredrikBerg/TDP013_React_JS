@@ -44,8 +44,8 @@ function getMessage(id) {
                 } catch (error) {
                     return reject(error)
                 }
-            } else if (typeof id == typeof 1) {
-                var idAccessor = id;
+            } else if (typeof parseInt(id) == typeof 1) {
+                var idAccessor = parseInt(id);
             } else reject(err);
             dbo.collection("messages").findOne({_id : idAccessor}, function(err, result) {
                 if(err) { return reject(err) }
