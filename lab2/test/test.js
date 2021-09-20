@@ -2,9 +2,7 @@ const assert = require('assert')
 //const should = require('should')
 const superagent = require('superagent');
 var app = require('../lib/server')
-//const route = require('../lib/route');
 const handlers = require('../lib/requestHandlers')
-//const middleWare = require('../lib/middleWare')
 const {MongoClient, ObjectId} = require('mongodb');
 let url = "mongodb://localhost:27017";
 
@@ -51,7 +49,7 @@ describe('Routes', function() {
 
     describe('Unsupported url', function() {
         it('Should return status code 404', function(done) {
-            superagent.get('http://localhost:3000/asdf').end(function(err, res) {
+            superagent.get('http://localhost:3000/asdf').end(function(err,res) {
                 assert(res.status == 404)
                 done()
             })
@@ -73,8 +71,8 @@ describe('Routes', function() {
         })
         it('Should return status code 200', function(done) {
             const message = {_id : 1, msg : "Hello there!", flag : false}
-            superagent.post('/save').send(message).end(function(err, res) {
-                //assert(res.status == 200)
+            superagent.post('http://localhost:3000/save').send(message).end(function(err, res) {
+                assert(res.status == 200)
                 done()
             })    
         })

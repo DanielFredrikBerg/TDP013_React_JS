@@ -1,8 +1,5 @@
-
 const handlers = require('./requestHandlers');
 const express = require('express');
-const schemas = require('./schemas'); 
-const middleware = require('./middleWare'); 
 const sanitize = require('mongo-sanitize')
 const router = express.Router();
 
@@ -19,12 +16,16 @@ router.get('/', function(req, res, next) {
                 </html>`)
 })
 
-router.post('/save', middleware(schemas.message, 'body'), function(req, res) {
-    handlers.saveMessage(sanitize(req.body)).then(function(result) {
-        res.status(200).send();
-    }).catch(function(err) {
-        res.status(500).send("Status Internal Server Error");
-    })        
+router.post('/save', function(req, res) {
+    if(req.body.msg.length < 1 || req.body.msg.length > 140){
+        res.status(400).send("Invalid length of message error");
+    } else { 
+        handlers.saveMessage(sanitize(req.body)).then(function(result) {
+            res.status(200).send();
+        }).catch(function(err) {
+            res.status(500).send("Status Internal Server Error");
+        })
+    }        
 })
 router.all('/save', function(req, res) {
     res.status(405).send("Status 405 Method Not Allowed")
@@ -43,9 +44,10 @@ router.all('/flag', function(req, res) {
 })
 
 
-router.get('/get', middleware(schemas.getQUERY, 'query'), function(req, res) {
+router.get('/get', function(req, res) {
     handlers.getMessage(req.query.id).then(function(message) {
-        res.send(message)
+        if (message != null) {res.send(message)}
+        else res.status(400).send("Invalid Query Parameters")
     }).catch(function(err) {
         res.status(500).send("Status Internal Server Error")
     })   

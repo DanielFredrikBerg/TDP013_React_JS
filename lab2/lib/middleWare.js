@@ -1,4 +1,4 @@
-const Joi = require('joi');
+/* const Joi = require('joi');
 const middleware = function(schema, property) {
     return function(req, res, next) {
         const { error } = schema.validate(req[property]);
@@ -10,4 +10,4 @@ const middleware = function(schema, property) {
         }
     }
 }
-module.exports = middleware;
+module.exports = middleware; */
