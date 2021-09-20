@@ -38,7 +38,16 @@ function getMessage(id) {
     return new Promise(function(resolve, reject) {
         MongoClient.connect(url, function(err, db) {
             let dbo = db.db("tdp013")
-            dbo.collection("messages").findOne({_id : parseInt(id)}, function(err, result) {
+            if(typeof id === 'string' && id.length == 24) {//probably ObjectId
+                try {
+                    var idAccessor = ObjectId(id).valueOf();
+                } catch (error) {
+                    return reject(error)
+                }
+            } else if (typeof id == typeof 1) {
+                var idAccessor = id;
+            } else reject(err);
+            dbo.collection("messages").findOne({_id : idAccessor}, function(err, result) {
                 if(err) { return reject(err) }
                 db.close()
                 resolve(result)

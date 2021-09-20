@@ -46,10 +46,14 @@ router.all('/flag', function(req, res) {
 
 router.get('/get', function(req, res) {
     handlers.getMessage(req.query.id).then(function(message) {
-        if (message != null) {res.send(message)}
-        else res.status(400).send("Invalid Query Parameters")
+        if (message != null) {
+            res.send(message)
+        }
+        else {
+            res.status(400).send("Entry Not Found")
+        }
     }).catch(function(err) {
-        res.status(500).send("Status Internal Server Error")
+        res.status(400).send("Invalid Query Parameters")
     })   
 })
 router.all('/get', function(req, res) {
