@@ -1,4 +1,4 @@
-const Joi = require('joi');
+/* const Joi = require('joi');
 
 const schemas = {
     message: Joi.object().keys({
@@ -8,4 +8,4 @@ const schemas = {
         id: Joi.number().min(1).required() // Komma åt hur många meddelanden som finns i databasen?
     })
 };
-module.exports = schemas;
+module.exports = schemas; */
