@@ -20,7 +20,11 @@
 
 - **Beskriv strukturen och flödet i er applikation och demonstrera att det fungerar.**
 Vi följer specifikation 2 från kurshemsidan.
-Accessa 
+Alla post & get queries behandlas av funktionerna i route.js. I route.post(/save) på rad 19 används mongo-sanitize för
+för att motverka injections. Meddelandet kontrolleras att den är av proper längd. Vid fel returneras olika errorstatusar.
+Därefter kallas funktionerna som berör och modifierar databasen. Dessa återfinns i requestHandlers.js och skapar nya Promises
+som exekveras asynkront. I de funktioner det behövs kontrolleras indatan och errors skickas med i rejects vid fel.
+När databasprocessen är klar returneras det från Promise:n det som söktes eller så returneras ett error. 
 
 - **Vad är en callback-funktion och hur använder ni er av dem i koden?**
 En callback funktion kan ta en funktion som parameter och kan ge retur i ett senare skede. De är till stor hjälp vid
