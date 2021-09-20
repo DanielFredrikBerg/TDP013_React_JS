@@ -6,8 +6,21 @@ const handlers = require('../lib/requestHandlers')
 const {MongoClient, ObjectId} = require('mongodb');
 let url = "mongodb://localhost:27017";
 
-function insertMessage() {
+function insertMessageWithIntKey() {
     const message = {_id : 1, msg : "Hello there!", flag : false}
+    return new Promise(function(resolve, reject) {
+        MongoClient.connect(url, function(err, db) {
+            let dbo = db.db("tdp013");
+            dbo.collection("messages").insertOne(message, function(err, result) {
+                db.close()
+                resolve()
+            })
+        })
+    })
+}
+
+function insertMessageWithObjectIdKey() {
+    const message = {_id : "6148c8f8453adf5913618d6e", msg : "ObjectId key here!", flag : false}
     return new Promise(function(resolve, reject) {
         MongoClient.connect(url, function(err, db) {
             let dbo = db.db("tdp013");
@@ -105,7 +118,7 @@ describe('Routes', function() {
     describe('/flag', function() {
         before(async function() {
             await clearDb()
-            await insertMessage()
+            await insertMessageWithIntKey()
         })
         it('Accessing /flag should return status code 200', function(done) {
             superagent.post('http://localhost:3000/flag').send({_id : 1}).end(function(err, res) {
@@ -124,10 +137,17 @@ describe('Routes', function() {
     describe('/get', function() {
         before(async function() {
             await clearDb()
-            await insertMessage()
+            await insertMessageWithIntKey()
+            await insertMessageWithObjectIdKey()
         })
-        it('Accessing existing message should return a json object', function(done) {
+        it('Accessing existing message with integer key should return a json object', function(done) {
             superagent.get('http://localhost:3000/get').send("1").end(function(err, res) {
+                assert(typeof res.body == typeof {})
+                done()
+            })    
+        })
+        it('Accessing existing message with ObjectId key should return a json object', function(done) {
+            superagent.get('http://localhost:3000/get').send("6148c8f8453adf5913618d6e").end(function(err, res) {
                 assert(typeof res.body == typeof {})
                 done()
             })    
@@ -181,7 +201,7 @@ describe('Request handlers', function() {
     describe('flagMessage', function() {
         before(async function() {
             await clearDb()
-            await insertMessage() 
+            await insertMessageWithIntKey() 
         })
         it('should flag one message', async function() {
            result = await handlers.flagMessage(1)
@@ -193,7 +213,7 @@ describe('Request handlers', function() {
     describe('getMessage', function() {
         before(async function() {
             await clearDb()
-            await insertMessage() 
+            await insertMessageWithIntKey() 
         })
         it('should return one message', async function() {
             message = await handlers.getMessage(1)
