@@ -6,6 +6,7 @@ const router = express.Router();
 router.use(express.json()); 
 
 router.post('/save', function(req, res) {
+    console.log(req.body)
     if(req.body.msg.length < 1 || req.body.msg.length > 140){
         res.status(400).send("Invalid length of message error");
     } else { 

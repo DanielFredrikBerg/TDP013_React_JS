@@ -1,6 +1,3 @@
-const { post } = require("superagent");
-const handlers = request("./lib/requestHandlers");
-
 function enter(event) {
   if (event.keyCode == 13)
   {
@@ -39,26 +36,26 @@ function markRead(dateID)
   }
 }
 
-function createMessage(keyValue)
+function createMessage(JSONmessageObject)
 {
   // Lägger in meddelanden på rad.
-  let dateId = keyValue.split('=')[0];
-  let message = keyValue.split('=')[1];
-  let msgRead = message.substr(message.length - 2);
+  let dateId = JSONmessageObject.creationDate;
+  let message = JSONmessageObject.msg;
+  let msgRead = JSONmessageObject.flag;
   let msgBox = document.createElement('div');
   msgBox.setAttribute("id", dateId);
-  msgBox.textContent = message.substr(0, message.length - 3);  
+  msgBox.textContent = message;
 
   let checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
   checkbox.setAttribute("onchange", `markRead(${msgBox.id});`); // Adds a function dynamically to the checkbox.
   
-  if (msgRead == 'rd')
+  if (msgRead)
   {
     msgBox.setAttribute("class", "readMsgBox");
     checkbox.checked = true;
   }
-  else if (msgRead == 'ud')
+  else if (!msgRead)
   {
     msgBox.setAttribute("class", "msgBox");
     checkbox.checked = false;
@@ -74,26 +71,32 @@ function createMessage(keyValue)
 
 function addMsg()
 {
-  let textField = document.getElementById('postText');
-  let messageText = textField.value;
-  console.log(messageText);
-  await fetch('http://localhost:3000/send', {
+  let msg = document.getElementById('postText').value;
+  fetch('http://localhost:3000/save', { 
+      headers: {
+      'Content-Type': 'application/json'
+      },
       method: 'POST',
-      body: JSON.stringify(messageText)
+      body: JSON.stringify({msg, flag : false, creationDate : Date.now()})
     }).then(function(res) {
-      keyValue = `${Date.now()}=${messageText}:ud`;
-      document.cookie = keyValue;
-      res.json()})
-    .then(res => console.log(res));
+      console.log(res.status)})   
 } 
   
   
+function sortByObjectIdCreationDate(ObjectIdA, ObjectIdB){
+  return ObjectIdA.creationDate - ObjectIdB.creationDate
+}
 
-function listMsgs()
+async function listMsgs()
 {  
-  if (document.cookie != "")
-  {
-    let keyValues = document.cookie.split("; ");
-    keyValues.sort().forEach(keyValue => createMessage(keyValue));
-  }
+  const messagesInDatabase = await fetch('http://localhost:3000/getall', {
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    method: 'GET'
+  }).then(function(res){
+    return res.json();
+  })
+  console.log(messagesInDatabase.sort(sortByObjectIdCreationDate));
+  messagesInDatabase.sort(sortByObjectIdCreationDate).forEach(JSONmessageObject => createMessage(JSONmessageObject));
 }

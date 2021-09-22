@@ -59,7 +59,6 @@ function clearDb() {
 
 
 describe('Routes', function() {
-
     describe('Unsupported url', function() {
         it('Accessing unsupported url should return status code 404', function(done) {
             superagent.get('http://localhost:3000/asdf').end(function(err,res) {
@@ -236,6 +235,9 @@ describe('Request handlers', function() {
             assert(messages[1]["msg"] == "test_msg_2")
             assert(messages[2]["_id"] == 3)
             assert(messages[2]["msg"] == "test_msg_3") 
+        })
+        after(async function() {
+            await clearDb()
         })
     })
 })
