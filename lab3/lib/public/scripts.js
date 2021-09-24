@@ -89,14 +89,17 @@ function sortByObjectIdCreationDate(ObjectIdA, ObjectIdB){
 
 async function listMsgs()
 {  
-  const messagesInDatabase = await fetch('http://localhost:3000/getall', {
+  await fetch('http://localhost:3000/getall', {
     headers: {
       'Content-Type': 'application/json'
     },
     method: 'GET'
-  }).then(function(res){
-    return res.json();
+  }).then(messagesFromDatabase => {
+    return messagesFromDatabase.json();
+  }).then(messagesFromDatabase => {
+    console.log(messagesFromDatabase.sort(sortByObjectIdCreationDate));
+    messagesFromDatabase.sort(sortByObjectIdCreationDate).forEach(JSONmessageObject => createMessage(JSONmessageObject));
+  }).catch(error => {
+    console.log(`Error: ${error} in listMsgs().`);
   })
-  console.log(messagesInDatabase.sort(sortByObjectIdCreationDate));
-  messagesInDatabase.sort(sortByObjectIdCreationDate).forEach(JSONmessageObject => createMessage(JSONmessageObject));
 }
