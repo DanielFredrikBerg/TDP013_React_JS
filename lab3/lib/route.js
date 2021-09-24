@@ -6,18 +6,14 @@ const router = express.Router();
 router.use(express.json()); 
 
 router.post('/save', function(req, res) {
-    console.log(req.body)
-    if(!handlers.validateMessage(req.body.msg)){
-        res.status(400).send("Invalid length of message error");
-        return;
-    } else { 
-        handlers.saveMessage(sanitize(req.body)).then(function(result) {
-            res.status(200).send();
+    handlers.saveMessage(sanitize(req.body)).then(function(result) {
+        console.log(result);    
+        res.status(200).send();
+            
         }).catch(function(err) {
-            res.status(500).send("Status Internal Server Error");
-            return;
-        })
-    }        
+            console.log(`Error: ${err}`);
+            res.status(400).send(`${err}`);
+        })      
 })
 router.all('/save', function(req, res) {
     res.status(405).send("Status 405 Method Not Allowed")

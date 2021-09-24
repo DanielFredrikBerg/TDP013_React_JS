@@ -1,39 +1,30 @@
 const {MongoClient, ObjectId} = require('mongodb');
+
 let url = "mongodb://localhost:27017"
 
-function validateMessage(message) {
-    return new Promise(function(resolve, reject) {
-        // Guard statement
-        if (message == null){
-            reject(new Error("Message does not exist."));
-        } else resolve(message);
-    }).then(nonNullMessage => {
-        // Check correct message length
-        if (nonNullMessage.length < 1 || nonNullMessage > 140){
-            reject(new Error("Message not correct length."))
-        } else resolve(nonNullMessage);
-    }).then(correctMessage => {
-        console.log(`Message checked successfully: ${correctMessage}, lenght: ${correctMessage.length}`)
-        resolve(true);
-    }).catch(error => {
-        console.log(error)
+function invalidMessage(message) {
+    // Guard statement
+    if ( message == null 
+        || message.length < 1
+        || message.length > 140 ) {
+        return true;
+    } else {
         return false;
-    });
+    }
 }
 
-function saveMessage(message) {
-    return new Promise(function(resolve, reject) {
-        // MongoClient.connect är redan promise, oftast overkill att göra egna Promise structure (går att lägga på then och catch på dessa.) 
-        // Kan definiera egna new Errors och rejecta dem => de fångas av catch.
-        MongoClient.connect(url, function(err, db) {
-            let dbo = db.db("tdp013")
-            dbo.collection("messages").insertOne(message, function(err, result) {
-                if(err) { reject(err) }
-                db.close()
-                resolve(result)
-            });  
-        })
-    })
+async function saveMessage(message) {
+    // MongoClient.connect är redan promise, oftast overkill att göra egna Promise structure (går att lägga på then och catch på dessa.) 
+    // Kan definiera egna new Errors och rejecta dem 8=====3 de fångas av catch.
+    console.log(message)
+    if(invalidMessage(message.msg)) { 
+        console.log("invalid message!");
+        throw new Error("Invalid message");
+    } else {
+        const connection = MongoClient.connect(url+'/tdp013');
+        const result = (await connection).collection("messages").insertOne(message);
+        return result['acknowledged'];
+    }
 }
 
 function flagMessage(id) {
@@ -41,11 +32,7 @@ function flagMessage(id) {
         let flag = true
         MongoClient.connect(url, function(err, db) {
             let dbo = db.db("tdp013")
-            dbo.collection("messages").findOne({_id : parseInt(id)}, (err, result) => {
-                if(err) { return reject(err) }
-                flag = !result.flag
-            })
-            dbo.collection("messages").updateOne({_id : parseInt(id)}, {$set: {"flag" : flag}}, function(err, result) {
+            dbo.collection("messages").updateOne({_id : parseInt(id)}, {$set: {flag : !flag}}, function(err, result) {
                 if(err) { return reject(err) }
                 db.close() 
                 resolve(result)

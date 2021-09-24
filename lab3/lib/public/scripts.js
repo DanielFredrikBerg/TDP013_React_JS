@@ -22,24 +22,28 @@ function tooLongMessage()
 function markRead(dateID)
 {
   let msg = document.getElementById(dateID);
-  //alert(`DateID: ${dateID}`);
-  //alert(`${msg} test`);
   if (msg.childNodes[0].checked == true)
   {
     msg.setAttribute("class", "readMsgBox");
-    document.cookie = `${msg.id}=${msg.textContent}:rd`;
   }
   else
   {
     msg.setAttribute("class", "msgBox");
-    document.cookie = `${msg.id}=${msg.textContent}:ud`;
   }
+// Viktors kod <- kolla denna!
+  fetch('http://localhost:3000/flag', {
+    headers: {'Content-Type' : 'application/json'},
+    method: 'POST',
+    body: JSON.stringify({_id : dateID})
+    }).then(function(response){ 
+      console.log(response)
+    })
 }
 
 function createMessage(JSONmessageObject)
 {
   // Lägger in meddelanden på rad.
-  let dateId = JSONmessageObject.creationDate;
+  let dateId = JSONmessageObject._id;
   let message = JSONmessageObject.msg;
   let msgRead = JSONmessageObject.flag;
   let msgBox = document.createElement('div');
@@ -77,14 +81,14 @@ function addMsg()
       'Content-Type': 'application/json'
       },
       method: 'POST',
-      body: JSON.stringify({msg, flag : false, creationDate : Date.now()})
+      body: JSON.stringify({msg, flag : false, _id : Date.now()})
     }).then(function(res) {
       console.log(res.status)})   
 } 
   
   
-function sortByObjectIdCreationDate(ObjectIdA, ObjectIdB){
-  return ObjectIdA.creationDate - ObjectIdB.creationDate
+function sortByObjectId(ObjectIdA, ObjectIdB){
+  return ObjectIdA._id - ObjectIdB._id
 }
 
 async function listMsgs()
@@ -97,8 +101,8 @@ async function listMsgs()
   }).then(messagesFromDatabase => {
     return messagesFromDatabase.json();
   }).then(messagesFromDatabase => {
-    console.log(messagesFromDatabase.sort(sortByObjectIdCreationDate));
-    messagesFromDatabase.sort(sortByObjectIdCreationDate).forEach(JSONmessageObject => createMessage(JSONmessageObject));
+    console.log(messagesFromDatabase.sort(sortByObjectId));
+    messagesFromDatabase.sort(sortByObjectId).forEach(JSONmessageObject => createMessage(JSONmessageObject));
   }).catch(error => {
     console.log(`Error: ${error} in listMsgs().`);
   })
