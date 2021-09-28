@@ -1,13 +1,10 @@
 const handlers = require('./requestHandlers');
 const express = require('express');
 const sanitize = require('mongo-sanitize')
+const path = require('path')
 const router = express.Router();
 
 router.use(express.json()); 
-
-router.get('/', function(req, res, next) {
-    res.sendFile(path.join('../index.html'));
-})
 
 router.post('/save', function(req, res) {
     if(req.body.msg.length < 1 || req.body.msg.length > 140){

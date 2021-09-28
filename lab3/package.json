@@ -19,8 +19,10 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "jquery": "^3.6.0",
     "mongo-sanitize": "^1.1.0",
     "mongodb": "^4.1.2",
+    "path": "^0.12.7",
     "superagent": "^6.1.0"
   }
 }
