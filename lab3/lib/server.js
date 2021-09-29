@@ -21,5 +21,11 @@ function start_server() {
     })
 }
 
+function stop_server() {
+    app.close(function() {
+        console.log("Server stopped")
+    })
+}
+
 
 module.exports =  {app, start_server}

@@ -38,21 +38,17 @@ function markRead(dateID)
     headers: {'Content-Type' : 'application/json'},
     method: 'POST',
     body: JSON.stringify({_id : dateID})
-  }).then(function(response){ 
-      console.log(response)
   })
 }
 
 function createMessage(msgData)
 {
   // Lägger in meddelanden på rad.
-  console.log(msgData)
   let dateId = msgData._id;
   let message = msgData.msg;
   let msgRead = msgData.flag;
   let msgBox = document.createElement('div');
   msgBox.setAttribute("id", dateId);
-  console.log(msgBox);
   msgBox.textContent = message;  
 
   let checkbox = document.createElement('input');
@@ -89,10 +85,13 @@ function addMsg()
       },
       method: 'POST',
       body: body
-    }).then(function(res) {
-      console.log(res.status)})  
-  
-  createMessage(data);
+  }).then(function(res) {
+    if (res.status == 400) {
+      tooLongMessage()
+    } else {
+      createMessage(data)
+    }
+  })  
   textField.value=''
 }
 
@@ -104,16 +103,8 @@ async function listMsgs()
     },
     method: 'GET'
   }).then(function(res) {
-    console.log(res)
-    return res.json();
+    return res.json()
   })
 
-  messages.forEach(message => createMessage(message));
-  
-  /*
-  if (document.cookie != "")
-  {
-    let keyValues = document.cookie.split("; ");
-    keyValues.sort().forEach(keyValue => createMessage(keyValue));
-  } */
+  messages.forEach(message => createMessage(message))
 }
