@@ -2,7 +2,7 @@ const {MongoClient, ObjectId} = require('mongodb');
 
 let url = "mongodb://localhost:27017"
 
-function invalidMessage(message) {
+async function invalidMessage(message) {
     // Guard statement
     if ( message == null 
         || message.length < 1
@@ -14,69 +14,58 @@ function invalidMessage(message) {
 }
 
 async function saveMessage(message) {
-    // MongoClient.connect är redan promise, oftast overkill att göra egna Promise structure (går att lägga på then och catch på dessa.) 
-    // Kan definiera egna new Errors och rejecta dem 8=====3 de fångas av catch.
-    console.log(message)
-    if(invalidMessage(message.msg)) { 
-        console.log("invalid message!");
-        throw new Error("Invalid message");
+    const isInvalid = await invalidMessage(message.msg)
+    if(isInvalid){
+        throw new Error("Invalid Message!")
     } else {
-        const connection = MongoClient.connect(url+'/tdp013');
-        const result = (await connection).collection("messages").insertOne(message);
-        return result['acknowledged'];
+        MongoClient.connect(url, function(err, db) {
+            let dbo = db.db("tdp013")
+            dbo.collection("messages").insertOne(message, function(err, result) {
+                if(err) { reject(err) }
+                db.close()
+                return result
+            });
+        })
     }
 }
 
-function flagMessage(id) {
-    return new Promise(function(resolve, reject) {
-        let flag = true
-        MongoClient.connect(url, function(err, db) {
-            let dbo = db.db("tdp013")
-            dbo.collection("messages").updateOne({_id : parseInt(id)}, {$set: {flag : !flag}}, function(err, result) {
-                if(err) { return reject(err) }
-                db.close() 
-                resolve(result)
-            })
+async function flagMessage(id) {
+    MongoClient.connect(url).then(function(db) {
+        let dbo = db.db("tdp013")
+        dbo.collection("messages").updateOne(
+            {_id : id}, 
+            [
+                { $set: { flag : { "$eq" : [false, "$flag"] } } }
+            ]
+        , function(err, result) {
+            if(err) { return err }
+            db.close()
+            return result
         })
-    })
-
+    }) 
 }
 
-function getMessage(id) {
-    return new Promise(function(resolve, reject) {
-        MongoClient.connect(url, function(err, db) {
-            let dbo = db.db("tdp013")
-            if(typeof id === 'string' && id.length == 24) {//probably ObjectId
-                try {
-                    var idAccessor = ObjectId(id).valueOf();
-                } catch (error) {
-                    return reject(error)
-                }
-            } else if (typeof parseInt(id) == typeof 1) {
-                var idAccessor = parseInt(id);
-            } else reject(err);
-            dbo.collection("messages").findOne({_id : idAccessor}, function(err, result) {
-                if(err) { return reject(err) }
-                db.close()
-                resolve(result)
-            })
+async function getMessage(id) {
+    MongoClient.connect(url, function(err, db) {
+        let dbo = db.db("tdp013")
+        dbo.collection("messages").findOne({_id : id}, function(err, result) {
+            if(err) { throw new Error("Can not getMessage") }
+            db.close()
+            return result
         })
-    })
+    })  
 }
 
-function getAllMessages() {
-    return new Promise(function(resolve, reject) {
-        MongoClient.connect(url, function(err, db) {
-            let dbo = db.db("tdp013");
-            dbo.collection("messages").find({}).toArray( function(err, result) {
-                if(err) { return reject(err) }
-                db.close()
-                resolve(result)
-            })  
-        })
-
+async function getAllMessages() {
+    MongoClient.connect(url, function(err, db) {
+        let dbo = db.db("tdp013");
+        dbo.collection("messages").find({}).toArray( function(err, result) {
+            if(err) { return new Error("Can not getAllMessages") }
+            db.close()
+            //console.log(`getAllMessages returns: ${result}`)
+            return result
+        })  
     })
-
 }
 
 module.exports = {saveMessage, flagMessage, getMessage, getAllMessages}

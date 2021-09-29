@@ -1,3 +1,5 @@
+//const { response } = require("express");
+
 function enter(event) {
   if (event.keyCode == 13)
   {
@@ -21,6 +23,14 @@ function tooLongMessage()
 // Changed the msgbox color depending on change of checkbox.
 function markRead(dateID)
 {
+  fetch('http://localhost:3000/flag', {
+    headers: {'Content-Type' : 'application/json'},
+    method: 'POST',
+    body: JSON.stringify({_id : dateID})
+    }).then(function(response){ 
+      console.log(response)
+    })
+
   let msg = document.getElementById(dateID);
   if (msg.childNodes[0].checked == true)
   {
@@ -30,14 +40,8 @@ function markRead(dateID)
   {
     msg.setAttribute("class", "msgBox");
   }
-// Viktors kod <- kolla denna!
-  fetch('http://localhost:3000/flag', {
-    headers: {'Content-Type' : 'application/json'},
-    method: 'POST',
-    body: JSON.stringify({_id : dateID})
-    }).then(function(response){ 
-      console.log(response)
-    })
+
+  
 }
 
 function createMessage(JSONmessageObject)
@@ -93,17 +97,30 @@ function sortByObjectId(ObjectIdA, ObjectIdB){
 
 async function listMsgs()
 {  
-  await fetch('http://localhost:3000/getall', {
+  
+    const response = await fetch('http://localhost:3000/getall');
+    const tweets = await response.json();
+    console.log(tweets)
+
+  /* fetch('http://localhost:3000/getall', {
     headers: {
       'Content-Type': 'application/json'
     },
     method: 'GET'
-  }).then(messagesFromDatabase => {
-    return messagesFromDatabase.json();
-  }).then(messagesFromDatabase => {
-    console.log(messagesFromDatabase.sort(sortByObjectId));
-    messagesFromDatabase.sort(sortByObjectId).forEach(JSONmessageObject => createMessage(JSONmessageObject));
+  }).then(result => {
+    console.log("inside fetch")
+    console.log(result)
   }).catch(error => {
     console.log(`Error: ${error} in listMsgs().`);
-  })
+  }) */
+  
+  
+  
+  /* .then(messagesFromDatabase => {
+    console.log(messagesFromDatabase)
+    return messagesFromDatabase;
+  }).then(messagesFromDatabase => {
+    messagesFromDatabase.sort(sortByObjectId).forEach(JSONmessageObject => createMessage(JSONmessageObject));
+  }) */
+  //console.log(messagesInDatabase)
 }

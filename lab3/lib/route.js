@@ -11,9 +11,9 @@ router.post('/save', function(req, res) {
         res.status(200).send();
             
         }).catch(function(err) {
-            console.log(`Error: ${err}`);
+            console.log(`${err}`);
             res.status(400).send(`${err}`);
-        })      
+        }) 
 })
 router.all('/save', function(req, res) {
     res.status(405).send("Status 405 Method Not Allowed")
@@ -50,11 +50,10 @@ router.all('/get', function(req, res) {
 
 
 router.get('/getall', function(req, res) {
-    handlers.getAllMessages().then(function(value) {
-        res.send(value)
-    }).catch(function(err) {
-        res.status(500).send("Status Internal Server Error")
-    })   
+    handlers.getAllMessages().then(allMessages => {
+        allMessages.then(messages => {console.log(messages)})
+        res.send(allMessages)
+    }).catch(err => res.status(500).send(`Status Internal Server Error: ${err}`))      
 })
 router.all('/getall', function(req, res) {
     res.status(405).send("Status 405 Method Not Allowed")
