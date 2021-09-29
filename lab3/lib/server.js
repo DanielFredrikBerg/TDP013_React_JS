@@ -7,7 +7,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(require('./route'))
 
-
 const port = 3000;
 
 const corsOptions = {
@@ -15,17 +14,20 @@ const corsOptions = {
 }
 app.use(cors(corsOptions));
 
-function start_server() {
-    app.listen(port, function() {
+var server
+function startServer(quietly = false) {
+    server = app.listen(port)
+    if (!quietly) {
         console.log("Server started")
-    })
+    }
 }
 
-function stop_server() {
-    app.close(function() {
+function stopServer(quietly = false) {
+    server.close() 
+    if (!quietly) {
         console.log("Server stopped")
-    })
+    }  
 }
 
 
-module.exports =  {app, start_server}
+module.exports =  {app, startServer, stopServer}

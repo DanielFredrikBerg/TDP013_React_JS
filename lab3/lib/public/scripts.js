@@ -1,6 +1,4 @@
 
-
-
 function enter(event) {
   if (event.keyCode == 13)
   {

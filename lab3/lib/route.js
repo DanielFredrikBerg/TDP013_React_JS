@@ -1,8 +1,7 @@
 const handlers = require('./requestHandlers');
 const express = require('express');
 const sanitize = require('mongo-sanitize')
-const path = require('path')
-const router = express.Router();
+const router = express.Router()
 
 router.use(express.json()); 
 
@@ -36,7 +35,6 @@ router.all('/flag', function(req, res) {
 
 router.get('/get', function(req, res) {
     handlers.getMessage(parseInt(req.query.id)).then(function(message) {
-        console.log(typeof message)
         if (message != null) {
             res.send(message)
         }

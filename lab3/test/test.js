@@ -1,9 +1,8 @@
 const assert = require('assert')
-//const should = require('should')
 const superagent = require('superagent');
 var app = require('../lib/server')
 const handlers = require('../lib/requestHandlers')
-const {MongoClient, ObjectId} = require('mongodb');
+const {MongoClient} = require('mongodb');
 let url = "mongodb://localhost:27017";
 
 function insertMessageWithIntKey() {
@@ -27,7 +26,9 @@ function insertMessageWithObjectIdKey() {
 }
 
 function insertThreeMessages() {
-    const messages = [{_id : 1, msg : "test_msg_1"},{_id : 2, msg : "test_msg_2"},{_id : 3, msg : "test_msg_3"}]
+    const messages = [{_id : 1, msg : "test_msg_1", flag : false},
+                      {_id : 2, msg : "test_msg_2", flag : false},
+                      {_id : 3, msg : "test_msg_3", flag : false}]
     MongoClient.connect(url).then(function(db) {
         let dbo = db.db("tdp013");
         dbo.collection("messages").insertMany(messages, function(err, result){
@@ -45,8 +46,15 @@ function clearDb() {
     })
 }
 
-
 describe('Routes', function() {
+
+    beforeEach(function() {
+        app.startServer(true)
+    })
+
+    afterEach(function() {
+        app.stopServer(true)
+    })
 
     describe('Unsupported url', function() {
         it('Accessing unsupported url should return status code 404', function(done) {
