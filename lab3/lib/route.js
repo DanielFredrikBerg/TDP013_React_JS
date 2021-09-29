@@ -13,7 +13,7 @@ router.post('/save', function(req, res) {
         handlers.saveMessage(sanitize(req.body)).then(function(result) {
             res.status(200).send();
         }).catch(function(err) {
-            res.status(500).send("Status Internal Server Error");
+            res.status(500).send("Status 500 Internal Server Error");
         })
     }        
 })
@@ -26,7 +26,7 @@ router.post('/flag', function(req, res) {
     handlers.flagMessage(req.body._id).then(function(result) {
         res.status(200).send()
     }).catch(function(err) {
-        res.status(500).send("Status Internal Server Error")
+        res.status(500).send("Status 500 Internal Server Error")
     })
 })
 router.all('/flag', function(req, res) {
@@ -35,7 +35,8 @@ router.all('/flag', function(req, res) {
 
 
 router.get('/get', function(req, res) {
-    handlers.getMessage(req.query.id).then(function(message) {
+    handlers.getMessage(parseInt(req.query.id)).then(function(message) {
+        console.log(typeof message)
         if (message != null) {
             res.send(message)
         }
@@ -55,7 +56,7 @@ router.get('/getall', function(req, res) {
     handlers.getAllMessages().then(function(value) {
         res.send(value)
     }).catch(function(err) {
-        res.status(500).send("Status Internal Server Error")
+        res.status(500).send("Status 500 Internal Server Error")
     })   
 })
 router.all('/getall', function(req, res) {

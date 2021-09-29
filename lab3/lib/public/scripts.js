@@ -104,6 +104,7 @@ async function listMsgs()
     },
     method: 'GET'
   }).then(function(res) {
+    console.log(res)
     return res.json();
   })
 

@@ -8,51 +8,39 @@ let url = "mongodb://localhost:27017";
 
 function insertMessageWithIntKey() {
     const message = {_id : 1, msg : "Hello there!", flag : false}
-    return new Promise(function(resolve, reject) {
-        MongoClient.connect(url, function(err, db) {
-            let dbo = db.db("tdp013");
-            dbo.collection("messages").insertOne(message, function(err, result) {
-                db.close()
-                resolve()
-            })
+    MongoClient.connect(url).then(function(db) {
+        let dbo = db.db("tdp013");
+        dbo.collection("messages").insertOne(message, function(err, result) {
+            db.close()
         })
     })
 }
 
 function insertMessageWithObjectIdKey() {
     const message = {_id : "6148c8f8453adf5913618d6e", msg : "ObjectId key here!", flag : false}
-    return new Promise(function(resolve, reject) {
-        MongoClient.connect(url, function(err, db) {
-            let dbo = db.db("tdp013");
-            dbo.collection("messages").insertOne(message, function(err, result) {
-                db.close()
-                resolve()
-            })
-        })
+    MongoClient.connect(url).then(function(db) {
+        let dbo = db.db("tdp013");
+        dbo.collection("messages").insertOne(message, function(err, result){
+            db.close()
+        })  
     })
 }
 
 function insertThreeMessages() {
     const messages = [{_id : 1, msg : "test_msg_1"},{_id : 2, msg : "test_msg_2"},{_id : 3, msg : "test_msg_3"}]
-    return new Promise(function(resolve, reject) {
-        MongoClient.connect(url, function(err, db) {
-            let dbo = db.db("tdp013");
-            dbo.collection("messages").insertMany(messages, function(err, result) {
-                db.close()
-                resolve()
-            })
-        })
+    MongoClient.connect(url).then(function(db) {
+        let dbo = db.db("tdp013");
+        dbo.collection("messages").insertMany(messages, function(err, result){
+            db.close()
+        }) 
     })
 }
 
 function clearDb() {
-    return new Promise(function(resolve, reject) {
-        MongoClient.connect(url, function(err, db) {
-            let dbo = db.db("tdp013");
-            dbo.collection("messages").deleteMany({}, async function(err, result) {
-                db.close()
-                resolve()
-            })
+    MongoClient.connect(url).then(function(db) {
+        let dbo = db.db("tdp013");
+        dbo.collection("messages").deleteMany({}, function(err, result) {
+            db.close()
         })
     })
 }
@@ -79,8 +67,8 @@ describe('Routes', function() {
     })
     
     describe('/save', function() {
-        before(async function() {
-            await clearDb()
+        before(function() {
+            clearDb()
         })
         it('Message ok should return status code 200', function(done) {
             const message = {_id : 1, msg : "Hello there!", flag : false}
@@ -116,9 +104,9 @@ describe('Routes', function() {
 
    
     describe('/flag', function() {
-        before(async function() {
-            await clearDb()
-            await insertMessageWithIntKey()
+        before(function() {
+            clearDb()
+            insertMessageWithIntKey()
         })
         it('Accessing /flag should return status code 200', function(done) {
             superagent.post('http://localhost:3000/flag').send({_id : 1}).end(function(err, res) {
@@ -135,10 +123,10 @@ describe('Routes', function() {
     }) 
 
     describe('/get', function() {
-        before(async function() {
-            await clearDb()
-            await insertMessageWithIntKey()
-            await insertMessageWithObjectIdKey()
+        before(function() {
+            clearDb()
+            insertMessageWithIntKey()
+            insertMessageWithObjectIdKey()
         })
         it('Accessing existing message with integer key should return a json object', function(done) {
             superagent.get('http://localhost:3000/get').send("1").end(function(err, res) {
@@ -167,9 +155,9 @@ describe('Routes', function() {
     }) 
 
     describe('/getall', function() {
-        before(async function() {
-            await clearDb()
-            await insertThreeMessages()
+        before(function() {
+            clearDb()
+            insertThreeMessages()
         })
         it('Accessing /getall should return all json objects', function(done) {
             superagent.get('http://localhost:3000/getall').end(function(err, res) {
@@ -188,10 +176,10 @@ describe('Routes', function() {
 
 describe('Request handlers', function() {
     describe('saveMessage', function() {
-        before(async function() {
-            await clearDb()
+        before(function() {
+            clearDb()
         })
-        it('should insert one message', async function() {
+        it('should insert one message', function() {
             const message = {_id : 1, msg : "Hello there!", flag : false}
             handlers.saveMessage(message).then(function(result) {
                 assert(result["acknowledged"])
@@ -200,11 +188,11 @@ describe('Request handlers', function() {
     })
     
     describe('flagMessage', function() {
-        before(async function() {
-            await clearDb()
-            await insertMessageWithIntKey() 
+        before(function() {
+            clearDb()
+            insertMessageWithIntKey() 
         })
-        it('should flag one message', async function() {
+        it('should flag one message', function() {
            handlers.flagMessage(1).then(function(result) {
             assert(result["acknowledged"])
             assert(result["modifiedCount"] == 1)
@@ -213,11 +201,11 @@ describe('Request handlers', function() {
     }) 
 
     describe('getMessage', function() {
-        before(async function() {
-            await clearDb()
-            await insertMessageWithIntKey() 
+        before(function() {
+            clearDb()
+            insertMessageWithIntKey() 
         })
-        it('should return one message', async function() {
+        it('should return one message', function() {
             handlers.getMessage(1).then(function(message) {
                 assert(message["_id"] == 1)
                 assert(message["msg"] == "Hello there!")
@@ -228,10 +216,10 @@ describe('Request handlers', function() {
 
     describe('getAllMessages', function() {
         before(async function() {
-            await clearDb()
-            await insertThreeMessages()
+            clearDb()
+            insertThreeMessages()
         })
-        it('should return all messages sorted by time posted', async function() {
+        it('should return all messages sorted by time posted', function() {
             handlers.getAllMessages().then(function(messages){
                 assert(messages[0]["_id"] == 1)
                 assert(messages[0]["msg"] == "test_msg_1")
