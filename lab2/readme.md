@@ -18,7 +18,7 @@
 
 #### Reflektionsfrågor
 
-- **Beskriv strukturen och flödet i er applikation och demonstrera att det fungerar.**
+**Beskriv strukturen och flödet i er applikation och demonstrera att det fungerar.**
 
 Vi följer specifikation 2 från kurshemsidan.
 Alla post & get queries behandlas av funktionerna i route.js. I route.post(/save) på rad 19 används mongo-sanitize för
@@ -27,7 +27,7 @@ Därefter kallas funktionerna som berör och modifierar databasen. Dessa återfi
 som exekveras asynkront. I de funktioner det behövs kontrolleras indatan och errors skickas med i rejects vid fel.
 När databasprocessen är klar returneras det från Promise:n det som söktes eller så returneras ett error. 
 
-- **Vad är en callback-funktion och hur använder ni er av dem i koden?**
+**Vad är en callback-funktion och hur använder ni er av dem i koden?**
 
 En callback funktion kan ta en funktion som parameter och kan ge retur i ett senare skede. De är till stor hjälp vid
 asynkrona anrop då callback kan göras när den underliggande processen är klar.
@@ -35,13 +35,13 @@ asynkrona anrop då callback kan göras när den underliggande processen är kla
 Vi använder oss utav callbacks i de flesta funktionsanrop. Asynkrona callbacks i form av Promises används i testerna
 samt i de funktioner som accessar mongodb.
 
-- **Hur stor nytta hade ni av code-coverage med istanbul?**
+**Hur stor nytta hade ni av code-coverage med istanbul?**
 
 Vi har märkt av att istanbul inte alltid skriver ner att vissa funktioner är täckta även om testas bland testerna.
 Så länge man vet om det i ett litet projekt lär det vara fine, men i ett större är det mycket svårt att få täckning
 för alla funktioner samt svårare att få översikt över sin kodbas.
 
-- **Vilka fördelar/nackdelar finns det med att spara data som JSON-objekt jämfört med klassiska tabeller?**
+**Vilka fördelar/nackdelar finns det med att spara data som JSON-objekt jämfört med klassiska tabeller?**
 
 fördelar: 
 * I JSON-objekt kan data sparas på många olika sätt. 
