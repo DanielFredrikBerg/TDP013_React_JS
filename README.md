@@ -12,4 +12,4 @@ Finns i lab2 mappen.
 
 ## Lab3
 
-TODO
+-||- lab3 -||-
