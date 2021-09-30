@@ -25,16 +25,21 @@
 
 
 - **Hur fungerar CORS?**
+
 CORS blockerar HTTP-request som inte kommer från en viss origin, http://localhost:3000 i detta fallet.
 
 - **Hur testas CORS?**
+
 Om man undersöker via Inspect->Network->XHR i en webbläsare kan man under Sec-Fetch-Mode och Sec-Fetch-Site se att Cors är aktiverat.
 
 - **Hur förhindrar ni att hela sidan laddas om när något ändras?**
+
 Uppdateringen av HTML-dokumentet som sker när ett meddellande skapas/flaggas sker på klientes sida, vilket gör att sidan inte behöver laddas om. På server-sidan uppdateras endast databasen.
 
 - **Vad använder ni som ID:n för meddelanden? Hur ser ni till att alla meddelanden har ett unikt ID?**
+
 Vi använder Date.now() som ger passerad tid sedan 1970 i millisekunder, och hoppas på att två användare inte lyckas skapa ett nytt meddellande samma millisekund. 
 
 - **Hur skyddar ni er mot injections?**
+
 Med mongo-sanetize, som tar bort potentiellt skadliga kombinationer av tecken från inputs till databasen.
