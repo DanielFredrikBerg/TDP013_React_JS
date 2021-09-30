@@ -9,7 +9,7 @@
 3. npm install --save-dev mocha nodemon nyc should
 4. npm install --save cors express mongodb mongo-sanitize superagent
 5. Starta en terminal och cd:a till tdp013_gruppc_vikro653_danhu849/lab2 och starta node.js servern med: _npm run start_
-6. Öppna en till terminal, cd:a till tdp013_gruppc_vikro653_danhu849/lab2 och kör testerna med: _npm run test_
+6. Öppna en till terminal, cd:a till tdp013_gruppc_vikro653_danhu849/lab2 och kör testerna med: _npm test_
 7. Öppna http://localhost:3000 i en webbrowser. Du borde se en tom inputruta längst upp till vänster. Under rutan finns en knapp det står "Send" på.
 8. Fyll i valfri text i rutan och klicka på "Send" eller tryck enter för att lagra meddelandet i databasen.
 9. Gå till http://localhost:3000/getall för att se alla meddelanden.
