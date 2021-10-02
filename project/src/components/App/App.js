@@ -34,6 +34,9 @@ function App() {
           <Route path="/preferences">
             <Preferences />
           </Route>
+          <Route path="/createAccount">
+            <createAccount/>
+          </Route>
         </Switch>
       </BrowserRouter>
     </div>
