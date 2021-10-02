@@ -14,9 +14,6 @@ export default function useToken() {
     setToken(userToken.token);
   };
 
-  return {
-    setToken: saveToken,
-    token
-  }
+  return {setToken: saveToken, token}
 
 }

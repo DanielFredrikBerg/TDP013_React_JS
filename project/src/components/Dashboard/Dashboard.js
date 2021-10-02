@@ -9,8 +9,20 @@ async function logoutUser() {
 export default function Dashboard() {
   return(
     <div>
-        <h2>Dashboard</h2>
-        <button onClick={e => logoutUser()}>Log Out</button>
+        <div id = "top">
+            <h2>Dashboard</h2>
+            <button onClick={e => logoutUser()}>Log Out</button>
+        </div>
+
+        <div id="mid">
+            <div className="column"></div>
+            <div className="column"></div>
+            <div className="column"></div>
+        </div> 
+
+        <div id = "bottom">
+
+        </div>
     </div>
   );
 }

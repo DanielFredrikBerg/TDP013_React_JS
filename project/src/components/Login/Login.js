@@ -3,22 +3,36 @@ import PropTypes from 'prop-types';
 import './Login.css';
 
 async function loginUser(credentials) {
- return await fetch('http://localhost:8080/Login', {
+  var token = null
+  document.getElementById("login-form").reset();
+  await fetch('http://localhost:8080/Login', {
    method: 'POST',
    headers: {'Content-Type': 'application/json'},
    body: JSON.stringify(credentials)
- }).then((res) => {
-  console.log(res.status)
+ }).then(res => {
+  console.log(res)
+   if (res.status == 200) {
+    token = credentials;
+   } 
  })
- 
+ return token
 }
 
 async function createUser(credentials) {
-  return fetch('http://localhost:8080/CreateAccount', {
+  var token = null
+  document.getElementById("login-form").reset();
+  await fetch('http://localhost:8080/CreateAccount', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify(credentials)
-  }).then(data => data.json())
+  }).then(res => {
+    console.log(res)
+    if (res.status == 200) {
+      token = credentials;
+     } 
+  })
+  console.log(token)
+  return token;
 }
 
 export default function Login({ setToken }) {
@@ -27,28 +41,32 @@ export default function Login({ setToken }) {
 
   const handleLogin = async e => {
     e.preventDefault();
-    const token = await loginUser({username,password});
-    console.log(typeof token)
-    setToken(token);
-    
-    //window.location.href="http://localhost:3000/Dashboard"
+    loginUser({username,password}).then(token => {
+      setToken(token);
+      if (token) {
+        window.location.href="http://localhost:3000/Dashboard"
+      }
+    });
   }
 
   const handleCreate = async e => {
     e.preventDefault();
-    const token = await createUser({username,password});
-    setToken(token);
-
+    const token = await createUser({username,password}).then(token => {
+      setToken(token);
+      if (token) {
+        window.location.href="http://localhost:3000/Dashboard"
+      }
+    });
   }
 
   return(
     <div className="login-wrapper">
       <h1 style={{marginBottom: "-10px"}}>Logga in eller skapa ny Account, idk</h1>
       <p>(jag är inte din mamma)</p>
-      <form>
+      <form id="login-form">
         <label>
           <p>Username</p>
-          <input type="text" onChange={e => setUserName(e.target.value)} />
+          <input type="text" name="username" onChange={e => setUserName(e.target.value)} />
         </label>
         <label>
           <p>Password</p>

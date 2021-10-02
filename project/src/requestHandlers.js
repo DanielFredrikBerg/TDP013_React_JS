@@ -5,7 +5,6 @@ async function login(credentials) {
     const db = await MongoClient.connect(url)
     const dbo = db.db("tdp013")
     const result = await dbo.collection("user_accounts").findOne(credentials)
-    console.log(result)
     db.close()
     return result 
 }
