@@ -14,13 +14,20 @@ export default function Dashboard() {
             <button onClick={e => logoutUser()}>Log Out</button>
         </div>
 
-        <div id="mid">
-            <div className="column"></div>
-            <div className="column"></div>
-            <div className="column"></div>
+        <div id="user_page">
+            <div className="column">
+
+            </div>
+            <div className="column">
+
+            </div>
+            <div className="column">
+
+            </div>
         </div> 
 
-        <div id = "bottom">
+        <div id = "chat">
+            <h3>Create chat here</h3>
 
         </div>
     </div>
