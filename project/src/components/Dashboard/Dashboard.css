@@ -1,0 +1,50 @@
+.dashboard_wrapper {
+    display: flex; 
+}
+
+#left_column {
+    width: 80%;
+    height: 100vh;
+}
+
+#right_column {
+    width: 20%;
+    height: 100vh;
+}
+
+#left_top {
+    height: 8%;
+    background-color: cornflowerblue;
+    padding: 5px;
+}
+
+#left_top2 {
+    height: 7%;
+    background-color:hotpink;
+    padding: 5px;
+}
+
+#left_mid {
+    text-align: center;
+    height: 55%;
+    background-color:darkkhaki;
+    padding: 5px;
+}
+
+#left_bot {
+    height: 30%;
+    background-color:greenyellow;
+    padding: 5px;
+}
+
+#right_top {
+    height: 15%;
+    background-color:lightcoral;
+    padding: 5px;
+}
+
+#right_bot {
+    height: 85%;
+    background-color: darkorange;
+    padding: 5px;
+}

@@ -27,11 +27,10 @@ function App() {
 
   return (
     <div className="wrapper">
-      <h1>Application</h1>
       <BrowserRouter>
         <Switch>
           <Route path="/dashboard">
-            <Dashboard />
+            <Dashboard userName = {JSON.parse(sessionStorage.getItem('token')).username} />
           </Route>
         </Switch>
       </BrowserRouter>
