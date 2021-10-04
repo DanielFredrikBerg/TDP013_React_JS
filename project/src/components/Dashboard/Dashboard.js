@@ -1,6 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Login from '../Login/Login';
+
+import {Dropdown, DropdownButton, Navbar, Container, Nav, NavDropdown, SplitButton, Button} from 'react-bootstrap';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './Dashboard.css';
+import DropdownItem from 'react-bootstrap/esm/DropdownItem';
 
 async function logoutUser() {
     sessionStorage.clear();
@@ -8,6 +13,15 @@ async function logoutUser() {
 }
 async function createPost(postText) {
     console.log("asd")
+}
+
+async function DisplayPosts() {
+    useEffect(() => {
+        var a = document.getElementById('current_user_posts');
+        var div = document.createElement("div");
+        div.textContent = "asdf";
+        a.appendChild(div)
+      }, []); // <-- empty array means 'run once'
 }
 
 export default function Dashboard({userName}) {
@@ -22,53 +36,52 @@ export default function Dashboard({userName}) {
         await createPost(postText).then(result => {
             console.log(result)
         });
-      }
-
-    const displayPosts = () => {
-        var a = document.getElementById('current_user_posts');
-        a.insertBefore(<p>123</p>, a.firstChild)
     }
 
     return(
-        <div className="dashboard_wrapper" onLoad={displayPosts()}>
-            <div id="left_column">
-                <div id = "left_top">
-                    <h3 >Logged in as {userName}</h3>
-                    <button onClick={e => logoutUser()}>Log Out</button>
-                </div>
+        <div className="dashboard_wrapper" >
+            <div id="top">
+                <Navbar variant="dark" id="Navbar" bg="dark" expand="lg" fixed="top">
+                    <Container fluid>
+                        <Navbar.Toggle aria-controls="navbar-dark" />
+                        <Navbar.Collapse>
+                        <DropdownButton
+                                variant="dark"
+                                title="Friends"
+                                id="dropdown_button"
+                            > 
+                                <Dropdown.Item >Friend 1</Dropdown.Item>  
+                                <Dropdown.Item>Friend 123456789</Dropdown.Item>  
+                            </DropdownButton>
+                        </Navbar.Collapse>
 
-                <div id="left_top2">
-                    <h3>SEARCH USER HERE</h3>
-                </div>
-
-                <div id="left_mid">
-                    {currentUser == userName && 
-                        <div>
-                            <h3>Post Message</h3>
-                            <form id="create_post_form">
-                                <input type="text" name="create_post_field" onChange={e => setPostText(e.target.value)} />
-                                <button onClick={handlePost}>Send</button>
+                        <Navbar.Collapse id="navbar-dark" className="justify-content-center">
+                            
+                            <form>
+                            <p><Navbar.Text style={{marginRight : "10px"}}>Find User</Navbar.Text></p>
+                                <label>          
+                                    <input type="text" name="username"  />
+                                </label>
+                                <Navbar.Text style={{marginLeft : "10px"}}><a href=''>Search</a></Navbar.Text>
                             </form>
-                        </div>
-                    }
-                    <h3>{userName}'s Posts</h3>
-                    <div id="current_user_posts"></div>
-                </div> 
+                        </Navbar.Collapse>
 
-                <div id="left_bot">
-                    <h3>CHAT HERE</h3>
-                </div> 
+                        <Navbar.Collapse className="justify-content-end" style={{marginRight : "10px"}}>
+                            <Navbar.Text style={{marginTop : "25px"}}>
+                                Signed in as: <a href="#login">{userName}</a>
+                                <Nav className="me-auto">
+                                    <p><Navbar.Text varient="light" href="#home" onClick={logoutUser} style={{marginLeft: "20px"}}><a href=''>Sign Out</a></Navbar.Text></p>
+                                </Nav>
+                            </Navbar.Text>  
+                        </Navbar.Collapse>
+
+                    </Container>
+                </Navbar> 
+            </div>
+            <div id="bot">
 
             </div>
-            <div id="right_column">
-                <div id="right_top">
-                    <h3>Add Friend</h3>
-                    <p id="addFriendStatusMessage"></p>
-                </div>
-                <div id="right_bot">
-                    <h3>FRIEND LIST HERE</h3>
-                </div>  
-            </div>
+
         </div>
     )
 

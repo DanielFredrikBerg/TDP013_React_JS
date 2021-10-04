@@ -4,7 +4,8 @@ import './Login.css';
 
 async function loginUser(credentials) {
   var token = null
-  document.getElementById("login-form").reset();
+  document.getElementById("login-username").reset();
+  document.getElementById("login-password").reset();
   await fetch('http://localhost:8080/Login', {
    method: 'POST',
    headers: {'Content-Type': 'application/json'},
@@ -20,7 +21,8 @@ async function loginUser(credentials) {
 
 async function createUser(credentials) {
   var token = null
-  document.getElementById("login-form").reset();
+  document.getElementById("login-username").reset();
+  document.getElementById("login-password").reset();
   await fetch('http://localhost:8080/CreateAccount', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
@@ -60,14 +62,16 @@ export default function Login({ setToken }) {
   }
 
   return(
-    <div className="login-wrapper">
+    <div id="login-wrapper">
       <h1 style={{marginBottom: "-10px"}}>Logga in eller skapa ny Account, idk</h1>
       <p>(jag är inte din mamma)</p>
-      <form id="login-form">
+      <form id="login-username">
         <label>
           <p>Username</p>
           <input type="text" name="username" onChange={e => setUserName(e.target.value)} />
         </label>
+      </form>
+      <form id="login-password">
         <label>
           <p>Password</p>
           <input type="password" onChange={e => setPassword(e.target.value)} />
