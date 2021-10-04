@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Login from '../Login/Login';
 
-import {Dropdown, DropdownButton, Navbar, Container, Nav, NavDropdown, SplitButton, Button} from 'react-bootstrap';
+import {Dropdown, DropdownButton, Navbar, Container, Nav, NavDropdown, SplitButton, Button, NavbarBrand} from 'react-bootstrap';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Dashboard.css';
@@ -38,6 +38,20 @@ export default function Dashboard({userName}) {
         });
     }
 
+    var fName1 = "Friend 1"
+    var fName2 = "This_is_a_long_fucking_friend_name"
+
+    function createDropdownItem(friendName) {
+        return (        
+            <div style={{width : (friendName.length * 8 + 140).toString() + "px", margin : "10px"}}>
+                <Navbar.Text style={{color : "black", marginLeft  : "10px"}}> <a style={{color : "black"}} href=''>{friendName}</a> 
+                    <button style={{margin : "10px"}}>Add</button><button >Remove</button>
+                </Navbar.Text>
+            </div>
+        )
+    }
+    
+
     return(
         <div className="dashboard_wrapper" >
             <div id="top">
@@ -49,9 +63,10 @@ export default function Dashboard({userName}) {
                                 variant="dark"
                                 title="Friends"
                                 id="dropdown_button"
+                                style={{display : "inline", float : "left"}}
                             > 
-                                <Dropdown.Item >Friend 1</Dropdown.Item>  
-                                <Dropdown.Item>Friend 123456789</Dropdown.Item>  
+                            {createDropdownItem(fName1)}
+                            {createDropdownItem(fName2)}
                             </DropdownButton>
                         </Navbar.Collapse>
 
@@ -69,9 +84,7 @@ export default function Dashboard({userName}) {
                         <Navbar.Collapse className="justify-content-end" style={{marginRight : "10px"}}>
                             <Navbar.Text style={{marginTop : "25px"}}>
                                 Signed in as: <a href="#login">{userName}</a>
-                                <Nav className="me-auto">
-                                    <p><Navbar.Text varient="light" href="#home" onClick={logoutUser} style={{marginLeft: "20px"}}><a href=''>Sign Out</a></Navbar.Text></p>
-                                </Nav>
+                                <p><Navbar.Text varient="light" href="#home" onClick={logoutUser} style={{marginLeft: "20px"}}><a href=''>Sign Out</a></Navbar.Text></p>
                             </Navbar.Text>  
                         </Navbar.Collapse>
 
