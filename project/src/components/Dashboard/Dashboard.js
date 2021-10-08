@@ -1,19 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import Login from '../Login/Login';
 
-import {Dropdown, DropdownButton, Navbar, Container, Nav, NavDropdown, SplitButton, Button, NavbarBrand} from 'react-bootstrap';
+import {Dropdown, Navbar, Container, Form} from 'react-bootstrap';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Dashboard.css';
-import DropdownItem from 'react-bootstrap/esm/DropdownItem';
 
-async function logoutUser() {
-    sessionStorage.clear();
-    window.location.href="http://localhost:3000/"
-}
-async function createPost(postText) {
-    console.log("asd")
-}
 
 async function DisplayPosts() {
     useEffect(() => {
@@ -26,48 +17,113 @@ async function DisplayPosts() {
 
 export default function Dashboard({userName}) {
     var currentUser = userName;
-    var currentUserIsFriend = false;
 
-    const [postText, setPostText] = useState();
+    // 2 == Friends
+    // 1 == Request Sent
+    // 0 == Not Friends 
+    var currentUserFriendStatus = 0;
 
+    const [postText, setPostText] = useState()
+    const [userPosts, addUserPost] = useState([])
+
+    var messages = []
+
+    /*
     const handlePost = async e => {
         document.getElementById("create_post_form").reset();
         e.preventDefault();
         await createPost(postText).then(result => {
             console.log(result)
         });
-    }
+    } */
 
     var fName1 = "Friend 1"
     var fName2 = "This_is_a_long_fucking_friend_name"
 
+    async function logoutUser() {
+        sessionStorage.clear();
+        window.location.href="http://localhost:3000/"
+    }
+
+    function displayPost(postData) {
+        var posts = document.getElementById("posts")
+        var newPost = (<div key={postData._id} id={postData._id} style={{backgroundColor : "#212529", margin: "15px", padding : "10px", borderRadius : "5px", color : "#8a9a93"}}>
+            <h4><a href="#" style={{color : "white"}} onClick={ChangeCurrentUser(postData.creator)}>{postData.creator}</a></h4>
+            {postData.msg}</div>)
+
+
+       addUserPost([newPost, ...userPosts])
+    
+    }
+
+    async function DisplayAllPosts() {
+
+    }
+
+    async function createPost() {
+        var textField = document.getElementById("textField")
+        if (textField.value.length > 0) {
+            var postData = {msg : textField.value, _id : Date.now(), creator : userName}
+            textField.value = ""
+            displayPost(postData)
+            await fetch('http://localhost:8080/AddMessage', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(postData)
+              }).then(res => {
+                console.log(res)
+                if (res.status === 200) {
+                  
+                 } 
+              })
+        }
+
+    }
+
+    async function RemovePost() {
+
+    }
+
+    async function ChangeFriendStatus(user, status) {
+
+    }
+    
+    async function ChangeCurrentUser(user) {
+        currentUser = user
+    }
+
     function createDropdownItem(friendName) {
         return (        
-            <div style={{width : (friendName.length * 8 + 140).toString() + "px", margin : "10px"}}>
-                <Navbar.Text style={{color : "black", marginLeft  : "10px"}}> <a style={{color : "black"}} href=''>{friendName}</a> 
+            <div style={{width : (friendName.length * 8 + 150).toString() + "px", margin : "10px", border : "2px", backgroundColor : "#212529", borderStyle : "solid", borderRadius : "5px"}}>
+                <Navbar.Text style={{color : "#212529", marginLeft  : "10px"}}> <a href=''>{friendName}</a> 
                     <button style={{margin : "10px"}}>Add</button><button >Remove</button>
                 </Navbar.Text>
             </div>
         )
     }
-    
 
     return(
         <div className="dashboard_wrapper" >
             <div id="top">
-                <Navbar variant="dark" id="Navbar" bg="dark" expand="lg" fixed="top">
+                <Navbar variant="dark" id="Navbar" bg="dark" expand="lg" fixed="top" style={{height : "14vh"}}>
                     <Container fluid>
                         <Navbar.Toggle aria-controls="navbar-dark" />
                         <Navbar.Collapse>
-                        <DropdownButton
-                                variant="dark"
-                                title="Friends"
-                                id="dropdown_button"
-                                style={{display : "inline", float : "left"}}
-                            > 
-                            {createDropdownItem(fName1)}
-                            {createDropdownItem(fName2)}
-                            </DropdownButton>
+                        
+                        <Dropdown>
+                            <Dropdown.Toggle 
+                                ariant="dark"
+                                id="dropdown_button">
+                                Friends
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu style={{backgroundColor : "lightgreen", borderWidth : "3px", borderColor : "#212529"}}>
+                                {createDropdownItem(fName1)}
+                                {createDropdownItem(fName2)}
+                            </Dropdown.Menu>
+                        </Dropdown>
+            
+     
+                        
                         </Navbar.Collapse>
 
                         <Navbar.Collapse id="navbar-dark" className="justify-content-center">
@@ -75,16 +131,16 @@ export default function Dashboard({userName}) {
                             <form>
                             <p><Navbar.Text style={{marginRight : "10px"}}>Find User</Navbar.Text></p>
                                 <label>          
-                                    <input type="text" name="username"  />
+                                    <input type="text" />
                                 </label>
-                                <Navbar.Text style={{marginLeft : "10px"}}><a href=''>Search</a></Navbar.Text>
+                                <Navbar.Text style={{marginLeft : "10px"}}><a href='#'>Search</a></Navbar.Text>
                             </form>
                         </Navbar.Collapse>
 
                         <Navbar.Collapse className="justify-content-end" style={{marginRight : "10px"}}>
                             <Navbar.Text style={{marginTop : "25px"}}>
                                 Signed in as: <a href="#login">{userName}</a>
-                                <p><Navbar.Text varient="light" href="#home" onClick={logoutUser} style={{marginLeft: "20px"}}><a href=''>Sign Out</a></Navbar.Text></p>
+                                <p><Navbar.Text href="#" onClick={logoutUser} style={{marginLeft: "20px"}}><a href=''>Sign Out</a></Navbar.Text></p>
                             </Navbar.Text>  
                         </Navbar.Collapse>
 
@@ -92,6 +148,29 @@ export default function Dashboard({userName}) {
                 </Navbar> 
             </div>
             <div id="bot">
+                <div style={{backgroundColor : "#212529", color : "white", marginTop : "30px", borderRadius : "10px", paddingTop : "15px", paddingBottom : "15px", paddingLeft : "35px", paddingRight : "35px", textAlign : "center"}}>
+                    <h1 style={{color : "#8a9a93"}}>{currentUser}'s Page</h1>
+                    {currentUserFriendStatus === 2 && <Navbar.Text style={{color : "#8a9a93"}}>You are Friends</Navbar.Text>}
+                    {currentUserFriendStatus === 1 && <Navbar.Text style={{color : "#8a9a93"}}>Friend Request has been Sent</Navbar.Text>}
+                    {currentUserFriendStatus === 0 && <Navbar.Text ><a style={{color : "white"}} href='#'> Send Friend Request</a> </Navbar.Text>}
+
+                    {(userName === currentUser || currentUserFriendStatus === 2) && <div style={{width : "600px"}}>
+                        <form  >
+                            <p><Navbar.Text style={{marginRight : "10px", color : "#8a9a93"}}></Navbar.Text></p>
+                                      
+                                <Form.Group >
+                                    <Form.Control id="textField" as="textarea" rows="3" />
+                                </Form.Group>
+                               
+                                <Navbar.Text style={{marginLeft : "10px"}}><a style={{color : "white"}} href='#' onClick={createPost}>Post Message</a></Navbar.Text>
+                            </form>
+
+                    </div>}
+                </div>
+
+                <div id="posts" style={{backgroundColor : "lightgreen", color : "white", marginTop : "30px", padding : "10px", borderRadius : "10px", maxWidth : "700px"}}>
+                    {userPosts}
+                </div>
 
             </div>
 

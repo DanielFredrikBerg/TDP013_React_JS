@@ -27,4 +27,15 @@ router.use('/CreateAccount', (req, res) => {
     })
 });
 
+router.use('AddMessage', (req, res) => {
+    handlers.addMessage(req.body).then(result => {
+        console.log(result)
+        if (result) {
+            res.send(result)
+        } else {
+            res.status(404).send({})
+        }
+    })
+})
+
 module.exports = router

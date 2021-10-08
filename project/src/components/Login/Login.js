@@ -12,7 +12,7 @@ async function loginUser(credentials) {
    body: JSON.stringify(credentials)
  }).then(res => {
   console.log(res)
-   if (res.status == 200) {
+   if (res.status === 200) {
     token = credentials;
    } 
  })
@@ -29,7 +29,7 @@ async function createUser(credentials) {
     body: JSON.stringify(credentials)
   }).then(res => {
     console.log(res)
-    if (res.status == 200) {
+    if (res.status === 200) {
       token = credentials;
      } 
   })
@@ -53,7 +53,7 @@ export default function Login({ setToken }) {
 
   const handleCreate = async e => {
     e.preventDefault();
-    const token = await createUser({username,password}).then(token => {
+    await createUser({username,password}).then(token => {
       setToken(token);
       if (token) {
         window.location.href="http://localhost:3000/Dashboard"
@@ -63,7 +63,7 @@ export default function Login({ setToken }) {
 
   return(
     <div id="login-wrapper">
-      <h1 style={{marginBottom: "-10px"}}>Logga in eller skapa ny Account, idk</h1>
+      <h1 style={{marginBottom: "-2px"}}>Logga in eller skapa ny Account, idk</h1>
       <p>(jag är inte din mamma)</p>
       <form id="login-username">
         <label>
