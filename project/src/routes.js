@@ -7,24 +7,20 @@ router.use(express.json());
 
 router.use('/Login', (req, res) => {
     handlers.login(req.body).then(result => {
-        console.log(result)
-        if (result) {
-            res.send(result);
-        } else {
-            res.status(404).send({});
-        }  
+        res.send(result);  
+    }).catch(error => {
+        console.log(error);
+        res.status(404).send({});
     });
 });
   
 router.use('/CreateAccount', (req, res) => {
     handlers.createAccount(req.body).then(result => {
-        console.log(result)
-        if (result) {
-            res.send(result);
-        } else {
-            res.status(404).send({});
-        }  
-    })
+        res.send(result);  
+    }).catch(error => {
+        console.log(error);
+        res.status(404).send({});
+    });
 });
 
 router.use('AddMessage', (req, res) => {

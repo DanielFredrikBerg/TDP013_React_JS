@@ -14,8 +14,10 @@ async function loginUser(credentials) {
   console.log(res)
    if (res.status === 200) {
     token = credentials;
-   } 
- })
+   } else {
+    throw new Error("res.status not 200 in loginUser in Login.js")
+  }
+ }).catch(error => console.log(error));
  return token
 }
 
@@ -31,8 +33,10 @@ async function createUser(credentials) {
     console.log(res)
     if (res.status === 200) {
       token = credentials;
-     } 
-  })
+    } else {
+      throw new Error("res.status not 200 in createUser in Login.js")
+    }
+  }).catch(error => console.log(error));
   console.log(token)
   return token;
 }
