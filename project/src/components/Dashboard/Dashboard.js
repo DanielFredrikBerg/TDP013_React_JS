@@ -27,15 +27,13 @@ export default function Dashboard({userName}) {
 
     
     var [currentUser, setCurrentUser] = useState(userName)
-    const [postText, setPostText] = useState()
     var [userPosts, setUserPosts] = useState([])
+    var [findUserText, setFindUserText] = useState()
+    var [findUserStatusMessage, setFindUserStatusMessage] = useState()
 
     useEffect(() => {
         DisplayAllPosts(userName)
     },[])
- 
-    //
- 
 
     /*
     const handlePost = async e => {
@@ -105,10 +103,29 @@ export default function Dashboard({userName}) {
     }
     
     async function ChangeCurrentUser(user) {
-        if (user == currentUser) {
-            //setCurrentUser(user)
+        if (user != currentUser) {
+            setCurrentUser(user)
             DisplayAllPosts(user)
         }
+    }
+
+    async function findUser() {
+        
+        await fetch('http://localhost:8080/FindUser', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({username : findUserText})
+          }).then(res => {
+            if (res.status === 200) {
+                ChangeCurrentUser(findUserText)
+                setFindUserStatusMessage("")
+            } else {
+                setFindUserStatusMessage(`User ${findUserText} not Found`)
+            }
+            
+        })
+        setFindUserText("")
+        
     }
 
     function createDropdownItem(friendName) {
@@ -130,31 +147,27 @@ export default function Dashboard({userName}) {
                     <Container fluid>
                         <Navbar.Toggle aria-controls="navbar-dark" />
                         <Navbar.Collapse>
-                        
-                        <Dropdown>
-                            <Dropdown.Toggle 
-                                ariant="dark"
-                                id="dropdown_button">
-                                Friends
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu style={{backgroundColor : "lightgreen", borderWidth : "3px", borderColor : "#212529"}}>
-                                {createDropdownItem(fName1)}
-                                {createDropdownItem(fName2)}
-                            </Dropdown.Menu>
-                        </Dropdown>
-            
-     
-                        
+                            <Dropdown>
+                                <Dropdown.Toggle 
+                                    ariant="dark"
+                                    id="dropdown_button">
+                                    Friends
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu style={{backgroundColor : "lightgreen", borderWidth : "3px", borderColor : "#212529"}}>
+                                    {createDropdownItem(fName1)}
+                                    {createDropdownItem(fName2)}
+                                </Dropdown.Menu>
+                            </Dropdown>
                         </Navbar.Collapse>
 
                         <Navbar.Collapse id="navbar-dark" className="justify-content-center">
-                            
-                            <form>
+                            <form id="find-user" style={{marginTop : "15px"}}>
                             <p><Navbar.Text style={{marginRight : "10px"}}>Find User</Navbar.Text></p>
                                 <label>          
-                                    <input type="text" />
+                                    <input type="text" value={findUserText} onChange={e => setFindUserText(e.target.value)}/>
                                 </label>
-                                <Navbar.Text style={{marginLeft : "10px"}}><a href='#'>Search</a></Navbar.Text>
+                                <Navbar.Text style={{marginLeft : "10px"}}><a href='#' onClick={findUser}>Search</a></Navbar.Text>
+                                <p style={{color : "red", marginTop : "10px"}}>{findUserStatusMessage}</p>
                             </form>
                         </Navbar.Collapse>
 

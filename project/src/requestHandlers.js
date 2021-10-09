@@ -7,7 +7,6 @@ async function login(credentials) {
     const dbo = db.db("tdp013")
     const result = await dbo.collection("user_accounts").findOne(credentials)
     db.close()
-    console.log(result)
     return result 
 }
 
@@ -35,5 +34,13 @@ async function getMessages(userData) {
     return result 
 }
 
+async function findUser(user) {
+    const db = await MongoClient.connect(url)
+    const dbo = db.db("tdp013")
+    const result = await dbo.collection("user_accounts").findOne(user)
+    db.close()
+    return result
+    
+}
 
-module.exports = {login, createAccount, addMessage, getMessages}
+module.exports = {login, createAccount, addMessage, getMessages, findUser}

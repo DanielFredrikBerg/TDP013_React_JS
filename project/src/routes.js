@@ -46,4 +46,14 @@ router.use('/GetMessages', (req, res) => {
 
 })
 
+router.use('/FindUser', (req, res) => {
+    handlers.findUser(req.body).then(result => {
+        if (result) {
+            res.send(result)
+        } else {
+            res.status(444).send()
+        }
+    })
+})
+
 module.exports = router
