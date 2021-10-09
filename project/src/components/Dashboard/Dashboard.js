@@ -5,7 +5,7 @@ import {Dropdown, Navbar, Container, Form} from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Dashboard.css';
 
-
+/*
 async function DisplayPosts() {
     useEffect(() => {
         var a = document.getElementById('current_user_posts');
@@ -13,18 +13,18 @@ async function DisplayPosts() {
         div.textContent = "asdf";
         a.appendChild(div)
       }, []); // <-- empty array means 'run once'
-}
+} */
 
 export default function Dashboard({userName}) {
-    var currentUser = userName;
 
     // 2 == Friends
     // 1 == Request Sent
     // 0 == Not Friends 
     var currentUserFriendStatus = 0;
 
+    var [currentUser, setCurrentUser] = useState(userName)
     const [postText, setPostText] = useState()
-    const [userPosts, addUserPost] = useState([])
+    var [userPosts, setUserPosts] = useState([])
 
     var messages = []
 
@@ -45,39 +45,44 @@ export default function Dashboard({userName}) {
         window.location.href="http://localhost:3000/"
     }
 
-    function displayPost(postData) {
-        var posts = document.getElementById("posts")
-        var newPost = (<div key={postData._id} id={postData._id} style={{backgroundColor : "#212529", margin: "15px", padding : "10px", borderRadius : "5px", color : "#8a9a93"}}>
-            <h4><a href="#" style={{color : "white"}} onClick={ChangeCurrentUser(postData.creator)}>{postData.creator}</a></h4>
+    function createPostElement(postData) {
+        return (<div key={postData._id} id={postData._id} style={{backgroundColor : "#212529", margin: "15px", padding : "10px", borderRadius : "5px", color : "#8a9a93"}}>
+            <h4><a href="#" style={{color : "white"}} onClick={() => ChangeCurrentUser(postData.creator)}>{postData.creator}</a></h4>
             {postData.msg}</div>)
-
-
-       addUserPost([newPost, ...userPosts])
-    
     }
 
-    async function DisplayAllPosts() {
-
+    async function DisplayAllPosts(user) { 
+        const msgData = await fetch('http://localhost:8080/GetMessages', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({username : user})
+          }).then(res => {  
+            if (res.status === 200) {
+                return res.json()
+             } 
+          })
+        console.log(msgData)
+        var updatedUserPosts = []
+        msgData.forEach(msg => updatedUserPosts.unshift(createPostElement(msg)))
+        setUserPosts(updatedUserPosts)
     }
 
     async function createPost() {
         var textField = document.getElementById("textField")
         if (textField.value.length > 0) {
             var postData = {msg : textField.value, _id : Date.now(), creator : userName}
-            textField.value = ""
-            displayPost(postData)
+            textField.value = ""   
             await fetch('http://localhost:8080/AddMessage', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(postData)
               }).then(res => {
-                console.log(res)
                 if (res.status === 200) {
-                  
-                 } 
-              })
+                    var post = createPostElement(postData)
+                    setUserPosts([post, ...userPosts])
+                } 
+            })
         }
-
     }
 
     async function RemovePost() {
@@ -89,7 +94,10 @@ export default function Dashboard({userName}) {
     }
     
     async function ChangeCurrentUser(user) {
-        currentUser = user
+        if (user == currentUser) {
+            //setCurrentUser(user)
+            DisplayAllPosts(user)
+        }
     }
 
     function createDropdownItem(friendName) {
@@ -101,6 +109,8 @@ export default function Dashboard({userName}) {
             </div>
         )
     }
+
+    //DisplayAllPosts(userName)
 
     return(
         <div className="dashboard_wrapper" >
@@ -139,7 +149,7 @@ export default function Dashboard({userName}) {
 
                         <Navbar.Collapse className="justify-content-end" style={{marginRight : "10px"}}>
                             <Navbar.Text style={{marginTop : "25px"}}>
-                                Signed in as: <a href="#login">{userName}</a>
+                                Signed in as: <a href="#login" onClick={() => ChangeCurrentUser(userName)}>{userName}</a>
                                 <p><Navbar.Text href="#" onClick={logoutUser} style={{marginLeft: "20px"}}><a href=''>Sign Out</a></Navbar.Text></p>
                             </Navbar.Text>  
                         </Navbar.Collapse>

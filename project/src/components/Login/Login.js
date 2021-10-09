@@ -12,7 +12,7 @@ async function loginUser(credentials) {
    body: JSON.stringify(credentials)
  }).then(res => {
   console.log(res)
-   if (res.status === 200) {
+   if (res.status == 200) {
     token = credentials;
    } 
  })
@@ -38,14 +38,17 @@ async function createUser(credentials) {
 }
 
 export default function Login({ setToken }) {
-  const [username, setUserName] = useState();
-  const [password, setPassword] = useState();
+  var [username, setUserName] = useState();
+  var [password, setPassword] = useState();
 
   const handleLogin = async e => {
     e.preventDefault();
     loginUser({username,password}).then(token => {
       setToken(token);
       if (token) {
+        setUserName(null)
+        setPassword(null)
+        //setToken(null)
         window.location.href="http://localhost:3000/Dashboard"
       }
     });
@@ -56,6 +59,9 @@ export default function Login({ setToken }) {
     await createUser({username,password}).then(token => {
       setToken(token);
       if (token) {
+        setUserName(null)
+        setPassword(null)
+        setToken(null)
         window.location.href="http://localhost:3000/Dashboard"
       }
     });

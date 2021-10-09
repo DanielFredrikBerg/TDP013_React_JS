@@ -20,10 +20,18 @@ async function createAccount(credentials) {
 async function addMessage(msgData) {
     const db = await MongoClient.connect(url)
     const dbo = db.db("tdp013")
-    console.log(`${msgData.creator}_messages`)
     const result = await dbo.collection(`${msgData.creator}_messages`).insertOne(msgData)
     db.close()
     return result 
 }
 
-module.exports = {login, createAccount, addMessage}
+async function getMessages(userData) {
+    const db = await MongoClient.connect(url)
+    const dbo = db.db("tdp013")
+    const result = await dbo.collection(`${userData.username}_messages`).find({}).toArray()
+    db.close()
+    return result 
+}
+
+
+module.exports = {login, createAccount, addMessage, getMessages}
