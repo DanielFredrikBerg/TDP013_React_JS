@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import './Login.css';
 
+async function logoutUser() {
+
+}
+
 async function loginUser(credentials) {
   var token = null
   document.getElementById("login-username").reset();
@@ -11,8 +15,9 @@ async function loginUser(credentials) {
    headers: {'Content-Type': 'application/json'},
    body: JSON.stringify(credentials)
  }).then(res => {
-  console.log(res)
+  alert(res.status)
    if (res.status == 200) {
+     
     token = credentials;
    } 
  })
@@ -28,7 +33,6 @@ async function createUser(credentials) {
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify(credentials)
   }).then(res => {
-    console.log(res)
     if (res.status === 200) {
       token = credentials;
      } 
@@ -45,10 +49,8 @@ export default function Login({ setToken }) {
     e.preventDefault();
     loginUser({username,password}).then(token => {
       setToken(token);
+      console.log(token)
       if (token) {
-        setUserName(null)
-        setPassword(null)
-        //setToken(null)
         window.location.href="http://localhost:3000/Dashboard"
       }
     });
@@ -59,9 +61,6 @@ export default function Login({ setToken }) {
     await createUser({username,password}).then(token => {
       setToken(token);
       if (token) {
-        setUserName(null)
-        setPassword(null)
-        setToken(null)
         window.location.href="http://localhost:3000/Dashboard"
       }
     });

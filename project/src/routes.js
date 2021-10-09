@@ -8,10 +8,9 @@ router.use(express.json());
 router.use('/Login', (req, res) => {
     handlers.login(req.body).then(result => {
         if (result) {
-            console.log(typeof result)
             res.send(result);
         } else {
-            res.status(404).send();
+            res.status(408).send();
         }  
     });
 });

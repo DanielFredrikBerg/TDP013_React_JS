@@ -13,15 +13,12 @@ function setToken(userToken) {
 
 function getToken() {
   const tokenString = sessionStorage.getItem('token');
-  console.log(tokenString)
   const userToken = JSON.parse(tokenString);
-  console.log(userToken)
   return userToken
 }
 
 function App() {
   const token = getToken();
-  console.log(token)
 
   if(!token) {
     return <Login setToken={setToken} />

@@ -22,7 +22,7 @@
     "start": "react-scripts start",
     "server": "nodemon ./server.js",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "nyc --reporter=text --reporter=html mocha",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

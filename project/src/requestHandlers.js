@@ -2,10 +2,12 @@ const {MongoClient, ObjectId} = require('mongodb');
 let url = "mongodb://localhost:27017"
 
 async function login(credentials) {
+    console.log(credentials)
     const db = await MongoClient.connect(url)
     const dbo = db.db("tdp013")
     const result = await dbo.collection("user_accounts").findOne(credentials)
     db.close()
+    console.log(result)
     return result 
 }
 

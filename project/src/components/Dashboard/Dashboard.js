@@ -5,6 +5,7 @@ import {Dropdown, Navbar, Container, Form} from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Dashboard.css';
 
+
 /*
 async function DisplayPosts() {
     useEffect(() => {
@@ -15,6 +16,8 @@ async function DisplayPosts() {
       }, []); // <-- empty array means 'run once'
 } */
 
+var runOnce = 0
+
 export default function Dashboard({userName}) {
 
     // 2 == Friends
@@ -22,11 +25,17 @@ export default function Dashboard({userName}) {
     // 0 == Not Friends 
     var currentUserFriendStatus = 0;
 
+    
     var [currentUser, setCurrentUser] = useState(userName)
     const [postText, setPostText] = useState()
     var [userPosts, setUserPosts] = useState([])
 
-    var messages = []
+    useEffect(() => {
+        DisplayAllPosts(userName)
+    },[])
+ 
+    //
+ 
 
     /*
     const handlePost = async e => {
@@ -42,13 +51,16 @@ export default function Dashboard({userName}) {
 
     async function logoutUser() {
         sessionStorage.clear();
-        window.location.href="http://localhost:3000/"
     }
 
     function createPostElement(postData) {
         return (<div key={postData._id} id={postData._id} style={{backgroundColor : "#212529", margin: "15px", padding : "10px", borderRadius : "5px", color : "#8a9a93"}}>
             <h4><a href="#" style={{color : "white"}} onClick={() => ChangeCurrentUser(postData.creator)}>{postData.creator}</a></h4>
             {postData.msg}</div>)
+    }
+
+    async function DisplayAllPostsOnReload(user) {
+
     }
 
     async function DisplayAllPosts(user) { 
@@ -60,8 +72,7 @@ export default function Dashboard({userName}) {
             if (res.status === 200) {
                 return res.json()
              } 
-          })
-        console.log(msgData)
+        })
         var updatedUserPosts = []
         msgData.forEach(msg => updatedUserPosts.unshift(createPostElement(msg)))
         setUserPosts(updatedUserPosts)
@@ -110,7 +121,7 @@ export default function Dashboard({userName}) {
         )
     }
 
-    //DisplayAllPosts(userName)
+    
 
     return(
         <div className="dashboard_wrapper" >
@@ -149,15 +160,15 @@ export default function Dashboard({userName}) {
 
                         <Navbar.Collapse className="justify-content-end" style={{marginRight : "10px"}}>
                             <Navbar.Text style={{marginTop : "25px"}}>
-                                Signed in as: <a href="#login" onClick={() => ChangeCurrentUser(userName)}>{userName}</a>
-                                <p><Navbar.Text href="#" onClick={logoutUser} style={{marginLeft: "20px"}}><a href=''>Sign Out</a></Navbar.Text></p>
+                                Signed in as: <a href="#" onClick={() => ChangeCurrentUser(userName)}>{userName}</a>
+                                <p><Navbar.Text onClick={logoutUser} style={{marginLeft: "20px"}}><a href='http://localhost:3000/Login'>Sign Out</a></Navbar.Text></p>
                             </Navbar.Text>  
                         </Navbar.Collapse>
 
                     </Container>
                 </Navbar> 
             </div>
-            <div id="bot">
+            <div id="bot" onLoad={() => DisplayAllPosts(userName)}>
                 <div style={{backgroundColor : "#212529", color : "white", marginTop : "30px", borderRadius : "10px", paddingTop : "15px", paddingBottom : "15px", paddingLeft : "35px", paddingRight : "35px", textAlign : "center"}}>
                     <h1 style={{color : "#8a9a93"}}>{currentUser}'s Page</h1>
                     {currentUserFriendStatus === 2 && <Navbar.Text style={{color : "#8a9a93"}}>You are Friends</Navbar.Text>}
@@ -178,7 +189,7 @@ export default function Dashboard({userName}) {
                     </div>}
                 </div>
 
-                <div id="posts" style={{backgroundColor : "lightgreen", color : "white", marginTop : "30px", padding : "10px", borderRadius : "10px", maxWidth : "700px"}}>
+                <div id="posts"  style={{backgroundColor : "lightgreen", color : "white", marginTop : "30px", padding : "10px", borderRadius : "10px", maxWidth : "700px"}}>
                     {userPosts}
                 </div>
 
