@@ -15,6 +15,7 @@ router.use('/Login', (req, res) => {
 });
   
 router.use('/CreateAccount', (req, res) => {
+    console.log(req.body)
     handlers.createAccount(req.body).then(result => {
         res.send(result);  
     }).catch(error => {
