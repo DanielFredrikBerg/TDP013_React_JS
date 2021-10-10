@@ -29,7 +29,7 @@ function App() {
       <BrowserRouter>
         <Switch>
           <Route path="/dashboard">
-            <Dashboard userName = {JSON.parse(sessionStorage.getItem('token')).username} />
+            <Dashboard loginName = {JSON.parse(sessionStorage.getItem('token')).username} />
           </Route>
         </Switch>
       </BrowserRouter>

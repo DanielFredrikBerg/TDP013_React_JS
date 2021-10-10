@@ -1,64 +1,41 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {Dropdown, Navbar, Container, Form} from 'react-bootstrap';
+import {CheckLg, XLg} from 'react-bootstrap-icons';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Dashboard.css';
 
+export default function Dashboard({loginName}) {
 
-/*
-async function DisplayPosts() {
-    useEffect(() => {
-        var a = document.getElementById('current_user_posts');
-        var div = document.createElement("div");
-        div.textContent = "asdf";
-        a.appendChild(div)
-      }, []); // <-- empty array means 'run once'
-} */
-
-var runOnce = 0
-
-export default function Dashboard({userName}) {
-
-    // 2 == Friends
-    // 1 == Request Sent
-    // 0 == Not Friends 
-    var currentUserFriendStatus = 0;
-
-    
-    var [currentUser, setCurrentUser] = useState(userName)
+    var [currentUser, setCurrentUser] = useState()
     var [userPosts, setUserPosts] = useState([])
     var [findUserText, setFindUserText] = useState()
     var [findUserStatusMessage, setFindUserStatusMessage] = useState()
+    var [currentUserFriendStatus, setCurrentUserFriendStatus] = useState(-1)
+    var [friendList, setFriendList] = useState([])
 
-    useEffect(() => {
-        DisplayAllPosts(userName)
+    useEffect(async () => {
+        if (sessionStorage.getItem('currentUser')) {
+            setCurrentUser(sessionStorage.getItem('currentUser'))
+            const status = await GetFriendStatus(sessionStorage.getItem('currentUser'))
+            setCurrentUserFriendStatus(status)
+            DisplayAllPosts(sessionStorage.getItem('currentUser'))
+        } else {
+            setCurrentUser(loginName)
+            DisplayAllPosts(loginName)
+        }
+        PopulateFriendList()
     },[])
-
-    /*
-    const handlePost = async e => {
-        document.getElementById("create_post_form").reset();
-        e.preventDefault();
-        await createPost(postText).then(result => {
-            console.log(result)
-        });
-    } */
-
-    var fName1 = "Friend 1"
-    var fName2 = "This_is_a_long_fucking_friend_name"
 
     async function logoutUser() {
         sessionStorage.clear();
     }
 
     function createPostElement(postData) {
-        return (<div key={postData._id} id={postData._id} style={{backgroundColor : "#212529", margin: "15px", padding : "10px", borderRadius : "5px", color : "#8a9a93"}}>
+        return (<div key={postData._id} id={postData._id} style={{backgroundColor : "#212529", width : "max-content", maxWidth : "600px", margin: "auto", marginTop: "15px", padding : "10px", borderRadius : "5px", color : "#8a9a93"}}>
             <h4><a href="#" style={{color : "white"}} onClick={() => ChangeCurrentUser(postData.creator)}>{postData.creator}</a></h4>
             {postData.msg}</div>)
-    }
-
-    async function DisplayAllPostsOnReload(user) {
-
     }
 
     async function DisplayAllPosts(user) { 
@@ -79,7 +56,7 @@ export default function Dashboard({userName}) {
     async function createPost() {
         var textField = document.getElementById("textField")
         if (textField.value.length > 0) {
-            var postData = {msg : textField.value, _id : Date.now(), creator : userName}
+            var postData = {msg : textField.value, _id : Date.now(), creator : loginName, page : currentUser}
             textField.value = ""   
             await fetch('http://localhost:8080/AddMessage', {
                 method: 'POST',
@@ -98,19 +75,48 @@ export default function Dashboard({userName}) {
 
     }
 
-    async function ChangeFriendStatus(user, status) {
 
-    }
-    
-    async function ChangeCurrentUser(user) {
-        if (user != currentUser) {
-            setCurrentUser(user)
-            DisplayAllPosts(user)
+
+    async function GetFriendStatus(friend) {
+        if (friend === loginName) {
+            return -1
+        }
+        const result = await fetch('http://localhost:8080/GetFriendStatus', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({username : loginName, friendname : friend})
+          }).then(res => {
+            if (res.status === 200) {
+                return res.json()
+            }
+        })
+        if (result) {
+            return result.friendstatus
+        } else {
+            return 0
         }
     }
 
+
+    
+    async function ChangeCurrentUser(user) {
+            if (user === loginName) {
+                setCurrentUserFriendStatus(-1)
+                sessionStorage.setItem('currentUser', user)
+                currentUser = user
+                setCurrentUser(user)
+                DisplayAllPosts(user)
+            } else {
+                const status = await GetFriendStatus(user)
+                setCurrentUserFriendStatus(status)
+                sessionStorage.setItem('currentUser', user) 
+                currentUser = user  
+                setCurrentUser(user)
+                DisplayAllPosts(user)  
+            }
+    }
+
     async function findUser() {
-        
         await fetch('http://localhost:8080/FindUser', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -125,25 +131,95 @@ export default function Dashboard({userName}) {
             
         })
         setFindUserText("")
-        
     }
 
-    function createDropdownItem(friendName) {
-        return (        
-            <div style={{width : (friendName.length * 8 + 150).toString() + "px", margin : "10px", border : "2px", backgroundColor : "#212529", borderStyle : "solid", borderRadius : "5px"}}>
-                <Navbar.Text style={{color : "#212529", marginLeft  : "10px"}}> <a href=''>{friendName}</a> 
-                    <button style={{margin : "10px"}}>Add</button><button >Remove</button>
+    async function changeFriendStatus(user, friend, status) {
+        const result = await fetch('http://localhost:8080/SetFriendStatus', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({username : user, friendname : friend, friendstatus : status})
+          }).then(res => {
+            if (res.status === 200) {
+                return res  
+            } 
+        })
+        return result
+    }
+
+    async function sendFriendRequest() {
+        changeFriendStatus(currentUser, loginName, 2) 
+        changeFriendStatus(loginName, currentUser, 1)
+        setCurrentUserFriendStatus(1)
+    }
+
+    async function acceptFriendRequest(friend) {
+        changeFriendStatus(loginName, friend, 3)
+        changeFriendStatus(friend, loginName, 3)
+        if (friend === currentUser) {
+            setCurrentUserFriendStatus(3)
+        }
+        PopulateFriendList()
+    }
+
+    async function removeFriend(friend) {
+        changeFriendStatus(loginName, friend, 0)
+        changeFriendStatus(friend, loginName, 0)
+        if (friend === currentUser) {
+            setCurrentUserFriendStatus(0)
+        }
+        PopulateFriendList()
+    }
+
+    function createFriendlistItem(friendData) {
+        if (friendData.friendstatus == 3) {
+           return <div style={{width : "max-content", margin : "10px", border : "2px", backgroundColor : "#212529", borderStyle : "solid", borderRadius : "5px"}}>
+                <Navbar.Text style={{color : "#212529", marginLeft  : "10px"}}> 
+                    <a href='#' onClick={() => ChangeCurrentUser(friendData.friendname)}>{friendData.friendname}</a> 
+                    <a href="#" onClick={() => removeFriend(friendData.friendname)}>
+                        <XLg style={{color : "red", margin : "10px", marginLeft : "20px"}}></XLg>
+                    </a>    
                 </Navbar.Text>
             </div>
-        )
+        } else if (friendData.friendstatus == 2) {
+            return (        
+                <div style={{width : "max-content", margin : "10px", border : "2px", backgroundColor : "#212529", borderStyle : "solid", borderRadius : "5px"}}>
+                    <Navbar.Text style={{color : "#212529", marginLeft  : "10px"}}> 
+                    <a href='#' onClick={() => ChangeCurrentUser(friendData.friendname)}>{friendData.friendname}</a> 
+                        <a href="#" onClick={() => acceptFriendRequest(friendData.friendname)}>
+                            <CheckLg style={{color : "green", margin : "10px", marginLeft : "20px"}}></CheckLg></a>
+                        <a href="#" onClick={() => removeFriend(friendData.friendname)}>
+                            <XLg style={{color : "red", margin : "10px"}}></XLg></a>    
+                    </Navbar.Text>
+                </div>
+            )
+        }
     }
 
-    
+    async function PopulateFriendList() {
+        const friendData = await fetch('http://localhost:8080/GetAllFriends', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({username : loginName})
+          }).then(res => {
+            if (res.status === 200) {
+                return res.json()
+            }
+        })
+        var updatedFriendList = []
+        friendData.forEach(friend => {
+            const friendListItem = createFriendlistItem(friend)
+            if (friendListItem) {
+                updatedFriendList.unshift(friendListItem)
+            }
+            
+        })
+        setFriendList(updatedFriendList)
+    }
 
     return(
         <div className="dashboard_wrapper" >
             <div id="top">
-                <Navbar variant="dark" id="Navbar" bg="dark" expand="lg" fixed="top" style={{height : "14vh"}}>
+                <Navbar variant="dark" id="Navbar" bg="dark" expand="lg" fixed="top" style={{height : "14vh", minHeight : "120px"}}>
                     <Container fluid>
                         <Navbar.Toggle aria-controls="navbar-dark" />
                         <Navbar.Collapse>
@@ -152,10 +228,11 @@ export default function Dashboard({userName}) {
                                     ariant="dark"
                                     id="dropdown_button">
                                     Friends
-                                </Dropdown.Toggle>
+                                </Dropdown.Toggle>  
                                 <Dropdown.Menu style={{backgroundColor : "lightgreen", borderWidth : "3px", borderColor : "#212529"}}>
-                                    {createDropdownItem(fName1)}
-                                    {createDropdownItem(fName2)}
+                                    {friendList.length === 0 && [<div style={{width : "max-content", margin : "10px", border : "2px", backgroundColor : "#212529", borderStyle : "solid", borderRadius : "5px"}}>
+                                        <Navbar.Text style={{color : "#8a9a93", margin : "10px"}}>You don't have any Friends</Navbar.Text></div>]}
+                                    {friendList.length > 0 && friendList}
                                 </Dropdown.Menu>
                             </Dropdown>
                         </Navbar.Collapse>
@@ -173,7 +250,7 @@ export default function Dashboard({userName}) {
 
                         <Navbar.Collapse className="justify-content-end" style={{marginRight : "10px"}}>
                             <Navbar.Text style={{marginTop : "25px"}}>
-                                Signed in as: <a href="#" onClick={() => ChangeCurrentUser(userName)}>{userName}</a>
+                                Signed in as: <a href="#" onClick={() => ChangeCurrentUser(loginName)}>{loginName}</a>
                                 <p><Navbar.Text onClick={logoutUser} style={{marginLeft: "20px"}}><a href='http://localhost:3000/Login'>Sign Out</a></Navbar.Text></p>
                             </Navbar.Text>  
                         </Navbar.Collapse>
@@ -181,35 +258,51 @@ export default function Dashboard({userName}) {
                     </Container>
                 </Navbar> 
             </div>
-            <div id="bot" onLoad={() => DisplayAllPosts(userName)}>
+            <div id="bot" onLoad={() => DisplayAllPosts(loginName)}>
                 <div style={{backgroundColor : "#212529", color : "white", marginTop : "30px", borderRadius : "10px", paddingTop : "15px", paddingBottom : "15px", paddingLeft : "35px", paddingRight : "35px", textAlign : "center"}}>
                     <h1 style={{color : "#8a9a93"}}>{currentUser}'s Page</h1>
-                    {currentUserFriendStatus === 2 && <Navbar.Text style={{color : "#8a9a93"}}>You are Friends</Navbar.Text>}
-                    {currentUserFriendStatus === 1 && <Navbar.Text style={{color : "#8a9a93"}}>Friend Request has been Sent</Navbar.Text>}
-                    {currentUserFriendStatus === 0 && <Navbar.Text ><a style={{color : "white"}} href='#'> Send Friend Request</a> </Navbar.Text>}
-
-                    {(userName === currentUser || currentUserFriendStatus === 2) && <div style={{width : "600px"}}>
-                        <form  >
+                    {currentUserFriendStatus === 3 && 
+                        <Navbar.Text style={{color : "#8a9a93"}}>
+                            You are Friends
+                        </Navbar.Text>}
+                    {currentUserFriendStatus === 2 && 
+                        <Navbar.Text ><a 
+                            style={{color : "white"}} 
+                            href='#' 
+                            onClick={() => acceptFriendRequest(currentUser)}>
+                            Accept Friend Request
+                        </a> </Navbar.Text>}
+                    {currentUserFriendStatus === 1 && 
+                        <Navbar.Text style={{color : "#8a9a93"}}>
+                            Friend Request has been Sent
+                        </Navbar.Text>}
+                    {currentUserFriendStatus === 0 && 
+                        <Navbar.Text><a 
+                            style={{color : "white"}} 
+                            href='#' 
+                            onClick={sendFriendRequest}> 
+                            Send Friend Request
+                        </a> </Navbar.Text>}
+                    {(loginName === currentUser || currentUserFriendStatus === 3) && <div style={{width : "600px"}}>
+                        <form>
                             <p><Navbar.Text style={{marginRight : "10px", color : "#8a9a93"}}></Navbar.Text></p>
                                       
                                 <Form.Group >
                                     <Form.Control id="textField" as="textarea" rows="3" />
                                 </Form.Group>
                                
-                                <Navbar.Text style={{marginLeft : "10px"}}><a style={{color : "white"}} href='#' onClick={createPost}>Post Message</a></Navbar.Text>
+                                <Navbar.Text style={{marginLeft : "10px"}}>
+                                    <a style={{color : "white"}} href='#' onClick={createPost}>Post Message</a
+                                ></Navbar.Text>
                             </form>
 
                     </div>}
                 </div>
 
-                <div id="posts"  style={{backgroundColor : "lightgreen", color : "white", marginTop : "30px", padding : "10px", borderRadius : "10px", maxWidth : "700px"}}>
+                <div id="posts"  style={{backgroundColor : "lightgreen", color : "white", padding : "10px", borderRadius : "10px", maxWidth : "700px"}}>
                     {userPosts}
                 </div>
-
             </div>
-
         </div>
-    )
-
-      
+    )     
 }

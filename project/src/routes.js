@@ -56,4 +56,35 @@ router.use('/FindUser', (req, res) => {
     })
 })
 
+router.use('/GetFriendStatus', (req, res) => {
+    handlers.getFriendStatus(req.body).then(result => {
+        if (result) {
+            console.log(result)
+            res.send(result)
+        } else {
+            res.status(444).send()
+        }
+    })
+})
+
+router.use('/SetFriendStatus', (req, res) => {
+    handlers.setFriendStatus(req.body).then(result => {
+        if (result) {
+            res.send(result)
+        } else {
+            res.status(456).send()
+        }
+    })
+})
+
+router.use('/GetAllFriends', (req, res) => {
+    handlers.getAllFriends(req.body).then(result => {
+        if (result) {
+            res.send(result)
+        } else {
+            res.status(478).send()
+        }
+    })
+})
+
 module.exports = router
