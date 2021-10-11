@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import './App.css';
 import Login from '../Login/Login';
 import Dashboard from '../Dashboard/Dashboard';
+import ChatRoom from "../ChatRoom/ChatRoom";
 
 //import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -31,6 +32,7 @@ function App() {
           <Route path="/dashboard">
             <Dashboard userName = {JSON.parse(sessionStorage.getItem('token')).username} />
           </Route>
+          <Route path="/:roomId" component={ChatRoom} />
         </Switch>
       </BrowserRouter>
     </div>

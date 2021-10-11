@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-
+import { Link } from "react-router-dom";
 import {Dropdown, Navbar, Container, Form} from 'react-bootstrap';
-
+import io from "socket.io-client";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Dashboard.css';
-
 
 /*
 async function DisplayPosts() {
@@ -16,8 +15,6 @@ async function DisplayPosts() {
       }, []); // <-- empty array means 'run once'
 } */
 
-var runOnce = 0
-
 export default function Dashboard({userName}) {
 
     // 2 == Friends
@@ -25,42 +22,25 @@ export default function Dashboard({userName}) {
     // 0 == Not Friends 
     var currentUserFriendStatus = 0;
 
-    
     var [currentUser, setCurrentUser] = useState(userName)
     const [postText, setPostText] = useState()
     var [userPosts, setUserPosts] = useState([])
 
-    useEffect(() => {
-        DisplayAllPosts(userName)
-    },[])
- 
-    //
- 
+    var messages = []
 
-    /*
-    const handlePost = async e => {
-        document.getElementById("create_post_form").reset();
-        e.preventDefault();
-        await createPost(postText).then(result => {
-            console.log(result)
-        });
-    } */
 
     var fName1 = "Friend 1"
     var fName2 = "This_is_a_long_fucking_friend_name"
 
     async function logoutUser() {
         sessionStorage.clear();
+        window.location.href="http://localhost:3000/"
     }
 
     function createPostElement(postData) {
         return (<div key={postData._id} id={postData._id} style={{backgroundColor : "#212529", margin: "15px", padding : "10px", borderRadius : "5px", color : "#8a9a93"}}>
             <h4><a href="#" style={{color : "white"}} onClick={() => ChangeCurrentUser(postData.creator)}>{postData.creator}</a></h4>
             {postData.msg}</div>)
-    }
-
-    async function DisplayAllPostsOnReload(user) {
-
     }
 
     async function DisplayAllPosts(user) { 
@@ -72,7 +52,8 @@ export default function Dashboard({userName}) {
             if (res.status === 200) {
                 return res.json()
              } 
-        })
+          }).catch(error => console.log(error, "Error in DisplayAllPosts."))
+        console.log(msgData)
         var updatedUserPosts = []
         msgData.forEach(msg => updatedUserPosts.unshift(createPostElement(msg)))
         setUserPosts(updatedUserPosts)
@@ -111,17 +92,28 @@ export default function Dashboard({userName}) {
         }
     }
 
+    function makeChatRoom(otherUser) {
+        return otherUser < userName ? `${otherUser}_${userName}` : `${userName}_${otherUser}`
+    }
+
+    const joinRoom = (roomId) =>{
+        if (userName !== "" && roomId !== "") {
+            socket.emit("join_room", roomId)
+        }
+    };
+
     function createDropdownItem(friendName) {
         return (        
             <div style={{width : (friendName.length * 8 + 150).toString() + "px", margin : "10px", border : "2px", backgroundColor : "#212529", borderStyle : "solid", borderRadius : "5px"}}>
                 <Navbar.Text style={{color : "#212529", marginLeft  : "10px"}}> <a href=''>{friendName}</a> 
                     <button style={{margin : "10px"}}>Add</button><button >Remove</button>
+                    <Link to={`/${makeChatRoom(friendName)}`} onClick={joinRoom}>Chat</Link>
                 </Navbar.Text>
             </div>
         )
     }
 
-    
+    //DisplayAllPosts(userName)
 
     return(
         <div className="dashboard_wrapper" >
@@ -140,6 +132,7 @@ export default function Dashboard({userName}) {
                             <Dropdown.Menu style={{backgroundColor : "lightgreen", borderWidth : "3px", borderColor : "#212529"}}>
                                 {createDropdownItem(fName1)}
                                 {createDropdownItem(fName2)}
+                                {createDropdownItem("ii")}
                             </Dropdown.Menu>
                         </Dropdown>
             
@@ -160,15 +153,15 @@ export default function Dashboard({userName}) {
 
                         <Navbar.Collapse className="justify-content-end" style={{marginRight : "10px"}}>
                             <Navbar.Text style={{marginTop : "25px"}}>
-                                Signed in as: <a href="#" onClick={() => ChangeCurrentUser(userName)}>{userName}</a>
-                                <p><Navbar.Text onClick={logoutUser} style={{marginLeft: "20px"}}><a href='http://localhost:3000/Login'>Sign Out</a></Navbar.Text></p>
+                                Signed in as: <a href="#login" onClick={() => ChangeCurrentUser(userName)}>{userName}</a>
+                                <p><Navbar.Text href="#" onClick={logoutUser} style={{marginLeft: "20px"}}><a href=''>Sign Out</a></Navbar.Text></p>
                             </Navbar.Text>  
                         </Navbar.Collapse>
 
                     </Container>
                 </Navbar> 
             </div>
-            <div id="bot" onLoad={() => DisplayAllPosts(userName)}>
+            <div id="bot">
                 <div style={{backgroundColor : "#212529", color : "white", marginTop : "30px", borderRadius : "10px", paddingTop : "15px", paddingBottom : "15px", paddingLeft : "35px", paddingRight : "35px", textAlign : "center"}}>
                     <h1 style={{color : "#8a9a93"}}>{currentUser}'s Page</h1>
                     {currentUserFriendStatus === 2 && <Navbar.Text style={{color : "#8a9a93"}}>You are Friends</Navbar.Text>}
@@ -189,7 +182,7 @@ export default function Dashboard({userName}) {
                     </div>}
                 </div>
 
-                <div id="posts"  style={{backgroundColor : "lightgreen", color : "white", marginTop : "30px", padding : "10px", borderRadius : "10px", maxWidth : "700px"}}>
+                <div id="posts" style={{backgroundColor : "lightgreen", color : "white", marginTop : "30px", padding : "10px", borderRadius : "10px", maxWidth : "700px"}}>
                     {userPosts}
                 </div>
 
