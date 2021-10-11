@@ -5,7 +5,7 @@ import {ArrowUpSquare, XLg} from 'react-bootstrap-icons';
 //import server from './../../server'
 const socket = require("socket.io");
 
-export default function Chat({loginName, chatFriend, prevChatFriend, setPrevChatFriend, showChatWindow, setShowChatWindow}) {
+export default function Chat({loginName, chatFriend, setChatFriend, prevChatFriend, setPrevChatFriend, showChatWindow, setShowChatWindow}) {
 
     if (prevChatFriend && chatFriend !== prevChatFriend) {
         //alert("disconnect prev")
@@ -25,7 +25,7 @@ export default function Chat({loginName, chatFriend, prevChatFriend, setPrevChat
     function onKeyPress(event) {
         if (event.which === 13 /* Enter */) {
           event.preventDefault();
-          //findUser()
+          //createChatMessage()
         }
     }
 
@@ -37,10 +37,16 @@ export default function Chat({loginName, chatFriend, prevChatFriend, setPrevChat
 
     }
 
+    async function closeChatWindow() {
+        //alert("close")
+        setChatFriend(null) // funkar inte ?
+        setShowChatWindow(false)
+    }
+
     return (
         <div style={{backgroundColor : "#212529", width : "400px  ", height : "600px", 
                      margin : "30px", borderRadius : "10px", borderWidth : "10px", borderColor : "#212529"}}>
-            <div style={{textAlign : "right"}}><XLg onClick={() => setShowChatWindow(false)} style={{cursor : "pointer", color : "white", margin: "10px"}}></XLg></div>
+            <div style={{textAlign : "right"}}><XLg onClick={closeChatWindow} style={{cursor : "pointer", color : "white", margin: "10px"}}></XLg></div>
             <div style={{color : "#8a9a93", textAlign : "center", paddingTop : "10px"}}>
                 
                 <h2 style={{marginTop : "-40px"}}>Chat </h2>

@@ -183,6 +183,7 @@ export default function Dashboard({loginName}) {
     }
 
     async function openChatWindow(friend) {
+        alert(chatFriend + friend)
         if (chatFriend === friend) {
             chatFriend = null
             setChatFriend(null)
@@ -330,7 +331,7 @@ export default function Dashboard({loginName}) {
                     {userPosts}
                 </div>
                 <div className="fixed-bottom" >
-                    {Chat({loginName, chatFriend, prevChatFriend, setPrevChatFriend, showChatWindow, setShowChatWindow})}        
+                    {Chat({loginName, chatFriend, setChatFriend, prevChatFriend, setPrevChatFriend, showChatWindow, setShowChatWindow})}        
                 </div>
 
             </div>
