@@ -1,10 +1,13 @@
 import React, {useState, useEffect} from 'react';
-
+import io, { Socket } from "socket.io"
 import {Dropdown, Navbar, Container, Form} from 'react-bootstrap';
 import {CheckLg, XLg} from 'react-bootstrap-icons';
-
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Dashboard.css';
+import { Link } from 'react-router-dom';
+
+const { ChatRoom } = require('../ChatRoom/ChatRoom')
+
 
 export default function Dashboard({loginName}) {
 
@@ -170,6 +173,12 @@ export default function Dashboard({loginName}) {
         PopulateFriendList()
     }
 
+    function setRoomId(otherUser) {
+        return otherUser < loginName ? `${otherUser}_${loginName}` : `${loginName}_${otherUser}`;
+    }
+
+    
+
     function createFriendlistItem(friendData) {
         if (friendData.friendstatus == 3) {
            return <div style={{width : "max-content", margin : "10px", border : "2px", backgroundColor : "#212529", borderStyle : "solid", borderRadius : "5px"}}>
@@ -177,7 +186,9 @@ export default function Dashboard({loginName}) {
                     <a href='#' onClick={() => ChangeCurrentUser(friendData.friendname)}>{friendData.friendname}</a> 
                     <a href="#" onClick={() => removeFriend(friendData.friendname)}>
                         <XLg style={{color : "red", margin : "10px", marginLeft : "20px"}}></XLg>
-                    </a>    
+                    </a> 
+                    <Link to={{ pathname: `/chat?roomId=${setRoomId(friendData.friendname)}`, query: { roomId: "bajs" }}} >
+                    Chat</Link>
                 </Navbar.Text>
             </div>
         } else if (friendData.friendstatus == 2) {
