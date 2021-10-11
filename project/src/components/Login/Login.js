@@ -11,13 +11,10 @@ async function loginUser(credentials) {
    headers: {'Content-Type': 'application/json'},
    body: JSON.stringify(credentials)
  }).then(res => {
-  console.log(res)
    if (res.status === 200) {
     token = credentials;
-   } else {
-    throw new Error("res.status not 200 in loginUser in Login.js")
-  }
- }).catch(error => console.log(error));
+   } 
+ })
  return token
 }
 
@@ -30,20 +27,16 @@ async function createUser(credentials) {
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify(credentials)
   }).then(res => {
-    console.log(res)
     if (res.status === 200) {
       token = credentials;
-    } else {
-      throw new Error("res.status not 200 in createUser in Login.js")
-    }
-  }).catch(error => console.log(error));
-  console.log(token)
+     } 
+  })
   return token;
 }
 
 export default function Login({ setToken }) {
-  const [username, setUserName] = useState();
-  const [password, setPassword] = useState();
+  var [username, setUserName] = useState();
+  var [password, setPassword] = useState();
 
   const handleLogin = async e => {
     e.preventDefault();

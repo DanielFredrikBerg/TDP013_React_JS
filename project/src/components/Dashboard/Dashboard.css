@@ -15,6 +15,7 @@
 
 #top {
     height: 14vh;
+    min-height: 120px;
     width: 100%;
     
 }

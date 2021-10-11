@@ -13,15 +13,12 @@ function setToken(userToken) {
 
 function getToken() {
   const tokenString = sessionStorage.getItem('token');
-  console.log(tokenString)
   const userToken = JSON.parse(tokenString);
-  console.log(userToken)
   return userToken
 }
 
 function App() {
   const token = getToken();
-  console.log(token)
 
   if(!token) {
     return <Login setToken={setToken} />
@@ -32,7 +29,7 @@ function App() {
       <BrowserRouter>
         <Switch>
           <Route path="/dashboard">
-            <Dashboard userName = {JSON.parse(sessionStorage.getItem('token')).username} />
+            <Dashboard loginName = {JSON.parse(sessionStorage.getItem('token')).username} />
           </Route>
         </Switch>
       </BrowserRouter>
