@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import {Dropdown, Navbar, Container, Form} from 'react-bootstrap';
 import './Login.css';
 
 async function loginUser(credentials) {
   var token = null
-  document.getElementById("login-username").reset();
-  document.getElementById("login-password").reset();
   await fetch('http://localhost:8080/Login', {
    method: 'POST',
    headers: {'Content-Type': 'application/json'},
@@ -20,8 +19,6 @@ async function loginUser(credentials) {
 
 async function createUser(credentials) {
   var token = null
-  document.getElementById("login-username").reset();
-  document.getElementById("login-password").reset();
   await fetch('http://localhost:8080/CreateAccount', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
@@ -37,10 +34,13 @@ async function createUser(credentials) {
 export default function Login({ setToken }) {
   var [username, setUserName] = useState();
   var [password, setPassword] = useState();
+  var [showErrorMsg, setShowErrorMsg] = useState(false)
 
   const handleLogin = async e => {
     e.preventDefault();
     loginUser({username,password}).then(token => {
+      setUserName("")
+      setPassword("")
       setToken(token);
       if (token) {
         window.location.href="http://localhost:3000/Dashboard"
@@ -52,6 +52,8 @@ export default function Login({ setToken }) {
     e.preventDefault();
     await createUser({username,password}).then(token => {
       setToken(token);
+      setUserName("")
+      setPassword("")
       if (token) {
         window.location.href="http://localhost:3000/Dashboard"
       }
@@ -60,24 +62,27 @@ export default function Login({ setToken }) {
 
   return(
     <div id="login-wrapper">
-      <h1 style={{marginBottom: "-2px"}}>Logga in eller skapa ny Account, idk</h1>
-      <p>(jag är inte din mamma)</p>
-      <form id="login-username">
-        <label>
-          <p>Username</p>
-          <input type="text" name="username" onChange={e => setUserName(e.target.value)} />
-        </label>
-      </form>
-      <form id="login-password">
-        <label>
-          <p>Password</p>
-          <input type="password" onChange={e => setPassword(e.target.value)} />
-        </label>
+      <div id="login-forms">
+      <Form style={{backgroundColor : "#212529", color : "#8a9a93", padding : "30px 50px 30px 50px", borderRadius : "15px"}}>
+        {showErrorMsg && <div style={{textAlign : "center"}}><p style={{color : "red"}}>Invalid Username/Password</p></div> /* TODO ERROR MESSAGES*/}
+        <Form.Group className="mb-3" controlId="formGroupEmail">
+          <Form.Label>Username</Form.Label>
+          <Form.Control type="email" placeholder="Enter username" value={username} onChange={e => setUserName(e.target.value)}/>
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="formGroupPassword">
+          <Form.Label>Password</Form.Label>
+          <Form.Control type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)}/>
+        </Form.Group>
         <div style={{marginTop: "10px"}}>
-          <button onClick={handleLogin}>Log In</button>
-          <button style={{marginLeft: "58px"}} onClick={handleCreate}>Create Account</button>
-        </div>
-      </form>
+           <a href="#" style={{color : "white"}} onClick={handleLogin}>Log In</a> 
+           <a href="#" style={{color : "white", float : "right"}} onClick={handleCreate}>Create Account</a> 
+          </div>
+      </Form>
+
+
+        
+
+      </div>
     </div>
   )
 }
