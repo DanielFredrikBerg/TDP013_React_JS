@@ -7,11 +7,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './Dashboard.css';
 
 import Chat from '../Chat/Chat'
+import { post } from 'superagent';
 
 export default function Dashboard({loginName}) {
 
     var [currentUser, setCurrentUser] = useState()
     var [userPosts, setUserPosts] = useState([])
+    var [postText, setPostText] = useState("")
     var [findUserText, setFindUserText] = useState()
     var [findUserStatusMessage, setFindUserStatusMessage] = useState()
     var [currentUserFriendStatus, setCurrentUserFriendStatus] = useState(-1)
@@ -83,10 +85,9 @@ export default function Dashboard({loginName}) {
     }
 
     async function createPost() {
-        var textField = document.getElementById("textField")
-        if (textField.value.length > 0) {
-            var postData = {msg : textField.value, _id : Date.now(), creator : loginName, page : currentUser}
-            textField.value = ""   
+        if (postText.length > 0) {
+            var postData = {msg : postText, _id : Date.now(), creator : loginName, page : currentUser}
+            setPostText("")  
             await fetch('http://localhost:8080/AddMessage', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -404,7 +405,9 @@ export default function Dashboard({loginName}) {
                             <Form.Group style={{marginTop : "15px"}}>
                                 <Form.Control id="textField" 
                                               as="textarea" 
-                                              rows="3"/>
+                                              rows="3"
+                                              value={postText}
+                                              onChange={e => setPostText(e.target.value)}/>
                             </Form.Group>
 
                             <Navbar.Text style={{marginLeft : "10px"}}>
