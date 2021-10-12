@@ -6,14 +6,13 @@ const socket = io.connect("http://localhost:3001")
 
 export default function Chat({loginName, chatFriend, setChatFriend, showChatWindow, setShowChatWindow}) {
     const [currentMessage, setCurrentMessage] = useState("");
-    var [messageList, setMessageList] = useState([])
-    const stateRef = useRef()
+    const [messageList, setMessageList] = useState([])
+    
+    // up-to-state version of messageList
+    const messageListRef = useRef()
+    messageListRef.current = messageList
   
     const roomId = loginName < chatFriend ? loginName+chatFriend : chatFriend+loginName
-
-    // up-to-state version of messageList
-    stateRef.current = messageList
-
     useEffect(() => {
         if (chatFriend && roomId !== "") {
             socket.emit("join_room", roomId);
@@ -31,7 +30,6 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
         return <div></div>
     }
 
-
     function onKeyPress(event) {
         if (event.which === 13 /* Enter */) {
           event.preventDefault();
@@ -42,19 +40,35 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
     function createChatBubble(message, sender) {
         var chatBubble
         if (sender == loginName) {
-            chatBubble = <div style={{backgroundColor : "#212529", color : "#8a9a93", borderRadius : "10px", width : "max-content", 
-                                      padding : "10px", margin: "10px", minWidth : "125px", maxWidth : "245px",textAlign : "right",
+            chatBubble = <div style={{backgroundColor : "#212529", 
+                                      color : "#8a9a93", 
+                                      borderRadius : "10px", 
+                                      width : "max-content", 
+                                      padding : "10px", 
+                                      margin: "10px", 
+                                      minWidth : "125px", 
+                                      maxWidth : "245px",
+                                      textAlign : "right",
                                       marginLeft: "auto"}}>
-                        <h4>{sender}</h4>
-                        {message}</div>
+                            <h4>{sender}</h4>
+                            {message}
+                         </div>
         } else {
-            chatBubble = <div style={{backgroundColor : "#212529", color : "#8a9a93", borderRadius : "10px", width : "max-content", 
-                                      padding : "10px", margin : "10px", marginLeft: "15px", minWidth : "125px", maxWidth : "245px"}}>
-                        <h4>{sender}</h4>
-                        {message}</div>
+            chatBubble = <div style={{backgroundColor : "#212529", 
+                                      color : "#8a9a93",
+                                      borderRadius : "10px", 
+                                      width : "max-content", 
+                                      padding : "10px", 
+                                      margin : "10px", 
+                                      marginLeft: "15px", 
+                                      minWidth : "125px", 
+                                    maxWidth : "245px"}}>
+                            <h4>{sender}</h4>
+                            {message}
+                         </div>
         }
         
-        setMessageList([chatBubble, ...stateRef.current])
+        setMessageList([chatBubble, ...messageListRef.current])
     }
 
     async function sendChatMessage() {
@@ -79,29 +93,69 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
         setShowChatWindow(false) 
     }
 
-
-
     return (
-        <div style={{backgroundColor : "#212529", width : "350px", height : "500px", 
-                     margin : "30px", borderRadius : "10px", borderWidth : "10px", borderColor : "#212529"}}>
-            <div style={{textAlign : "right"}}><XLg onClick={closeChatWindow} style={{cursor : "pointer", color : "white", margin: "10px"}}></XLg></div>
-            <div style={{color : "#8a9a93", textAlign : "center", paddingTop : "10px"}}>
-                
-                <h2 style={{marginTop : "-40px"}}>Chat </h2>
-                <p>Chatting with {chatFriend}</p>
+        <div style={{backgroundColor : "#212529", 
+                     width : "350px", 
+                     height : "500px", 
+                     margin : "30px", 
+                     borderRadius : "10px", 
+                     borderWidth : "10px", 
+                     borderColor : "#212529"}}>
+
+            <div style={{textAlign : "right"}}>
+                <XLg onClick={closeChatWindow} 
+                     style={{cursor : "pointer", 
+                             color : "white", 
+                             margin: "10px"}}>
+                </XLg>
             </div>
-            <div key={'inline'} style={{backgroundColor : "lightgreen", width : "316px", height : "350px", display: "flex", flexDirection : "column-reverse",
-                                        borderRadius : "8px", marginLeft : "17px", overflow : "scroll"}}>
+
+            <div style={{color : "#8a9a93", 
+                         textAlign : "center", 
+                         paddingTop : "10px"}}> 
+
+                <h2 style={{marginTop : "-40px"}}>
+                    Chat 
+                </h2>
+
+                <p>
+                    Chatting with {chatFriend}
+                </p>
+            </div>
+
+            <div key={'inline'} 
+                 style={{backgroundColor : "lightgreen", 
+                         width : "316px", 
+                         height : "350px", 
+                         display: "flex", 
+                         flexDirection : "column-reverse", 
+                         borderRadius : "8px", 
+                         marginLeft : "17px", 
+                         overflow : "scroll"}}>
                 {messageList}
             </div>
             <form>
-                <label style={{marginLeft : "22px", marginTop : "15px"}} onKeyPress={e => onKeyPress(e)} >
-                    <input value={currentMessage} style={{width : "270px"}} type="text" placeholder="Write message here..." onChange={(event) => {setCurrentMessage(event.target.value) }} name="username" />
-                    <ArrowUpSquare onClick={sendChatMessage} style={{color : "white", scale : "180%", marginLeft : "10px", marginBottom : "4px", cursor : "pointer"}} ></ArrowUpSquare>
+                <label style={{marginLeft : "22px", 
+                               marginTop : "15px"}} 
+                       onKeyPress={e => onKeyPress(e)}>
+
+                    <input value={currentMessage} 
+                           style={{width : "270px"}} 
+                           type="text" 
+                           placeholder="Write message here..." 
+                           onChange={(event) => {setCurrentMessage(event.target.value)}} 
+                           name="username"/>
+
+                    <ArrowUpSquare onClick={sendChatMessage} 
+                                   style={{color : "white", 
+                                           scale : "180%", 
+                                           marginLeft : "10px",
+                                           marginBottom : "4px", 
+                                           cursor : "pointer"}}>
+                    </ArrowUpSquare>
+
                 </label>
             </form>
-
-     
         </div>)
 }
  

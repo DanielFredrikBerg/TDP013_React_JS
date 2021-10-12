@@ -3,7 +3,7 @@ const cors = require('cors')
 const { Server } = require("socket.io");
 
 const app = express();
-app.use(cors({origin : "*"}));
+app.use(cors({origin : "http://localhost:3000"}));
 app.use(require('./src/routes'))
 
 const server = require('http').createServer(app)
@@ -21,8 +21,6 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
     console.log(`User ${socket.id} connected.`)
     
-    
-    
     socket.on("join_room", (roomId) => {
         socket.join(roomId);
         console.log(`User with ID: ${socket.id} joined room: ${roomId}`)
@@ -30,7 +28,6 @@ io.on("connection", (socket) => {
   
     // Listen for new messages
     socket.on("send_message", (data) => {
-        console.log('Full message:', data)
         socket.to(data.room).emit("recieve_message", data);
     });
   
@@ -44,10 +41,6 @@ io.on("connection", (socket) => {
 
 const PORT = 3001;
 const expressPort = 8080;
-//const server = app.listen(PORT, () => console.log(`chat server is running on port ${PORT}`))
 app.listen(8080, () => console.log(`Express running on port ${expressPort}`))
 server.listen(PORT, () => console.log(`chat server is running on port ${PORT}`))
-//server.listen(8080, () => console.log('Server is running on http://localhost:8080'));
-//server.listen(3001, () => console.log(`chat server is running on port 3001`))
 
-//module.exports = {server}

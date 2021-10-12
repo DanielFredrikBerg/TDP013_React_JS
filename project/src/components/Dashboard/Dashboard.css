@@ -1,6 +1,7 @@
 .dashboard_wrapper {
-    
+    background: lightpink;
 }
+
 .btn,
 .btn:active,
 #dropdown_button,
@@ -32,6 +33,17 @@
 #Navbar {
     height: 10vh;
     text-align: center;
+}
+
+.postBubble {
+  background-color : "#212529";
+  width : "max-content";
+  max-width : "600px";
+  margin: "auto";
+  margin-top: "15px";
+  padding : "10px";
+  border-radius : "5px";
+  color : "#8a9a93";
 }
 
 
