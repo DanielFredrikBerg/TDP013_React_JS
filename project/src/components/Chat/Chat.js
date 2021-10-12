@@ -1,45 +1,36 @@
-import { useEffect, useState } from "react";
-import { FormGroup, FormControl, FormLabel, Button, Form, Row, Col} from "react-bootstrap";
+import { useEffect, useState, useRef } from "react";
 import {ArrowUpSquare, XLg} from 'react-bootstrap-icons';
 import io from "socket.io-client";
 
-//import server from './../../server'
-//const socket = require("socket.io");
-
 const socket = io.connect("http://localhost:3001")
 
-export default function Chat({loginName, chatFriend, setChatFriend, prevChatFriend, setPrevChatFriend, showChatWindow, setShowChatWindow}) {
+export default function Chat({loginName, chatFriend, setChatFriend, showChatWindow, setShowChatWindow}) {
     const [currentMessage, setCurrentMessage] = useState("");
-    //const [messageList, setMessageList] = useState([])
-
-
+    var [messageList, setMessageList] = useState([])
+    const stateRef = useRef()
   
     const roomId = loginName < chatFriend ? loginName+chatFriend : chatFriend+loginName
-    if (chatFriend) {
-        socket.emit("join_room", roomId);   
-    }
-       
+
+    // up-to-state version of messageList
+    stateRef.current = messageList
 
     useEffect(() => {
-        console.log("sdf")
+        if (chatFriend && roomId !== "") {
+            socket.emit("join_room", roomId);
+        }
+    }, [roomId])
+       
+    useEffect(() => {
         socket.on("recieve_message", (data) => {
-            console.log('Data',data)
+            createChatBubble(data.message, data.author)
         });
         
     }, [socket])
 
-
-    if (prevChatFriend && chatFriend !== prevChatFriend) {
-        //alert("disconnect prev")
-        // disconnect loginName prevChatFriend pair
-        setPrevChatFriend(chatFriend)
-    }
-
     if (!showChatWindow) {
-        //alert("disconnect")
-        // disconnect loginName chatFriend pair
         return <div></div>
     }
+
 
     function onKeyPress(event) {
         if (event.which === 13 /* Enter */) {
@@ -48,8 +39,28 @@ export default function Chat({loginName, chatFriend, setChatFriend, prevChatFrie
         }
     }
 
+    function createChatBubble(message, sender) {
+        var chatBubble
+        if (sender == loginName) {
+            chatBubble = <div style={{backgroundColor : "#212529", color : "#8a9a93", borderRadius : "10px", width : "max-content", 
+                                      padding : "10px", margin: "10px", minWidth : "125px", maxWidth : "245px",textAlign : "right",
+                                      marginLeft: "auto"}}>
+                        <h4>{sender}</h4>
+                        {message}</div>
+        } else {
+            chatBubble = <div style={{backgroundColor : "#212529", color : "#8a9a93", borderRadius : "10px", width : "max-content", 
+                                      padding : "10px", margin : "10px", marginLeft: "15px", minWidth : "125px", maxWidth : "245px"}}>
+                        <h4>{sender}</h4>
+                        {message}</div>
+        }
+        
+        setMessageList([chatBubble, ...stateRef.current])
+    }
+
     async function sendChatMessage() {
+        
         if (currentMessage !== "") {
+            createChatBubble(currentMessage, loginName)
             const messageData = {
                 _id: Date.now(),
                 room: roomId,
@@ -64,10 +75,11 @@ export default function Chat({loginName, chatFriend, setChatFriend, prevChatFrie
     }
 
     async function closeChatWindow() {
-        //alert("close")
-        setChatFriend(null) // funkar inte ?
+        setChatFriend("") // funkar inte ?
         setShowChatWindow(false) 
     }
+
+
 
     return (
         <div style={{backgroundColor : "#212529", width : "350px", height : "500px", 
@@ -78,20 +90,18 @@ export default function Chat({loginName, chatFriend, setChatFriend, prevChatFrie
                 <h2 style={{marginTop : "-40px"}}>Chat </h2>
                 <p>Chatting with {chatFriend}</p>
             </div>
-            <div key={'inline'} style={{backgroundColor : "lightgreen", width : "316px", height : "350px", 
-                                        borderRadius : "8px", marginLeft : "17px"}}>
-                {}
-
+            <div key={'inline'} style={{backgroundColor : "lightgreen", width : "316px", height : "350px", display: "flex", flexDirection : "column-reverse",
+                                        borderRadius : "8px", marginLeft : "17px", overflow : "scroll"}}>
+                {messageList}
             </div>
             <form>
-        <label style={{marginLeft : "22px", marginTop : "15px"}} onKeyPress={e => onKeyPress(e)} >
-          <input value={currentMessage} style={{width : "270px"}} type="text" placeholder="Write message here..." onChange={(event) => { setCurrentMessage(event.target.value) }} name="username" />
-          <ArrowUpSquare onClick={sendChatMessage} style={{color : "white", scale : "180%", marginLeft : "10px", marginBottom : "4px", cursor : "pointer"}} ></ArrowUpSquare>
-        </label>
-      </form>
+                <label style={{marginLeft : "22px", marginTop : "15px"}} onKeyPress={e => onKeyPress(e)} >
+                    <input value={currentMessage} style={{width : "270px"}} type="text" placeholder="Write message here..." onChange={(event) => {setCurrentMessage(event.target.value) }} name="username" />
+                    <ArrowUpSquare onClick={sendChatMessage} style={{color : "white", scale : "180%", marginLeft : "10px", marginBottom : "4px", cursor : "pointer"}} ></ArrowUpSquare>
+                </label>
+            </form>
 
      
-        </div>
-    )
+        </div>)
 }
- //onClick={() => setShowChatWindow(false)} 
+ 

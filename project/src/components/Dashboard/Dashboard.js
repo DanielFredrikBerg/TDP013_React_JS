@@ -18,7 +18,6 @@ export default function Dashboard({loginName}) {
     var [friendList, setFriendList] = useState([])
     var [showChatWindow, setShowChatWindow] = useState(false)
     var [chatFriend, setChatFriend] = useState()
-    var [prevChatFriend, setPrevChatFriend] = useState()
 
     useEffect(() => {
         if (sessionStorage.getItem('currentUser')) {
@@ -186,10 +185,8 @@ export default function Dashboard({loginName}) {
         if (chatFriend === friend) {
             chatFriend = null
             setChatFriend(null)
-            setPrevChatFriend(null)
             setShowChatWindow(false)
         } else {
-            setPrevChatFriend(chatFriend)
             chatFriend = friend
             setChatFriend(friend)
             setShowChatWindow(true)
@@ -330,7 +327,7 @@ export default function Dashboard({loginName}) {
                     {userPosts}
                 </div>
                 <div className="fixed-bottom" >
-                    {true && Chat({loginName, chatFriend, setChatFriend, prevChatFriend, setPrevChatFriend, showChatWindow, setShowChatWindow})}        
+                    {Chat({loginName, chatFriend, setChatFriend, showChatWindow, setShowChatWindow})}        
                 </div>
 
             </div>
