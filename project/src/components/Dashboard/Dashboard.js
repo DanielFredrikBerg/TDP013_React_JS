@@ -205,7 +205,7 @@ export default function Dashboard({loginName}) {
                     <a href="#" onClick={() => openChatWindow(friendData.friendname)}>
                         <ChatLeftText style={{color : "yellow", marginLeft : "20px"}}></ChatLeftText></a> 
                     <a href="#" onClick={() => removeFriend(friendData.friendname)}>
-                        <XLg style={{color : "red", margin : "10px", marginLeft : "10px"}}></XLg></a>    
+                        <XLg style={{color : "red", margin : "10px", marginLeft : "15px"}}></XLg></a>    
                 </Navbar.Text>
             </div>
         } else if (friendData.friendstatus == 2) {

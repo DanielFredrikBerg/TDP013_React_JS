@@ -1,11 +1,26 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { FormGroup, FormControl, FormLabel, Button, Form, Row, Col} from "react-bootstrap";
 import {ArrowUpSquare, XLg} from 'react-bootstrap-icons';
+import io from "socket.io-client";
 
 //import server from './../../server'
-const socket = require("socket.io");
+//const socket = require("socket.io");
 
 export default function Chat({loginName, chatFriend, setChatFriend, prevChatFriend, setPrevChatFriend, showChatWindow, setShowChatWindow}) {
+    const [currentMessage, setCurrentMessage] = useState("");
+    const socket = io.connect("http://localhost:3001");
+    const roomId = loginName < chatFriend ? loginName+chatFriend : chatFriend+loginName;
+    console.log("Room id from Chat component: ", roomId);
+    
+    socket.emit("join_room", roomId);    
+
+    useEffect(() => {
+        socket.on("recieve_message", (data) => {
+            console.log('Data',data)
+        });
+        
+    }, [socket])
+
 
     if (prevChatFriend && chatFriend !== prevChatFriend) {
         //alert("disconnect prev")
@@ -33,8 +48,17 @@ export default function Chat({loginName, chatFriend, setChatFriend, prevChatFrie
 
     }
 
-    function createChatMessage() {
+    async function createChatMessage() {
+        if (currentMessage !== "") {
+            const messageData = {
+                room: roomId,
+                author: loginName,
+                message: currentMessage,
+                time: new Date(Date.now()).getHours() + ":" + new Date(Date.now()).getMinutes(),
+            };
 
+            await socket.emit("send_message", messageData);
+        }
     }
 
     async function closeChatWindow() {
@@ -55,8 +79,11 @@ export default function Chat({loginName, chatFriend, setChatFriend, prevChatFrie
             <div key={'inline'} style={{backgroundColor : "lightgreen", width : "360px", height : "450px", borderRadius : "8px", marginLeft : "20px"}}></div>
             <form id="login-username">
         <label style={{marginLeft : "30px", marginTop : "15px"}} onKeyPress={e => onKeyPress(e)} >
-          <input style={{width : "300px"}} type="text" name="username" />
-          <ArrowUpSquare  style={{color : "white", scale : "180%", marginLeft : "10px", marginBottom : "4px", cursor : "pointer"}} ></ArrowUpSquare>
+          <input style={{width : "300px"}} type="text" placeholder="Write message here..." 
+                    onChange={(event) => {
+                        setCurrentMessage(event.target.value);
+                    }} name="username" />
+          <ArrowUpSquare onClick={createChatMessage} style={{color : "white", scale : "180%", marginLeft : "10px", marginBottom : "4px", cursor : "pointer"}} ></ArrowUpSquare>
         </label>
       </form>
 

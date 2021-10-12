@@ -20,9 +20,8 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
     console.log(`User ${socket.id} connected.`)
-    // Join a conversation
-    const { roomId } = socket.handshake.query;
-    console.log(roomId);
+    
+    
     
     socket.on("join_room", (roomId) => {
         socket.join(roomId);
@@ -32,20 +31,23 @@ io.on("connection", (socket) => {
     // Listen for new messages
     socket.on("send_message", (data) => {
         console.log('Full message:', data)
-        console.log(`Room id: ${data.room}`)
         socket.to(data.room).emit("recieve_message", data);
     });
   
     // Leave the room if the user closes the socket
-    socket.on("disconnect", () => {
+    socket.on("disconnect", (data) => {
         console.log(`User ${socket.id} disconnected.`)
-        socket.leave(roomId);
+        socket.leave(data.room);
     });
 });
 
 
-
-server.listen(8080, () => console.log('Server is running on http://localhost:8080'));
+const PORT = 3001;
+const expressPort = 8080;
+//const server = app.listen(PORT, () => console.log(`chat server is running on port ${PORT}`))
+app.listen(8080, () => console.log(`Express running on port ${expressPort}`))
+server.listen(PORT, () => console.log(`chat server is running on port ${PORT}`))
+//server.listen(8080, () => console.log('Server is running on http://localhost:8080'));
 //server.listen(3001, () => console.log(`chat server is running on port 3001`))
 
 //module.exports = {server}
