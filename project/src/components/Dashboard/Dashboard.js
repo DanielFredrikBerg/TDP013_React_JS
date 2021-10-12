@@ -340,7 +340,7 @@ export default function Dashboard({loginName}) {
                         <Navbar.Collapse className="justify-content-end" 
                                          style={{marginRight : "10px"}}>
                             <Navbar.Text style={{marginTop : "25px"}}>
-                                Signed in as: 
+                                {"Signed in as: "}
                                 <a href="#" 
                                    onClick={() => ChangeCurrentUser(loginName)}>
                                    {loginName}
