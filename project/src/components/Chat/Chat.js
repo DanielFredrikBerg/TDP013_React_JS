@@ -40,7 +40,7 @@ export default function Chat({loginName, chatFriend, setChatFriend, prevChatFrie
     function onKeyPress(event) {
         if (event.which === 13 /* Enter */) {
           event.preventDefault();
-          //createChatMessage()
+          createChatMessage();
         }
     }
 
@@ -51,6 +51,7 @@ export default function Chat({loginName, chatFriend, setChatFriend, prevChatFrie
     async function createChatMessage() {
         if (currentMessage !== "") {
             const messageData = {
+                _id: Date.now(),
                 room: roomId,
                 author: loginName,
                 message: currentMessage,
@@ -79,10 +80,7 @@ export default function Chat({loginName, chatFriend, setChatFriend, prevChatFrie
             <div key={'inline'} style={{backgroundColor : "lightgreen", width : "360px", height : "450px", borderRadius : "8px", marginLeft : "20px"}}></div>
             <form id="login-username">
         <label style={{marginLeft : "30px", marginTop : "15px"}} onKeyPress={e => onKeyPress(e)} >
-          <input style={{width : "300px"}} type="text" placeholder="Write message here..." 
-                    onChange={(event) => {
-                        setCurrentMessage(event.target.value);
-                    }} name="username" />
+          <input style={{width : "300px"}} type="text" placeholder="Write message here..." onChange={(event) => { setCurrentMessage(event.target.value) }} name="username" />
           <ArrowUpSquare onClick={createChatMessage} style={{color : "white", scale : "180%", marginLeft : "10px", marginBottom : "4px", cursor : "pointer"}} ></ArrowUpSquare>
         </label>
       </form>
