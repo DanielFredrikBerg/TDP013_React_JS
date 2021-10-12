@@ -15,6 +15,7 @@ export default function Chat({loginName, chatFriend, setChatFriend, prevChatFrie
     socket.emit("join_room", roomId);    
 
     useEffect(() => {
+        console.log("sdf")
         socket.on("recieve_message", (data) => {
             console.log('Data',data)
         });
@@ -59,6 +60,7 @@ export default function Chat({loginName, chatFriend, setChatFriend, prevChatFrie
             };
 
             await socket.emit("send_message", messageData);
+            setCurrentMessage("")
         }
     }
 
@@ -69,7 +71,8 @@ export default function Chat({loginName, chatFriend, setChatFriend, prevChatFrie
     }
 
     return (
-        <div style={{backgroundColor : "#212529", width : "400px  ", height : "600px", 
+        <div style={{backgroundColor : "#212529", width : "30vw", height : "60vh", minHeight : "300px", 
+                     minWidth : "200px", maxHeight : "600px", maxWidth : "400px", 
                      margin : "30px", borderRadius : "10px", borderWidth : "10px", borderColor : "#212529"}}>
             <div style={{textAlign : "right"}}><XLg onClick={closeChatWindow} style={{cursor : "pointer", color : "white", margin: "10px"}}></XLg></div>
             <div style={{color : "#8a9a93", textAlign : "center", paddingTop : "10px"}}>
@@ -77,10 +80,10 @@ export default function Chat({loginName, chatFriend, setChatFriend, prevChatFrie
                 <h2 style={{marginTop : "-40px"}}>Chat </h2>
                 <p>Chatting with {chatFriend}</p>
             </div>
-            <div key={'inline'} style={{backgroundColor : "lightgreen", width : "360px", height : "450px", borderRadius : "8px", marginLeft : "20px"}}></div>
-            <form id="login-username">
+            <div key={'inline'} style={{backgroundColor : "lightgreen", width : "80%", height : "450px", borderRadius : "8px", marginLeft : "20px"}}></div>
+            <form>
         <label style={{marginLeft : "30px", marginTop : "15px"}} onKeyPress={e => onKeyPress(e)} >
-          <input style={{width : "300px"}} type="text" placeholder="Write message here..." onChange={(event) => { setCurrentMessage(event.target.value) }} name="username" />
+          <input value={currentMessage} style={{width : "300px"}} type="text" placeholder="Write message here..." onChange={(event) => { setCurrentMessage(event.target.value) }} name="username" />
           <ArrowUpSquare onClick={createChatMessage} style={{color : "white", scale : "180%", marginLeft : "10px", marginBottom : "4px", cursor : "pointer"}} ></ArrowUpSquare>
         </label>
       </form>
