@@ -67,7 +67,6 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
                             {message}
                          </div>
         }
-        
         setMessageList([chatBubble, ...messageListRef.current])
     }
 

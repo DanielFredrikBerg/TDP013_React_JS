@@ -6,6 +6,7 @@ async function login(credentials) {
     const dbo = db.db("tdp013")
     const result = await dbo.collection("user_accounts").findOne({username: credentials.username, md5password: credentials.md5password})//.then(res => {console.log(res); return res})
     db.close()
+    console.log(result)
     return result 
 }
 
