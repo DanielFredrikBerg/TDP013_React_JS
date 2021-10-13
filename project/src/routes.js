@@ -2,13 +2,13 @@ const handlers = require('./requestHandlers');
 const express = require('express');
 const sanitize = require('mongo-sanitize')
 
-
 const router = express.Router()
 router.use(express.json()); 
 
 
 router.use('/Login', (req, res) => {
     handlers.login(req.body).then(result => {
+        console.log(result)
         if (result) {
             res.send(result);
         } else {
@@ -18,13 +18,16 @@ router.use('/Login', (req, res) => {
 });
   
 router.use('/CreateAccount', (req, res) => {
-    handlers.createAccount(req.body).then(result => {
-        if (result) {
-            res.send(result);
-        } else {
-            res.status(407).send();
-        }  
-    })
+    handlers.findUser(req.body.username).then( (wasUserFound) => {
+        if(!wasUserFound){
+            handlers.createAccount(req.body).then( (result) => {
+                res.send(result);
+            })
+        }
+        else {
+            throw new Error()
+        }
+    }).catch(() => res.status(407).send("User already exists."));
 });
 
 router.use('/AddMessage', (req, res) => {

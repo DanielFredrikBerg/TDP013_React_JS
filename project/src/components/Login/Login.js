@@ -1,5 +1,7 @@
+import { render } from '@testing-library/react';
 import React, { useState } from 'react';
 import {Form} from 'react-bootstrap';
+import Toast from 'react-bootstrap/Toast'
 import './Login.css';
 
 async function loginUser(credentials) {
@@ -25,8 +27,33 @@ async function createUser(credentials) {
   }).then(res => {
     if (res.status === 200) {
       token = credentials;
-     } 
-  })
+    }
+  }).catch((err) => {
+    console.log(err);
+    
+    [
+      'Primary',
+      'Secondary',
+      'Success',
+      'Danger',
+      'Warning',
+      'Info',
+      'Light',
+      'Dark',
+    ].map((variant, idx) => (
+      <Toast className="d-inline-block m-1" bg={variant.toLowerCase()} key={idx}>
+        <Toast.Header>
+          <img src="holder.js/20x20?text=%20" className="rounded me-2" alt="" />
+          <strong className="me-auto">Bootstrap</strong>
+          <small>11 mins ago</small>
+        </Toast.Header>
+        <Toast.Body className={variant === 'Dark' && 'text-white'}>
+          Hello, world! This is a toast message.
+        </Toast.Body>
+      </Toast>
+    ));
+    
+  });
   return token;
 }
 

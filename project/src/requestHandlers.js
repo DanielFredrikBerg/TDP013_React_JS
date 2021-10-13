@@ -33,10 +33,10 @@ async function getMessages(userData) {
     return result 
 }
 
-async function findUser(user) {
+async function findUser(username) {
     const db = await MongoClient.connect(url)
     const dbo = db.db("tdp013")
-    const result = await dbo.collection("user_accounts").findOne(user)
+    const result = await dbo.collection("user_accounts").findOne( { username: `${username}`} )
     db.close()
     return result  
 }
