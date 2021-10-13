@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^12.8.3",
     "bootstrap": "^5.1.1",
     "http": "^0.0.1-security",
+    "md5": "^2.3.0",
     "mongo-sanitize": "^1.1.0",
     "mongodb": "^4.1.2",
     "react": "^17.0.2",

@@ -4,7 +4,7 @@ let url = "mongodb://localhost:27017"
 async function login(credentials) {
     const db = await MongoClient.connect(url)
     const dbo = db.db("tdp013")
-    const result = await dbo.collection("user_accounts").findOne(credentials)
+    const result = await dbo.collection("user_accounts").findOne({username: credentials.username, md5password: credentials.md5password})
     db.close()
     return result 
 }
@@ -33,13 +33,15 @@ async function getMessages(userData) {
     return result 
 }
 
-async function findUser(username) {
+async function findUser(userData) {
     const db = await MongoClient.connect(url)
     const dbo = db.db("tdp013")
-    const result = await dbo.collection("user_accounts").findOne( { username: `${username}`} )
+    const result = await dbo.collection("user_accounts").findOne( {username: userData.username }  )
     db.close()
     return result  
 }
+
+
 
 async function getFriendStatus(userData) {
     const db = await MongoClient.connect(url)

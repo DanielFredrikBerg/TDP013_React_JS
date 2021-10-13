@@ -8,17 +8,17 @@ router.use(express.json());
 
 router.use('/Login', (req, res) => {
     handlers.login(req.body).then(result => {
-        console.log(result)
+        //console.log(result)
         if (result) {
             res.send(result);
         } else {
             res.status(408).send();
         }  
-    });
+    }).catch(err => console.log("error in /Login routes", err));
 });
   
 router.use('/CreateAccount', (req, res) => {
-    handlers.findUser(req.body.username).then( (wasUserFound) => {
+    handlers.findUser(req.body).then( (wasUserFound) => {
         if(!wasUserFound){
             handlers.createAccount(req.body).then( (result) => {
                 res.send(result);

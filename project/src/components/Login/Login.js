@@ -3,6 +3,10 @@ import React, { useState } from 'react';
 import {Form} from 'react-bootstrap';
 import Toast from 'react-bootstrap/Toast'
 import './Login.css';
+const md5 = require('md5');
+
+
+
 
 async function loginUser(credentials) {
   var token = null
@@ -29,33 +33,12 @@ async function createUser(credentials) {
       token = credentials;
     }
   }).catch((err) => {
-    console.log(err);
-    
-    [
-      'Primary',
-      'Secondary',
-      'Success',
-      'Danger',
-      'Warning',
-      'Info',
-      'Light',
-      'Dark',
-    ].map((variant, idx) => (
-      <Toast className="d-inline-block m-1" bg={variant.toLowerCase()} key={idx}>
-        <Toast.Header>
-          <img src="holder.js/20x20?text=%20" className="rounded me-2" alt="" />
-          <strong className="me-auto">Bootstrap</strong>
-          <small>11 mins ago</small>
-        </Toast.Header>
-        <Toast.Body className={variant === 'Dark' && 'text-white'}>
-          Hello, world! This is a toast message.
-        </Toast.Body>
-      </Toast>
-    ));
-    
+    console.log(err);    
   });
   return token;
 }
+
+
 
 export default function Login({ setToken }) {
   var [username, setUserName] = useState();
@@ -64,26 +47,33 @@ export default function Login({ setToken }) {
 
   const handleLogin = async e => {
     e.preventDefault();
-    loginUser({username,password}).then(token => {
-      setUserName("")
-      setPassword("")
-      setToken(token);
-      if (token) {
-        window.location.href="http://localhost:3000/Dashboard"
-      }
-    });
-  }
+      const md5password = md5(password)
+          loginUser({username, md5password}).then(token => {
+            setUserName("")
+            setPassword("")
+            setToken(token);
+            if (token) {
+              window.location.href="http://localhost:3000/Dashboard"
+            }
+            else{
+              console.log("Invalid username or password.")
+            }
+          }).catch(err => console.log("handleLogin Error: ", err))
+    }
 
   const handleCreate = async e => {
     e.preventDefault();
-    await createUser({username,password}).then(token => {
-      setToken(token);
-      setUserName("")
-      setPassword("")
-      if (token) {
-        window.location.href="http://localhost:3000/Dashboard"
-      }
-    });
+      const md5password = md5(password)
+        createUser({username, md5password}).then(token => {
+          setToken(token);
+          setUserName("")
+          setPassword("")
+          if (token) {
+            window.location.href="http://localhost:3000/Dashboard"
+          }
+        });
+   
+    
   }
 
   return(
