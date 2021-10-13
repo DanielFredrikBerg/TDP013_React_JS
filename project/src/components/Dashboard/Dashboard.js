@@ -11,15 +11,15 @@ import { post } from 'superagent';
 
 export default function Dashboard({loginName}) {
 
-    var [currentUser, setCurrentUser] = useState()
-    var [userPosts, setUserPosts] = useState([])
-    var [postText, setPostText] = useState("")
-    var [findUserText, setFindUserText] = useState()
-    var [findUserStatusMessage, setFindUserStatusMessage] = useState()
-    var [currentUserFriendStatus, setCurrentUserFriendStatus] = useState(-1)
-    var [friendList, setFriendList] = useState([])
-    var [showChatWindow, setShowChatWindow] = useState(false)
-    var [chatFriend, setChatFriend] = useState()
+    let [currentUser, setCurrentUser] = useState()
+    const [userPosts, setUserPosts] = useState([])
+    const [postText, setPostText] = useState("")
+    const [findUserText, setFindUserText] = useState()
+    const [findUserStatusMessage, setFindUserStatusMessage] = useState()
+    const [currentUserFriendStatus, setCurrentUserFriendStatus] = useState(-1)
+    const [friendList, setFriendList] = useState([])
+    const [showChatWindow, setShowChatWindow] = useState(false)
+    const [chatFriend, setChatFriend] = useState()
 
     useEffect(async () => {
         if (sessionStorage.getItem('currentUser')) {
@@ -49,9 +49,8 @@ export default function Dashboard({loginName}) {
 
     function createPostElement(postData) {
         return (
-            <div key={postData._id} 
+            <div className="myfancydiv" key={postData._id} 
                  style={{color : "#8a9a93", 
-                         backgroundColor : "#212529", 
                          width : "max-content",
                          maxWidth : "600px", 
                          margin : "auto", 

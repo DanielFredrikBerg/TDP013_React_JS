@@ -21,6 +21,10 @@
     
 }
 
+.myfancydiv {
+  background-color: lightpink;
+}
+
 #bot {
     min-height: 86vh;
     width: 100%;

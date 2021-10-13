@@ -14,7 +14,7 @@ router.use('/Login', (req, res) => {
         } else {
             res.status(408).send();
         }  
-    }).catch(err => console.log("error in /Login routes", err));
+    }).catch((err) => res.status(666).send());
 });
   
 router.use('/CreateAccount', (req, res) => {
