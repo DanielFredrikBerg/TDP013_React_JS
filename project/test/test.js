@@ -4,10 +4,10 @@ const {MongoClient} = require('mongodb');
 let url = "mongodb://localhost:27017";
 
 
-async function clearDb() {
+async function clearDb(database) {
     const db = await MongoClient.connect(url)
     const dbo = db.db("tdp013");
-    await dbo.collection("user_accounts").deleteMany({})
+    await dbo.collection(database).deleteMany({})
     //console.log(asdf)
     db.close()
 

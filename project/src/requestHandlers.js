@@ -4,7 +4,7 @@ let url = "mongodb://localhost:27017"
 async function login(credentials) {
     const db = await MongoClient.connect(url)
     const dbo = db.db("tdp013")
-    const result = await dbo.collection("user_accounts").findOne({username: credentials.username, md5password: credentials.md5password})
+    const result = await dbo.collection("user_accounts").findOne({username: credentials.username, md5password: credentials.md5password})//.then(res => {console.log(res); return res})
     db.close()
     return result 
 }
