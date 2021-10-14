@@ -20,10 +20,6 @@ export default function Dashboard({loginName}) {
     const [showChatWindow, setShowChatWindow] = useState(false)
     let [chatFriend, setChatFriend] = useState()
 
-    // up-to-state version of friendList
-    const friendListRef = useRef()
-    friendListRef.current = friendList
-
     useEffect(async () => {
         if (sessionStorage.getItem('currentUser')) {
             const storedCurrentUser = sessionStorage.getItem('currentUser')
@@ -191,53 +187,35 @@ export default function Dashboard({loginName}) {
         }
     }
 
-    function createFriendlistItem(friendData) {
+    function createFriendlistItem(friendData, index) {
         if (friendData.friendstatus == 3) {
-           return <div key={Date.now()} style={{width : "max-content", 
-                               margin : "10px", 
-                               border : "2px", 
-                               backgroundColor : "#212529", 
-                               borderStyle : "solid", 
-                               borderRadius : "5px"}}>
-                    <Navbar.Text style={{color : "#212529", marginLeft  : "10px"}}> 
-                        <a href='#' 
-                        onClick={() => ChangeCurrentUser(friendData.friendname)}>
-                        {friendData.friendname}
+           return <div key={index} className="friendListItem">
+                    <Navbar.Text className="friendListText"> 
+                        <a href='#' onClick={() => ChangeCurrentUser(friendData.friendname)}>
+                            {friendData.friendname}
                         </a>
-                        <a href="#" 
-                        onClick={() => openChatWindow(friendData.friendname)}>
-                        <ChatLeftText style={{color : "yellow", marginLeft : "20px"}}></ChatLeftText>
+                        <a href="#" onClick={() => openChatWindow(friendData.friendname)}>
+                            <ChatLeftText className="friendListChatIcon"></ChatLeftText>
                         </a> 
-                        <a href="#" 
-                        onClick={() => removeFriend(friendData.friendname)}>
-                        <XLg style={{color : "red", margin : "10px", marginLeft : "15px"}}></XLg>
+                        <a href="#" onClick={() => removeFriend(friendData.friendname)}>
+                            <XLg className="friendListRemoveIcon"></XLg>
                         </a>    
                     </Navbar.Text>
                   </div>
         } else if (friendData.friendstatus === 2) {
-            return (        
-                <div style={{width : "max-content", 
-                             margin : "10px", 
-                             border : "2px", 
-                             backgroundColor : "#212529", 
-                             borderStyle : "solid", 
-                             borderRadius : "5px"}}>
-                    <Navbar.Text style={{color : "#212529", marginLeft  : "10px"}}> 
-                        <a href='#' 
-                           onClick={() => ChangeCurrentUser(friendData.friendname)}>
-                           {friendData.friendname}
-                        </a> 
-                        <a href="#" 
-                           onClick={() => acceptFriendRequest(friendData.friendname)}>
-                           <CheckLg style={{color : "green", margin : "10px", marginLeft : "20px"}}></CheckLg>
-                        </a>
-                        <a href="#" 
-                           onClick={() => removeFriend(friendData.friendname)}>
-                           <XLg style={{color : "red", margin : "10px"}}></XLg>
-                        </a>    
-                    </Navbar.Text>
-                </div>
-            )
+            return <div key={index} className="friendListItem">
+                        <Navbar.Text className="friendListText"> 
+                            <a href='#' onClick={() => ChangeCurrentUser(friendData.friendname)}>
+                                {friendData.friendname}
+                            </a> 
+                            <a href="#" onClick={() => acceptFriendRequest(friendData.friendname)}>
+                                <CheckLg className="friendListAcceptIcon"></CheckLg>
+                            </a>
+                            <a href="#" onClick={() => removeFriend(friendData.friendname)}>
+                                <XLg className="friendListRemoveIcon"></XLg>
+                            </a>    
+                        </Navbar.Text>
+                   </div>
         }
     }
 
@@ -253,13 +231,13 @@ export default function Dashboard({loginName}) {
 
         }).catch(err => console.log("PopulateFriendList: ", err))
         let updatedFriendList = []
-        friendData.forEach(friend => {
-            const friendListItem = createFriendlistItem(friend)
+        friendData.forEach((friend, index) => {
+            const friendListItem = createFriendlistItem(friend, index)
             if (friendListItem) {
                 updatedFriendList.unshift(friendListItem)
-            }
-            
+            }  
         })
+        console.log(updatedFriendList)
         setFriendList(updatedFriendList)
     }
 

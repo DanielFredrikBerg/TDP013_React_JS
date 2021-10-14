@@ -35,17 +35,6 @@
     text-align: center;
 }
 
-.postBubble {
-  background-color: #212529;
-  width: max-content;
-  max-width: 600px;
-  margin: auto;
-  margin-top: 15px;
-  padding: 10px;
-  border-radius: 5px;
-  color: #8a9a93;
-}
-
 a:visited,
 a:link {
     text-decoration: none;
@@ -57,4 +46,47 @@ a:active,
 a:hover {
     text-decoration: underline;
     color: white
+}
+
+
+.postBubble {
+  background-color: #212529;
+  width: max-content;
+  max-width: 600px;
+  margin: auto;
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 5px;
+  color: #8a9a93;
+}
+
+.friendListItem {
+  width: max-content; 
+  margin: 10px; 
+  border: 2px; 
+  background-color: #212529; 
+  border-style: solid; 
+  border-radius: 5px;
+}
+
+.friendListText {
+  color: #212529;
+  margin-left: 10px;
+}
+
+.friendListChatIcon {
+  color: yellow;
+  margin-left: 20px;
+}
+
+.friendListRemoveIcon {
+  color: red;
+  margin: 10px;
+  margin-left: 15px;
+}
+
+.friendListAcceptIcon {
+  color: green;
+  margin: 10px;
+  margin-left: 20px;
 }

@@ -38,7 +38,6 @@ function checkDbEntry(dbEntry) {
 }
 
 async function login(credentials) {
-    //console.log("login", credentials)
     if ( checkCredentials(credentials) )
         {
         const db = await MongoClient.connect(url)
