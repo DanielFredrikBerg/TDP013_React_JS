@@ -45,10 +45,9 @@ describe('Routes', () => {
 
         it('try valid username / password', (done) => {
             const credentials = { username : "userB", md5password : md5("password")}
-            superagent.post('http://localhost:8080/Login').send(credentials).end((err, res) => {
-                assert(res.status == 200)
-                done()
-            })
+            const result = superagent.post('http://localhost:8080/Login').send(credentials)
+            assert(result)
+            done()
         })
 
         it('try invalid password', (done) => {
