@@ -8,9 +8,9 @@ const socket = io.connect("http://localhost:3001")
 
 export default function Chat({loginName, chatFriend, setChatFriend, showChatWindow, setShowChatWindow}) {
     const [currentMessage, setCurrentMessage] = useState("");
-    const [messageDict, setMessageDict] = useState({})
+    const [messageDict, setMessageDict] = useState([])
     
-    // up-to-state version of messageList
+    // up-to-state version of messageDict
     const messageDictRef = useRef()
     messageDictRef.current = messageDict
   
@@ -44,8 +44,12 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
                             <h4>{sender}</h4>
                             {message}
                         </div>
-        let updatedMessageList = [chatBubble, ...messageDictRef[chatFriend]]
-        let updatedMessageDict = {...messageDictRef, chatFriend : updatedMessageList}
+        if(messageDictRef.current[chatFriend] === undefined) {
+            messageDict[chatFriend] = []
+            alert("a")
+        }
+        let updatedMessageDict = {...messageDictRef.current}
+        updatedMessageDict[chatFriend] = [chatBubble, messageDictRef.current[chatFriend]]
         setMessageDict(updatedMessageDict)
     }
 
@@ -66,7 +70,7 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
     }
 
     async function closeChatWindow() {
-        setChatFriend("") // funkar inte ?
+        setChatFriend("") 
         setShowChatWindow(false) 
     }
 
