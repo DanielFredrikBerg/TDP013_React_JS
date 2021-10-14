@@ -55,8 +55,8 @@ function validateMessageForm(msgData) {
 }
 
 async function login(credentials) {
-    if ( checkCredentials(credentials) )
-        {
+    /* if ( checkCredentials(credentials) )
+        { */
         const db = await MongoClient.connect(url)
         const dbo = db.db("tdp013")
         await dbo.collection("user_accounts")
@@ -69,14 +69,14 @@ async function login(credentials) {
                 throw new Error("user does not exist.")
             }
         })
-    } else {
+   /*  } else {
         throw new Error("login credentials empty.")
-    }
+    } */
 }
 
 async function createAccount(credentials) {
-    if ( checkCredentials(credentials) )
-        {
+    //if ( checkCredentials(credentials) )
+        //{
         const db = await MongoClient.connect(url)
         const dbo = db.db("tdp013")
         await dbo.collection("user_accounts")
@@ -92,9 +92,9 @@ async function createAccount(credentials) {
         }).then(result => {
             return result
         }).catch(err => {throw new Error(err)} )
-    } else {
+    /* } else {
         throw new Error("user credentials empty.")
-    }
+    } */
 }
     
 
@@ -125,7 +125,7 @@ async function getMessages(userData) {
 }
 
 async function findUser(userData) {
-    if( checkUserName(userData) ){
+    //if( checkUserName(userData) ){
         const db = await MongoClient.connect(url)
         const dbo = db.db("tdp013")
         const result = await dbo.collection("user_accounts").findOne( {username : userData.username } )
@@ -135,9 +135,9 @@ async function findUser(userData) {
         } else { 
             throw new Error("User does not exist.") 
         }
-    } else {
+    /* } else {
         throw new Error("Invalid username in findUser.")
-    }
+    } */
       
 }
 
