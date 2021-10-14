@@ -16,10 +16,10 @@ export default function Dashboard({loginName}) {
     const [postText, setPostText] = useState("")
     const [findUserText, setFindUserText] = useState()
     const [findUserStatusMessage, setFindUserStatusMessage] = useState()
-    const [currentUserFriendStatus, setCurrentUserFriendStatus] = useState(-1)
+    let [currentUserFriendStatus, setCurrentUserFriendStatus] = useState(-1)
     const [friendList, setFriendList] = useState([])
     const [showChatWindow, setShowChatWindow] = useState(false)
-    const [chatFriend, setChatFriend] = useState()
+    let [chatFriend, setChatFriend] = useState()
 
     useEffect(async () => {
         if (sessionStorage.getItem('currentUser')) {
@@ -101,6 +101,7 @@ export default function Dashboard({loginName}) {
     }
 
     async function GetFriendStatus(friend) {
+        
         if (friend === loginName) {
             return -1
         }
@@ -111,28 +112,31 @@ export default function Dashboard({loginName}) {
             body: JSON.stringify({username : loginName, friendname : friend})
         }).then(res => {
             if (res.status === 200) {
+                console.log(res)
                 return res.json()
-            }
+            }   
         })
         .catch(err => console.log("GetFriendStatus(friend) error: ", err) )
         if (result) {
-            return result.friendstatus
+            return result.friendstatus 
         } else {
             return 0
-        }
+        } 
     }
 
     async function ChangeCurrentUser(user) {
-            if (user === loginName) {
-                setCurrentUserFriendStatus(-1)
-            } else {
-                const status = await GetFriendStatus(user)
-                setCurrentUserFriendStatus(status) 
-            }
-            sessionStorage.setItem('currentUser', user) 
-            currentUser = user  
-            setCurrentUser(user)
-            DisplayAllPosts(user) 
+        if (user === loginName) {
+            setCurrentUserFriendStatus(-1)
+        } else {
+            
+            const status = await GetFriendStatus(user)
+            
+            setCurrentUserFriendStatus(status) 
+        }
+        sessionStorage.setItem('currentUser', user) 
+        currentUser = user  
+        setCurrentUser(user)
+        DisplayAllPosts(user) 
     }
 
     async function findUser() {
@@ -142,7 +146,7 @@ export default function Dashboard({loginName}) {
             body: JSON.stringify({username : findUserText})
           }).then(res => {
             if (res.status === 200) {
-                ChangeCurrentUser(findUserText)
+                ChangeCurrentUser(findUserText)   
                 setFindUserStatusMessage("")
             } else {
                 setFindUserStatusMessage(`User ${findUserText} not Found`)

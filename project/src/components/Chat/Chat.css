@@ -1,0 +1,35 @@
+
+.chatBubbleSender {
+    background-color : #212529;
+    color: #8a9a93; 
+    border-radius: 10px; 
+    width: max-content; 
+    padding: 10px; 
+    margin: 10px;
+    min-width: 125px; 
+    max-width: 245px;
+    text-align: right;
+    margin-left: auto;
+}
+
+.chatBubbleReciever {
+    background-color: #212529; 
+    color: #8a9a93;
+    border-radius: 10px; 
+    width: max-content; 
+    padding: 10px; 
+    margin: 10px; 
+    margin-left: 15px; 
+    min-width: 125px; 
+    max-width: 245px;
+}
+
+.chatWindow {
+    background-color : #212529; 
+        width: 350px; 
+        height: 500px; 
+        margin: 30px; 
+        border-radius: 10px; 
+        border-width: 10px; 
+        border-color: #212529;
+}
