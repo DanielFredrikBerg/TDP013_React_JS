@@ -11,18 +11,23 @@ let url = "mongodb://localhost:27017";
 async function clearDb() {
     const db = await MongoClient.connect(url)
     const dbo = db.db("tdp013");
-
     await dbo.collection("user_accounts").deleteMany({})
-
     db.close()
 }
 
-async function addUser() {
-    console.log("fdghj")
+async function addUser(name) {
     const db = await MongoClient.connect(url)
     const dbo = db.db("tdp013");
-    await dbo.collection("user_accounts").insertOne({username : "userA", md5password : md5("password")})
+    await dbo.collection("user_accounts").insertOne({username : name, md5password : md5("password")})
     db.close()
+}
+
+async function findUser(userName) {
+    const db = await MongoClient.connect(url)
+    const dbo = db.db("tdp013");
+    const result = await dbo.collection("user_accounts").findOne({username: userName } )
+    db.close()
+    return result
 }
 
 describe('Routes', () => {
@@ -33,22 +38,60 @@ describe('Routes', () => {
     describe('/Login', () => {
 
         before(() => {
-            addUser()
+            addUser("userA")
+            addUser("userB")
+            addUser("userC")
         })
 
         it('try valid username / password', (done) => {
-            const credentials = { username : "userA", md5password : md5("password")}
+            const credentials = { username : "userB", md5password : md5("password")}
             superagent.post('http://localhost:8080/Login').send(credentials).end((err, res) => {
                 assert(res.status == 200)
                 done()
             })
         })
 
-        it('try invalid username', (done) => {
-            done()
+        it('try invalid password', (done) => {
+            const credentials = { username : "userB", md5password : md5("invalid_password")}
+            superagent.post('http://localhost:8080/Login').send(credentials).end((err, res) => {
+                assert(res.status == 409)
+                done()
+            })
         })
 
-        it('try invalid password', (done) => {
+        it('try invalid username', (done) => {
+            const credentials = { username : "userAlaskmflskmlkno32i2", md5password : md5("password")}
+            superagent.post('http://localhost:8080/Login').send(credentials).end((err, res) => {
+                assert(res.status == 409)
+                done()
+            })
+        })
+
+        it('try empty user', (done) => {
+            const credentials = {}
+            superagent.post('http://localhost:8080/Login').send(credentials).end((err, res) => {
+                assert(res.status == 409)
+                done()
+            })
+        })
+
+        it('try empty password with correct user', (done) => {
+            const credentials = {username : "userB", md5password : null}
+            superagent.post('http://localhost:8080/Login').send(credentials).end((err, res) => {
+                assert(res.status == 409)
+                done()
+            })
+        })
+
+        it('try with nosql injection', (done) => {
+            const credentials = { $where: function() { return (this.name == "userB") } } ;
+            superagent.post('http://localhost:8080/Login').send(credentials).end((err, res) => {
+                assert(res.status == 409)
+                done()
+            })
+        })
+
+        it('TODO', (done) => {
             done()
         })
     })
@@ -56,18 +99,102 @@ describe('Routes', () => {
     describe('/CreateAccount', () => {
 
         before( () => {
+            addUser("userA")
+        })
 
+        it('try valid username / password', (done) => {
+            const credentials = { username : "userklasj", md5password : md5("password")}
+            superagent.post('http://localhost:8080/CreateAccount').send(credentials).end((err, res) => {
+                assert(res.status == 200)
+                done()
+            })
+        })
+
+        it('try already existing user', (done) => {
+            addUser("userA") // Vet inte varför den inte lägger till i before ovan..
+            
+            const credentials = { username : "userA", md5password : md5("password")}
+            superagent.post('http://localhost:8080/CreateAccount').send(credentials).end((err, res) => {
+                assert(res.status == 407)
+                done()
+            })
+        })
+
+        it('try empty username and password', (done) => {
+            done()
+        })
+
+        it('try empty username only', (done) => {
+            done()
+        })
+
+        it('try empty password only', (done) => {
+            done()
+        })
+    })
+
+    describe('/AddMessage', () => {
+
+        before( () => {
+            clearDb();
         })
 
         it('try valid username / password', (done) => {
             done()
         })
+    })
 
-        it('try invalid username', (done) => {
-            done()
+    describe('/GetMessages', () => {
+
+        before( () => {
+            clearDb();
         })
 
-        it('try invalid password', (done) => {
+        it('try valid username / password', (done) => {
+            done()
+        })
+    })
+
+    describe('/FindUser', () => {
+
+        before( () => {
+            clearDb();
+        })
+
+        it('try valid username / password', (done) => {
+            done()
+        })
+    })
+
+    describe('/GetFriendStatus', () => {
+
+        before( () => {
+            clearDb();
+        })
+
+        it('try valid username / password', (done) => {
+            done()
+        })
+    })
+
+    describe('/SetFriendStatus', () => {
+
+        before( () => {
+            clearDb();
+        })
+
+        it('try valid username / password', (done) => {
+            done()
+        })
+    })
+
+    describe('/GetAllFriends', () => {
+
+        before( () => {
+            clearDb();
+        })
+
+        it('try valid username / password', (done) => {
             done()
         })
     })
