@@ -40,16 +40,7 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
     function createChatBubble(message, sender) {
         var chatBubble
         if (sender == loginName) {
-            chatBubble = <div style={{backgroundColor : "#212529", 
-                                      color : "#8a9a93", 
-                                      borderRadius : "10px", 
-                                      width : "max-content", 
-                                      padding : "10px", 
-                                      margin: "10px", 
-                                      minWidth : "125px", 
-                                      maxWidth : "245px",
-                                      textAlign : "right",
-                                      marginLeft: "auto"}}>
+            chatBubble = <div className="chatBubble">
                             <h4>{sender}</h4>
                             {message}
                          </div>

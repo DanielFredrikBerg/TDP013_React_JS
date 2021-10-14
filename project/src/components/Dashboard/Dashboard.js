@@ -101,6 +101,7 @@ export default function Dashboard({loginName}) {
     }
 
     async function GetFriendStatus(friend) {
+        
         if (friend === loginName) {
             return -1
         }
@@ -111,7 +112,7 @@ export default function Dashboard({loginName}) {
           }).then(res => {
             if (res.status === 200) {
                 return res.json()
-            }
+            }   
         })
         if (result) {
             return result.friendstatus
@@ -121,16 +122,18 @@ export default function Dashboard({loginName}) {
     }
 
     async function ChangeCurrentUser(user) {
-            if (user === loginName) {
-                setCurrentUserFriendStatus(-1)
-            } else {
-                const status = await GetFriendStatus(user)
-                setCurrentUserFriendStatus(status) 
-            }
-            sessionStorage.setItem('currentUser', user) 
-            currentUser = user  
-            setCurrentUser(user)
-            DisplayAllPosts(user) 
+        if (user === loginName) {
+            setCurrentUserFriendStatus(-1)
+        } else {
+            
+            const status = await GetFriendStatus(user)
+            
+            setCurrentUserFriendStatus(status) 
+        }
+        sessionStorage.setItem('currentUser', user) 
+        currentUser = user  
+        setCurrentUser(user)
+        DisplayAllPosts(user) 
     }
 
     async function findUser() {
@@ -140,7 +143,7 @@ export default function Dashboard({loginName}) {
             body: JSON.stringify({username : findUserText})
           }).then(res => {
             if (res.status === 200) {
-                ChangeCurrentUser(findUserText)
+                ChangeCurrentUser(findUserText)   
                 setFindUserStatusMessage("")
             } else {
                 setFindUserStatusMessage(`User ${findUserText} not Found`)
