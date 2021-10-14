@@ -37,8 +37,6 @@ async function createUser(credentials) {
   return token;
 }
 
-
-
 export default function Login({ setToken }) {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");

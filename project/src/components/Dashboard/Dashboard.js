@@ -20,6 +20,10 @@ export default function Dashboard({loginName}) {
     const [showChatWindow, setShowChatWindow] = useState(false)
     let [chatFriend, setChatFriend] = useState()
 
+    // up-to-state version of chatFriend
+    const chatFriendRef = useRef()
+    chatFriendRef.current = chatFriend
+
     useEffect(async () => {
         if (sessionStorage.getItem('currentUser')) {
             const storedCurrentUser = sessionStorage.getItem('currentUser')
@@ -178,7 +182,7 @@ export default function Dashboard({loginName}) {
     }
 
     function openChatWindow(friend) {
-        if (chatFriend === friend) {
+        if (chatFriendRef === friend) {
             chatFriend = null
             setChatFriend(null)
             setShowChatWindow(false)
@@ -247,7 +251,6 @@ export default function Dashboard({loginName}) {
         <div>
             <div id="top">
                 <Navbar variant="dark" 
-                        id="Navbar" 
                         bg="dark" 
                         expand="sm" 
                         fixed="top"
