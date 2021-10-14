@@ -1,6 +1,3 @@
-.dashboard_wrapper {
-    background: lightpink;
-}
 
 .btn,
 .btn:active,
@@ -89,4 +86,84 @@ a:hover {
   color: green;
   margin: 10px;
   margin-left: 20px;
+}
+
+.navBar {
+  height: 14vh;
+  min-height: 120px;
+}
+
+.friendList {
+  background-color: lightgreen; 
+  border-width: 3px; 
+  border-color: #212529;
+}
+
+.findUserForm {
+  margin-top: 15px;
+}
+
+.findUserText {
+  margin-right: 10px;
+}
+
+.findUserLink {
+  margin-left: 10px;
+}
+
+.findUserStatusMessage {
+  color: red;
+  margin-top: 10px;
+}
+
+.logout {
+  margin-right: 10px;
+}
+
+.logoutText {
+  margin-top: 25px;
+}
+
+.logoutLink {
+  margin-left: 20px;
+}
+
+.botDiv {
+  background-color: #212529; 
+    color: white; 
+    margin-top: 30px; 
+    border-radius: 10px; 
+    padding-top: 15px; 
+    padding-bottom: 15px; 
+    padding-left: 35px; 
+    padding-right: 35px; 
+    text-align: center;
+}
+
+.currentUserHeader {
+  color: #8a9a93;
+}
+
+.friendStatusText {
+  color: #8a9a93;
+}
+
+.createPostDiv {
+  width: 600px;
+}
+
+.createPostGroup {
+  margin-top: 15px;
+}
+
+.createPostText {
+  margin-left: 10px;
+}
+
+.postDiv {
+  background-color: lightgreen; 
+  color: white; 
+  padding: 10px; 
+  border-radius: 10px; 
+  max-width: 700px;
 }
