@@ -39,19 +39,25 @@ function checkDbEntry(dbEntry) {
 
 function validateMessageForm(msgData) {
     return JSON.stringify(msgData) !== "{}"
-        && Object.keys(msgData).length === 4
+        && Object.keys(msgData).length === 3
         && msgData.hasOwnProperty("msg")
         && JSON.stringify(msgData.msg) !== "{}"
         && msgData.msg !== ""
-        && msgData.hasOwnProperty("_id")
-        && JSON.stringify(msgData._id) !== "{}"
-        && msgData._id !== ""
         && msgData.hasOwnProperty("creator")
         && JSON.stringify(msgData.creator) !== "{}"
         && msgData.creator !== ""
         && msgData.hasOwnProperty("page")
         && JSON.stringify(msgData.page) !== "{}"
         && msgData.page !== ""
+}
+
+function validateFriendForm(userFriendData) {
+    return JSON.stringify(userFriendData) !== "{}"
+        && Object.keys(userFriendData).length === 2
+        && msgData.hasOwnProperty("username")
+        && JSON.stringify(userFriendData.username) !== "{}"
+        && userFriendData.hasOwnProperty("friendname")
+        && JSON.stringify(userFriendData.friendname) !== "{}"
 }
 
 async function login(credentials) {
@@ -98,11 +104,11 @@ async function createAccount(credentials) {
 }
     
 
-
 async function addMessage(msgData) {
+    console.log("WHAT", validateMessageForm(msgData))
     if (validateMessageForm(msgData)) {
-        const user = msgData.creator
-        const isUser = await findUser({username: user})
+        const isUser = await findUser({ username: msgData.creator })
+        console.log(isUser)
         if(isUser) {
             const db = await MongoClient.connect(url)
             const dbo = db.db("tdp013")
@@ -113,15 +119,21 @@ async function addMessage(msgData) {
     } else {
         throw new Error("Invalid message form.")
     }
-     
 }
 
 async function getMessages(userData) {
-    const db = await MongoClient.connect(url)
-    const dbo = db.db("tdp013")
-    const result = await dbo.collection(`${userData.username}_messages`).find({}).toArray()
-    db.close()
-    return result 
+    if(checkUserName(userData)) {
+        const isUser = await findUser({ username: userData.username })
+        if(isUser) {
+            const db = await MongoClient.connect(url)
+            const dbo = db.db("tdp013")
+            const result = await dbo.collection(`${userData.username}_messages`).find({}).toArray()
+            db.close()
+            return result 
+        } else {
+            throw new Error("getMessages: User can not be found.")
+        }
+    }
 }
 
 async function findUser(userData) {
@@ -144,16 +156,18 @@ async function findUser(userData) {
 
 
 async function getFriendStatus(userData) {
-    const db = await MongoClient.connect(url)
-    const dbo = db.db("tdp013")
-    const result = await dbo.collection(`${userData.username}_friends`).findOne({friendname : userData.friendname})
-    db.close()
-    if (result) {
-        return result 
-    } else {
-        return {friendstatus : 0}
-    }
-    
+    console.log(userData)
+    //if(validateFriendForm(userData)) {
+        const db = await MongoClient.connect(url)
+        const dbo = db.db("tdp013")
+        const result = await dbo.collection(`${userData.username}_friends`).findOne({friendname : userData.friendname})
+        db.close()
+        if (result) {
+            return result 
+        } else {
+            return {friendstatus : 0}
+        }
+    //} 
 }
 
 async function setFriendStatus(userData) {

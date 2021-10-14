@@ -66,7 +66,9 @@ export default function Dashboard({loginName}) {
              } 
         }).catch(err => console.log("DisplayAllPosts Error: ", err))
         var updatedUserPosts = []
-        msgData.forEach(msg => updatedUserPosts.unshift(createPostElement(msg)))
+        if(msgData) {
+            msgData.forEach(msg => updatedUserPosts.unshift(createPostElement(msg)))
+        }
         setUserPosts(updatedUserPosts)
     }
 
