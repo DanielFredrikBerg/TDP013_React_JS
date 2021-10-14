@@ -49,8 +49,9 @@ async function createAccount(credentials) {
             }
         }).then(() => {
             return dbo.collection("user_accounts").insertOne(credentials)
-        }).then(result => {console.log(result); return result})
-        .catch(err => {throw new Error(err)} )
+        }).then(result => {
+            return result
+        }).catch(err => {throw new Error(err)} )
     } else {
         throw new Error("user credentials empty.")
     }
