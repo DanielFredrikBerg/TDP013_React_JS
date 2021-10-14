@@ -40,23 +40,14 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
     }
 
     function createChatBubble(message, sender) {
-        var chatBubble
-        if (sender == loginName) {
-            chatBubble = <div className="chatBubbleSender">
+        let chatBubble = <div key={Date.now()} className={sender == loginName ? "chatBubbleSender" : "chatBubbleReciever"}>
                             <h4>{sender}</h4>
                             {message}
-                         </div>
-        } else {
-            chatBubble = <div className="chatBubbleReciever">
-                            <h4>{sender}</h4>
-                            {message}
-                         </div>
-        }
+                        </div>
         setMessageList([chatBubble, ...messageListRef.current])
     }
 
     async function sendChatMessage() {
-        
         if (currentMessage !== "") {
             createChatBubble(currentMessage, loginName)
             const messageData = {
@@ -79,59 +70,25 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
 
     return (
         <div className="chatWindow">
-
-            <div style={{textAlign : "right"}}>
-                <XLg onClick={closeChatWindow} 
-                     style={{cursor : "pointer", 
-                             color : "white", 
-                             margin: "10px"}}>
-                </XLg>
+            <div className="closeButtonDiv">
+                <XLg className="closeButtonIcon" onClick={closeChatWindow}></XLg>
             </div>
 
-            <div style={{color : "#8a9a93", 
-                         textAlign : "center", 
-                         paddingTop : "10px"}}> 
-
-                <h2 style={{marginTop : "-40px"}}>
-                    Chat 
-                </h2>
-
-                <p>
-                    Chatting with {chatFriend}
-                </p>
+            <div className="chatHeaderDiv"> 
+                <h2 className="headerText">Chat</h2>
+                <p>Chatting with {chatFriend}</p>
             </div>
 
-            <div key={'inline'} 
-                 style={{backgroundColor : "lightgreen", 
-                         width : "316px", 
-                         height : "350px", 
-                         display: "flex", 
-                         flexDirection : "column-reverse", 
-                         borderRadius : "8px", 
-                         marginLeft : "17px", 
-                         overflow : "scroll"}}>
-                {messageList}
-            </div>
+            <div className="messageDiv">{messageList}</div>
             <form>
-                <label style={{marginLeft : "22px", 
-                               marginTop : "15px"}} 
-                       onKeyPress={e => onKeyPress(e)}>
-
+                <label className="messageLabel" onKeyPress={e => onKeyPress(e)}>
                     <input value={currentMessage} 
-                           style={{width : "270px"}} 
+                           className="messageInput"
                            type="text" 
                            placeholder="Write message here..." 
                            onChange={(event) => {setCurrentMessage(event.target.value)}} 
                            name="username"/>
-
-                    <ArrowUpSquare onClick={sendChatMessage} 
-                                   style={{color : "white", 
-                                           scale : "180%", 
-                                           marginLeft : "10px",
-                                           marginBottom : "4px", 
-                                           cursor : "pointer"}}>
-                    </ArrowUpSquare>
-
+                    <ArrowUpSquare className="sendMessageIcon" onClick={sendChatMessage}></ArrowUpSquare>
                 </label>
             </form>
         </div>)

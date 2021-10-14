@@ -1,6 +1,11 @@
 const {MongoClient, ObjectId} = require('mongodb');
 let url = "mongodb://localhost:27017"
 
+function checkIfValidMD5Hash(str) {
+    const regexExp = /^[a-f0-9]{32}$/gi;
+    return regexExp.test(str);
+  }
+
 function checkCredentials(credentials) {
     return credentials !== null 
         && JSON.stringify(credentials) !== "{}"
@@ -9,6 +14,7 @@ function checkCredentials(credentials) {
         && JSON.stringify(credentials.username) !== "{}"
         && credentials.hasOwnProperty('md5password')
         && JSON.stringify(credentials.md5password) !== "{}"
+        && checkIfValidMD5Hash(credentials.md5password)
 }
 
 function checkUserName(username) {
@@ -28,6 +34,7 @@ function checkDbEntry(dbEntry) {
         && JSON.stringify(dbEntry.username) !== "{}"
         && dbEntry.hasOwnProperty("md5password")
         && JSON.stringify(dbEntry.md5password) !== "{}"
+        && checkIfValidMD5Hash(dbEntry.md5password)
 }
 
 async function login(credentials) {

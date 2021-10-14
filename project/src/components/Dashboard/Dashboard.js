@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {Dropdown, Navbar, Container, Form} from 'react-bootstrap';
 import {CheckLg, XLg, ChatLeftText} from 'react-bootstrap-icons';
@@ -7,7 +7,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './Dashboard.css';
 
 import Chat from '../Chat/Chat'
-import { post } from 'superagent';
 
 export default function Dashboard({loginName}) {
 
@@ -43,23 +42,12 @@ export default function Dashboard({loginName}) {
         }
     }
 
-    async function logoutUser() {
-        sessionStorage.clear();
-    }
-
     function createPostElement(postData) {
         return (
-            <div className="myfancydiv" key={postData._id} 
-                 style={{color : "#8a9a93", 
-                         width : "max-content",
-                         maxWidth : "600px", 
-                         margin : "auto", 
-                         marginTop : "15px", 
-                         padding : "10px",
-                         borderRadius : "5px"}}>
+            <div className="postBubble" key={postData._id}>
                 <h4>
-                    <a href="#" 
-                       style={{color : "white"}} 
+                    <a href="#"
+                       className="postBubbleUserName"  
                        onClick={() => ChangeCurrentUser(postData.creator)}>
                        {postData.creator}
                     </a>
@@ -112,7 +100,6 @@ export default function Dashboard({loginName}) {
             body: JSON.stringify({username : loginName, friendname : friend})
         }).then(res => {
             if (res.status === 200) {
-                console.log(res)
                 return res.json()
             }   
         })
@@ -207,8 +194,8 @@ export default function Dashboard({loginName}) {
     }
 
     function createFriendlistItem(friendData) {
-        if (friendData.friendstatus === 3) {
-           return <div style={{width : "max-content", 
+        if (friendData.friendstatus == 3) {
+           return <div key={Date.now()} style={{width : "max-content", 
                                margin : "10px", 
                                border : "2px", 
                                backgroundColor : "#212529", 
@@ -350,7 +337,7 @@ export default function Dashboard({loginName}) {
                                    {loginName}
                                 </a>
                                 <p>
-                                    <Navbar.Text onClick={logoutUser} 
+                                    <Navbar.Text onClick={() => sessionStorage.clear()} 
                                                  style={{marginLeft: "20px"}}>
                                         <a href='http://localhost:3000/Login'>
                                             Sign Out

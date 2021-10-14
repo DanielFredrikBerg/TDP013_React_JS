@@ -21,10 +21,6 @@
     
 }
 
-.myfancydiv {
-  background-color: lightpink;
-}
-
 #bot {
     min-height: 86vh;
     width: 100%;
@@ -40,16 +36,19 @@
 }
 
 .postBubble {
-  background-color : "#212529";
-  width : "max-content";
-  max-width : "600px";
-  margin: "auto";
-  margin-top: "15px";
-  padding : "10px";
-  border-radius : "5px";
-  color : "#8a9a93";
+  background-color: #212529;
+  width: max-content;
+  max-width: 600px;
+  margin: auto;
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 5px;
+  color: #8a9a93;
 }
 
+.postBubbleUserName {
+  color: white;
+}
 
 a:link {
     text-decoration: none;
