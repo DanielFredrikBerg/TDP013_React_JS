@@ -66,7 +66,9 @@ export default function Dashboard({loginName}) {
              } 
         }).catch(err => console.log("DisplayAllPosts Error: ", err))
         var updatedUserPosts = []
-        msgData.forEach(msg => updatedUserPosts.unshift(createPostElement(msg)))
+        if (msgData) {
+            msgData.forEach(msg => updatedUserPosts.unshift(createPostElement(msg)))
+        }
         setUserPosts(updatedUserPosts)
     }
 
@@ -242,14 +244,14 @@ export default function Dashboard({loginName}) {
     }
 
     return(
-        <div className="dashboard_wrapper" >
+        <div>
             <div id="top">
                 <Navbar variant="dark" 
                         id="Navbar" 
                         bg="dark" 
                         expand="sm" 
-                        fixed="top" 
-                        style={{height : "14vh", minHeight : "120px"}}>
+                        fixed="top"
+                        className="navBar">
                     <Container fluid>
                         <Navbar.Toggle aria-controls="navbar-dark" />
                         <Navbar.Collapse>
@@ -259,17 +261,10 @@ export default function Dashboard({loginName}) {
                                     id="dropdown_button">
                                     Friends
                                 </Dropdown.Toggle>  
-                                <Dropdown.Menu style={{backgroundColor : "lightgreen", 
-                                                       borderWidth : "3px", 
-                                                       borderColor : "#212529"}}>
+                                <Dropdown.Menu className="friendList">
                                     {friendList.length === 0 && 
-                                    <div style={{width : "max-content",
-                                                  margin : "10px", 
-                                                  border : "2px", 
-                                                  backgroundColor : "#212529", 
-                                                  borderStyle : "solid", 
-                                                  borderRadius : "5px"}}>
-                                        <Navbar.Text style={{color : "#8a9a93", margin : "10px"}}>
+                                    <div className="friendListItem">
+                                        <Navbar.Text className="friendListText">
                                             You don't have any Friends
                                         </Navbar.Text>
                                     </div>}
@@ -280,10 +275,9 @@ export default function Dashboard({loginName}) {
 
                         <Navbar.Collapse id="navbar-dark" 
                                          className="justify-content-center">
-                            <form id="find-user" 
-                                  style={{marginTop : "15px"}}>
+                            <form className="findUserForm">
                                 <p>
-                                    <Navbar.Text style={{marginRight : "10px"}}>
+                                    <Navbar.Text className="findUserText">
                                         Find User
                                     </Navbar.Text>
                                 </p>
@@ -293,29 +287,26 @@ export default function Dashboard({loginName}) {
                                            onKeyPress={e => onKeyPress(e)} 
                                            onChange={e => setFindUserText(e.target.value)}/>
                                 </label>
-                                <Navbar.Text style={{marginLeft : "10px"}}>
-                                    <a href='#' 
-                                       onClick={findUser}>
+                                <Navbar.Text className="findUserLink">
+                                    <a href='#' onClick={findUser}>
                                        Search
                                     </a>
                                 </Navbar.Text>
-                                <p style={{color : "red", marginTop : "10px"}}>{
-                                    findUserStatusMessage}
+                                <p className="findUserStatusMessage">
+                                    {findUserStatusMessage}
                                 </p>
                             </form>
                         </Navbar.Collapse>
 
-                        <Navbar.Collapse className="justify-content-end" 
-                                         style={{marginRight : "10px"}}>
-                            <Navbar.Text style={{marginTop : "25px"}}>
+                        <Navbar.Collapse className="justify-content-end logout">
+                            <Navbar.Text className="logoutText">
                                 {"Signed in as: "}
-                                <a href="#" 
-                                   onClick={() => ChangeCurrentUser(loginName)}>
+                                <a href="#" onClick={() => ChangeCurrentUser(loginName)}>
                                    {loginName}
                                 </a>
                                 <p>
                                     <Navbar.Text onClick={() => sessionStorage.clear()} 
-                                                 style={{marginLeft: "20px"}}>
+                                                 className="logoutLink">
                                         <a href='http://localhost:3000/Login'>
                                             Sign Out
                                         </a>
@@ -327,73 +318,53 @@ export default function Dashboard({loginName}) {
                 </Navbar> 
             </div>
             <div id="bot">
-                <div style={{backgroundColor : "#212529", 
-                             color : "white", 
-                             marginTop : "30px", 
-                             borderRadius : "10px", 
-                             paddingTop : "15px", 
-                             paddingBottom : "15px", 
-                             paddingLeft : "35px", 
-                             paddingRight : "35px", 
-                             textAlign : "center"}}>
-
-                    <h1 style={{color : "#8a9a93"}}>
+                <div className="botDiv">
+                    <h1 className="currentUserHeader">
                         {currentUser}'s Page
                     </h1>
-
                     {currentUserFriendStatus === 3 && 
-                        <Navbar.Text style={{color : "#8a9a93"}}>
+                        <Navbar.Text className="friendStatusText">
                             You are Friends
                         </Navbar.Text>}
 
-                    {currentUserFriendStatus=== 2 && 
-                        <Navbar.Text ><a 
-                            style={{color : "white"}} 
-                            href='#' 
-                            onClick={() => acceptFriendRequest(currentUser)}>
-                            Accept Friend Request
-                        </a> </Navbar.Text>}
+                    {currentUserFriendStatus === 2 && 
+                        <Navbar.Text>
+                            <a href='#' onClick={() => acceptFriendRequest(currentUser)}>
+                                Accept Friend Request
+                            </a> 
+                        </Navbar.Text>}
 
                     {currentUserFriendStatus === 1 && 
-                        <Navbar.Text style={{color : "#8a9a93"}}>
+                        <Navbar.Text className="friendStatusText">
                             Friend Request has been Sent
                         </Navbar.Text>}
 
                     {currentUserFriendStatus === 0 && 
-                        <Navbar.Text><a 
-                            style={{color : "white"}} 
-                            href='#' 
-                            onClick={sendFriendRequest}> 
-                            Send Friend Request
-                        </a> </Navbar.Text>}
+                        <Navbar.Text>
+                            <a href='#' onClick={sendFriendRequest}> 
+                                Send Friend Request
+                            </a> 
+                        </Navbar.Text>}
 
                     {(loginName === currentUser || currentUserFriendStatus === 3) && 
-                    <div style={{width : "600px"}}>
+                    <div className="createPostDiv">
                         <form>    
-                            <Form.Group style={{marginTop : "15px"}}>
+                            <Form.Group className="createPostGroup">
                                 <Form.Control id="textField" 
                                               as="textarea" 
                                               rows="3"
                                               value={postText}
                                               onChange={e => setPostText(e.target.value)}/>
                             </Form.Group>
-
-                            <Navbar.Text style={{marginLeft : "10px"}}>
-                                <a style={{color : "white"}} 
-                                   href='#' 
-                                   onClick={createPost}>
+                            <Navbar.Text className="createPostText">
+                                <a href='#' onClick={createPost}>
                                    Post Message
                                 </a>
                             </Navbar.Text>
                         </form>
                     </div>}
                 </div>
-
-                <div id="posts"  style={{backgroundColor : "lightgreen", 
-                                         color : "white", 
-                                         padding : "10px", 
-                                         borderRadius : "10px", 
-                                         maxWidth : "700px"}}>
+                <div className="postDiv">
                     {userPosts}
                 </div>
                 <div className="fixed-bottom" >
