@@ -26,10 +26,58 @@
 
 .chatWindow {
     background-color : #212529; 
-        width: 350px; 
-        height: 500px; 
-        margin: 30px; 
-        border-radius: 10px; 
-        border-width: 10px; 
-        border-color: #212529;
+    width: 350px; 
+    height: 500px; 
+    margin: 30px; 
+    border-radius: 10px; 
+    border-width: 10px; 
+    border-color: #212529;
+}
+
+.closeButtonDiv {
+    text-align : right;
+}
+
+.closeButtonIcon {
+   cursor: pointer;
+   color: white; 
+   margin: 10px;
+}
+
+.chatHeaderDiv {
+    color: #8a9a93; 
+    text-align: center;
+    padding-top: 10px;
+}
+
+.headerText {
+    margin-top: -40px;
+}
+
+.messageDiv {
+    background-color : lightgreen;
+    width: 316px; 
+    height: 350px; 
+    display: flex; 
+    flex-direction: column-reverse; 
+    border-radius: 8px; 
+    margin-left: 17px; 
+    overflow: scroll;
+}
+
+.messageLabel {
+    margin-left: 22px; 
+    margin-top: 15px; 
+}
+
+.messageInput {
+    width: 270px;
+}
+
+.sendMessageIcon {
+    color: white; 
+    scale: 180%; 
+    margin-left: 10px;
+    margin-bottom: 4px; 
+    cursor: pointer;
 }

@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {Dropdown, Navbar, Container, Form} from 'react-bootstrap';
 import {CheckLg, XLg, ChatLeftText} from 'react-bootstrap-icons';
@@ -7,7 +7,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './Dashboard.css';
 
 import Chat from '../Chat/Chat'
-import { post } from 'superagent';
 
 export default function Dashboard({loginName}) {
 
@@ -208,7 +207,7 @@ export default function Dashboard({loginName}) {
 
     function createFriendlistItem(friendData) {
         if (friendData.friendstatus == 3) {
-           return <div style={{width : "max-content", 
+           return <div key={Date.now()} style={{width : "max-content", 
                                margin : "10px", 
                                border : "2px", 
                                backgroundColor : "#212529", 
