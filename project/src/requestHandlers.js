@@ -100,7 +100,7 @@ async function createAccount(credentials) {
 
 
 async function addMessage(msgData) {
-    if (validateMessageForm(msgData)) {
+    //if (validateMessageForm(msgData)) {
         const user = msgData.creator
         const isUser = await findUser({username: user})
         if(isUser) {
@@ -110,9 +110,9 @@ async function addMessage(msgData) {
             db.close()
             return result
         }
-    } else {
+    /* } else {
         throw new Error("Invalid message form.")
-    }
+    } */
      
 }
 
