@@ -22,7 +22,7 @@ async function addUser(name) {
     db.close()
 }
 
-async function findUser(userName) {
+async function getPostsOfUser(userName) {
     const db = await MongoClient.connect(url)
     const dbo = db.db("tdp013");
     const result = await dbo.collection("user_accounts").findOne({username: userName } )

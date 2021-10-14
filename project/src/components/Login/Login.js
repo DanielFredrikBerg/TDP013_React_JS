@@ -75,7 +75,7 @@ export default function Login({ setToken }) {
       && username !==  ""
       && password !== null 
       && password !== "" ) {
-        console.log("PASSWORD: ", password)
+        //console.log("PASSWORD: ", password)
       const md5password = md5(password)
         createUser({username, md5password}).then(token => {
           setToken(token);
