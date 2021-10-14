@@ -76,7 +76,15 @@ describe('Routes', () => {
         })
 
         it('try empty password with correct user', (done) => {
-            const credentials = {username : "userB", md5password : null}
+            const credentials = {username : "userB", md5password : {}}
+            superagent.post('http://localhost:8080/Login').send(credentials).end((err, res) => {
+                assert(res.status == 409)
+                done()
+            })
+        })
+
+        it('try empty password fields', (done) => {
+            const credentials = { username : {}, md5password : {} }
             superagent.post('http://localhost:8080/Login').send(credentials).end((err, res) => {
                 assert(res.status == 409)
                 done()
@@ -120,17 +128,55 @@ describe('Routes', () => {
             })
         })
 
-        it('try empty username and password', (done) => {
-            done()
+        it('try empty credentials', (done) => {
+            const credentials = {}
+            superagent.post('http://localhost:8080/CreateAccount').send(credentials).end((err, res) => {
+                assert(res.status == 407)
+                done()
+            })
         })
 
-        it('try empty username only', (done) => {
-            done()
+        it('try empty username and empty password', (done) => {
+            const credentials = { username: {} , md5password: {} }
+            superagent.post('http://localhost:8080/CreateAccount').send(credentials).end((err, res) => {
+                assert(res.status == 407)
+                done()
+            })
         })
 
         it('try empty password only', (done) => {
-            done()
+            const credentials = { username : "userA", md5password : {} }
+            superagent.post('http://localhost:8080/CreateAccount').send(credentials).end((err, res) => {
+                assert(res.status == 407)
+                done()
+            })
         })
+
+        it('try empty username only with correct password', (done) => {
+            const credentials = { username: {}, md5password : md5("password") }
+            superagent.post('http://localhost:8080/CreateAccount').send(credentials).end((err, res) => {
+                assert(res.status == 407)
+                done()
+            })
+        })
+
+        it('try only with correct password', (done) => {
+            const credentials = { md5password : md5("password") }
+            superagent.post('http://localhost:8080/CreateAccount').send(credentials).end((err, res) => {
+                assert(res.status == 407)
+                done()
+            })
+        })
+
+        it('try only with correct username', (done) => {
+            const credentials = { username : "userA" }
+            superagent.post('http://localhost:8080/CreateAccount').send(credentials).end((err, res) => {
+                console.log(res.status)
+                done()
+            })
+        })
+
+        
     })
 
     describe('/AddMessage', () => {

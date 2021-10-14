@@ -18,7 +18,9 @@ async function loginUser(credentials) {
    if (res.status === 200) {
     token = credentials;
    } 
- })
+ }).catch((err) => {
+  console.log("Error in loginUser within Login.js", err);    
+});
  return token
 }
 
@@ -31,6 +33,8 @@ async function createUser(credentials) {
   }).then(res => {
     if (res.status === 200) {
       token = credentials;
+    } else {
+      throw new Error("Error createUser in Login.js")
     }
   }).catch((err) => {
     console.log(err);    
@@ -41,28 +45,37 @@ async function createUser(credentials) {
 
 
 export default function Login({ setToken }) {
-  var [username, setUserName] = useState();
-  var [password, setPassword] = useState();
+  var [username, setUserName] = useState("");
+  var [password, setPassword] = useState("");
   var [showErrorMsg, setShowErrorMsg] = useState(false)
 
   const handleLogin = async e => {
     e.preventDefault();
-      const md5password = md5(password)
-          loginUser({username, md5password}).then(token => {
-            setUserName("")
-            setPassword("")
-            setToken(token);
-            if (token) {
-              window.location.href="http://localhost:3000/Dashboard"
-            }
-            else{
-              console.log("Invalid username or password.")
-            }
-          }).catch(err => console.log("handleLogin Error: ", err))
+    if ( username !== null 
+      && username !==  ""
+      && password !== null 
+      && password !== "" ) {
+        const md5password = md5(password)
+        loginUser({username, md5password}).then(token => {
+          setUserName("")
+          setPassword("")
+          setToken(token);
+          if (token) {
+            window.location.href="http://localhost:3000/Dashboard"
+          }
+          
+        }).catch(err => console.log("loginUser in Login.js Error: ", err))
+      }
+     
     }
 
   const handleCreate = async e => {
     e.preventDefault();
+    if ( username !== null 
+      && username !==  ""
+      && password !== null 
+      && password !== "" ) {
+        console.log("PASSWORD: ", password)
       const md5password = md5(password)
         createUser({username, md5password}).then(token => {
           setToken(token);
@@ -72,7 +85,7 @@ export default function Login({ setToken }) {
             window.location.href="http://localhost:3000/Dashboard"
           }
         });
-   
+      }
     
   }
 

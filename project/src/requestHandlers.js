@@ -1,9 +1,22 @@
 const {MongoClient, ObjectId} = require('mongodb');
 let url = "mongodb://localhost:27017"
 
+function checkCredentials(credentials) {
+    if(credentials !== null 
+        && JSON.stringify(credentials) !== "{}"
+        && Object.keys(credentials).length === 2 
+        && JSON.stringify(credentials.username) !== "{}"
+        && JSON.stringify(credentials.md5password) !== "{}" )
+        {
+            return true;
+        }
+    else { return false; }
+}
+
 async function login(credentials) {
     //console.log("login", credentials)
-    if (credentials !== null || credentials !== {}) {
+    if ( checkCredentials(credentials) )
+        {
         const db = await MongoClient.connect(url)
         const dbo = db.db("tdp013")
         await dbo.collection("user_accounts")
@@ -16,12 +29,14 @@ async function login(credentials) {
                 throw new Error("user does not exist.")
             }
         })
-    } else {throw new Error("login credentials empty.")}
+    } else {
+        throw new Error("login credentials empty.")
+    }
 }
 
 async function createAccount(credentials) {
-    //console.log("login", credentials)
-    if (credentials !== null || credentials !== {}) {
+    if ( checkCredentials(credentials) )
+        {
         const db = await MongoClient.connect(url)
         const dbo = db.db("tdp013")
         await dbo.collection("user_accounts")
