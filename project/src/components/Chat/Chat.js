@@ -8,11 +8,11 @@ const socket = io.connect("http://localhost:3001")
 
 export default function Chat({loginName, chatFriend, setChatFriend, showChatWindow, setShowChatWindow}) {
     const [currentMessage, setCurrentMessage] = useState("");
-    const [messageList, setMessageList] = useState([])
+    const [messageDict, setMessageDict] = useState({})
     
     // up-to-state version of messageList
-    const messageListRef = useRef()
-    messageListRef.current = messageList
+    const messageDictRef = useRef()
+    messageDictRef.current = messageDict
   
     const roomId = loginName < chatFriend ? loginName+chatFriend : chatFriend+loginName
     useEffect(() => {
@@ -44,7 +44,9 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
                             <h4>{sender}</h4>
                             {message}
                         </div>
-        setMessageList([chatBubble, ...messageListRef.current])
+        let updatedMessageList = [chatBubble, ...messageDictRef[chatFriend]]
+        let updatedMessageDict = {...messageDictRef, chatFriend : updatedMessageList}
+        setMessageDict(updatedMessageDict)
     }
 
     async function sendChatMessage() {
@@ -79,7 +81,7 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
                 <p>Chatting with {chatFriend}</p>
             </div>
 
-            <div className="messageDiv">{messageList}</div>
+            <div className="messageDiv">{messageDict[chatFriend]}</div>
             <form>
                 <label className="messageLabel" onKeyPress={e => onKeyPress(e)}>
                     <input value={currentMessage} 
