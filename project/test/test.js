@@ -103,7 +103,7 @@ describe('Routes', () => {
         })
     })
 
-    describe('/CreateAccount', () => {
+   /*  describe('/CreateAccount', () => {
 
         before( () => {
             addUser("userA")
@@ -198,7 +198,7 @@ describe('Routes', () => {
         it('try valid username / password', (done) => {
             done()
         })
-    })
+    }) */
 
     describe('/FindUser', () => {
 
