@@ -171,7 +171,7 @@ describe('Routes', () => {
         it('try only with correct username', (done) => {
             const credentials = { username : "userA" }
             superagent.post('http://localhost:8080/CreateAccount').send(credentials).end((err, res) => {
-                console.log(res.status)
+                assert(res.status == 407)
                 done()
             })
         })
@@ -182,7 +182,7 @@ describe('Routes', () => {
     describe('/AddMessage', () => {
 
         before( () => {
-            clearDb();
+            //clearDb();
         })
 
         it('try valid username / password', (done) => {
@@ -193,7 +193,7 @@ describe('Routes', () => {
     describe('/GetMessages', () => {
 
         before( () => {
-            clearDb();
+            //clearDb();
         })
 
         it('try valid username / password', (done) => {
@@ -204,12 +204,59 @@ describe('Routes', () => {
     describe('/FindUser', () => {
 
         before( () => {
-            clearDb();
+            addUser("UserA")
+            addUser("UserB")
+            addUser("UserC")
         })
 
-        it('try valid username / password', (done) => {
-            done()
+        it('find user by inserting only correct username', (done) => {
+            const credentials = { username : "UserB" }
+            superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
+                assert(res.status == 200)
+                done()
+            })
         })
+
+        it('try find user vid correct username & password', (done) => {
+            const credentials = { username : "userC", md5password : md5("password")}
+            superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
+                assert(res.status == 412)
+                done()
+            })
+        })
+
+        it('find user by inserting only empty username', (done) => {
+            const credentials = { username : {} }
+            superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
+                assert(res.status == 412)
+                done()
+            })
+        })
+
+        it('find user by inserting only empty password', (done) => {
+            const credentials = { md5password : {} }
+            superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
+                assert(res.status == 412)
+                done()
+            })
+        })
+
+        it('find user by inserting empty username & empty password', (done) => {
+            const credentials = { username: {}, md5password : {} }
+            superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
+                assert(res.status == 412)
+                done()
+            })
+        })
+
+        it('find user by inserting empty query', (done) => {
+            const credentials = {}
+            superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
+                assert(res.status == 412)
+                done()
+            })
+        })
+       
     })
 
     describe('/GetFriendStatus', () => {

@@ -37,8 +37,24 @@ function checkDbEntry(dbEntry) {
         && checkIfValidMD5Hash(dbEntry.md5password)
 }
 
+function validateMessageForm(msgData) {
+    return JSON.stringify(msgData) !== "{}"
+        && Object.keys(msgData).length === 4
+        && msgData.hasOwnProperty("msg")
+        && JSON.stringify(msgData.msg) !== "{}"
+        && msgData.msg !== ""
+        && msgData.hasOwnProperty("_id")
+        && JSON.stringify(msgData._id) !== "{}"
+        && msgData._id !== ""
+        && msgData.hasOwnProperty("creator")
+        && JSON.stringify(msgData.creator) !== "{}"
+        && msgData.creator !== ""
+        && msgData.hasOwnProperty("page")
+        && JSON.stringify(msgData.page) !== "{}"
+        && msgData.page !== ""
+}
+
 async function login(credentials) {
-    //console.log("login", credentials)
     if ( checkCredentials(credentials) )
         {
         const db = await MongoClient.connect(url)
@@ -84,11 +100,20 @@ async function createAccount(credentials) {
 
 
 async function addMessage(msgData) {
-    const db = await MongoClient.connect(url)
-    const dbo = db.db("tdp013")
-    const result = await dbo.collection(`${msgData.page}_messages`).insertOne(msgData)
-    db.close()
-    return result 
+    if (validateMessageForm(msgData)) {
+        const user = msgData.creator
+        const isUser = await findUser({username: user})
+        if(isUser) {
+            const db = await MongoClient.connect(url)
+            const dbo = db.db("tdp013")
+            const result = await dbo.collection(`${msgData.page}_messages`).insertOne(msgData)
+            db.close()
+            return result
+        }
+    } else {
+        throw new Error("Invalid message form.")
+    }
+     
 }
 
 async function getMessages(userData) {
@@ -103,7 +128,7 @@ async function findUser(userData) {
     if( checkUserName(userData) ){
         const db = await MongoClient.connect(url)
         const dbo = db.db("tdp013")
-        const result = await dbo.collection("user_accounts").findOne( {username : userData.username }  )
+        const result = await dbo.collection("user_accounts").findOne( {username : userData.username } )
         db.close()
         if(checkDbEntry(result)){
             return { username: result.username }
