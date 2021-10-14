@@ -1,15 +1,10 @@
-import { render } from '@testing-library/react';
 import React, { useState } from 'react';
 import {Form} from 'react-bootstrap';
-import Toast from 'react-bootstrap/Toast'
 import './Login.css';
 const md5 = require('md5');
 
-
-
-
 async function loginUser(credentials) {
-  var token = null
+  let token = null
   await fetch('http://localhost:8080/Login', {
    method: 'POST',
    headers: {'Content-Type': 'application/json'},
@@ -25,7 +20,7 @@ async function loginUser(credentials) {
 }
 
 async function createUser(credentials) {
-  var token = null
+  let token = null
   await fetch('http://localhost:8080/CreateAccount', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
@@ -45,9 +40,9 @@ async function createUser(credentials) {
 
 
 export default function Login({ setToken }) {
-  var [username, setUserName] = useState("");
-  var [password, setPassword] = useState("");
-  var [showErrorMsg, setShowErrorMsg] = useState(false)
+  const [username, setUserName] = useState("");
+  const [password, setPassword] = useState("");
+  const [showErrorMsg, setShowErrorMsg] = useState(false)
 
   const handleLogin = async e => {
     e.preventDefault();
