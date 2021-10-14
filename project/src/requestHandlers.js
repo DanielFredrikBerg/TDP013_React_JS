@@ -89,7 +89,12 @@ async function getFriendStatus(userData) {
     const dbo = db.db("tdp013")
     const result = await dbo.collection(`${userData.username}_friends`).findOne({friendname : userData.friendname})
     db.close()
-    return result 
+    if (result) {
+        return result 
+    } else {
+        return {friendstatus : 0}
+    }
+    
 }
 
 async function setFriendStatus(userData) {

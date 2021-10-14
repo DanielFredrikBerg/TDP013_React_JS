@@ -2,6 +2,8 @@ import { useEffect, useState, useRef } from "react";
 import {ArrowUpSquare, XLg} from 'react-bootstrap-icons';
 import io from "socket.io-client";
 
+import './Chat.css';
+
 const socket = io.connect("http://localhost:3001")
 
 export default function Chat({loginName, chatFriend, setChatFriend, showChatWindow, setShowChatWindow}) {
@@ -40,20 +42,12 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
     function createChatBubble(message, sender) {
         var chatBubble
         if (sender == loginName) {
-            chatBubble = <div className="chatBubble">
+            chatBubble = <div className="chatBubbleSender">
                             <h4>{sender}</h4>
                             {message}
                          </div>
         } else {
-            chatBubble = <div style={{backgroundColor : "#212529", 
-                                      color : "#8a9a93",
-                                      borderRadius : "10px", 
-                                      width : "max-content", 
-                                      padding : "10px", 
-                                      margin : "10px", 
-                                      marginLeft: "15px", 
-                                      minWidth : "125px", 
-                                    maxWidth : "245px"}}>
+            chatBubble = <div className="chatBubbleReciever">
                             <h4>{sender}</h4>
                             {message}
                          </div>
@@ -84,13 +78,7 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
     }
 
     return (
-        <div style={{backgroundColor : "#212529", 
-                     width : "350px", 
-                     height : "500px", 
-                     margin : "30px", 
-                     borderRadius : "10px", 
-                     borderWidth : "10px", 
-                     borderColor : "#212529"}}>
+        <div className="chatWindow">
 
             <div style={{textAlign : "right"}}>
                 <XLg onClick={closeChatWindow} 

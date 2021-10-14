@@ -16,10 +16,10 @@ export default function Dashboard({loginName}) {
     const [postText, setPostText] = useState("")
     const [findUserText, setFindUserText] = useState()
     const [findUserStatusMessage, setFindUserStatusMessage] = useState()
-    const [currentUserFriendStatus, setCurrentUserFriendStatus] = useState(-1)
+    let [currentUserFriendStatus, setCurrentUserFriendStatus] = useState(-1)
     const [friendList, setFriendList] = useState([])
     const [showChatWindow, setShowChatWindow] = useState(false)
-    const [chatFriend, setChatFriend] = useState()
+    let [chatFriend, setChatFriend] = useState()
 
     useEffect(async () => {
         if (sessionStorage.getItem('currentUser')) {
@@ -111,14 +111,16 @@ export default function Dashboard({loginName}) {
             body: JSON.stringify({username : loginName, friendname : friend})
           }).then(res => {
             if (res.status === 200) {
+                console.log(res)
                 return res.json()
             }   
         })
+        console.log(result)
         if (result) {
-            return result.friendstatus
+            return result.friendstatus 
         } else {
             return 0
-        }
+        } 
     }
 
     async function ChangeCurrentUser(user) {
