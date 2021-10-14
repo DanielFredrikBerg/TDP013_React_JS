@@ -68,8 +68,8 @@ export default function Dashboard({loginName}) {
             if (res.status === 200) {
                 return res.json()
              } 
-        })
-        let updatedUserPosts = []
+        }).catch(err => console.log("DisplayAllPosts Error: ", err))
+        var updatedUserPosts = []
         msgData.forEach(msg => updatedUserPosts.unshift(createPostElement(msg)))
         setUserPosts(updatedUserPosts)
     }
@@ -82,12 +82,12 @@ export default function Dashboard({loginName}) {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(postData)
-              }).then(res => {
+            }).then(res => {
                 if (res.status === 200) {
                     let post = createPostElement(postData)
                     setUserPosts([post, ...userPosts])
                 } 
-            })
+            }).catch(err => console.log("createPost() error: ", err))
         }
     }
 
@@ -95,15 +95,16 @@ export default function Dashboard({loginName}) {
         if (friend === loginName) {
             return -1
         }
+        
         const result = await fetch('http://localhost:8080/GetFriendStatus', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({username : loginName, friendname : friend})
-          }).then(res => {
+        }).then(res => {
             if (res.status === 200) {
                 return res.json()
             }   
-        })
+        }).catch(err => console.log("GetFriendStatus(friend) error: ", err) )
         if (result) {
             return result.friendstatus 
         } else {
@@ -136,8 +137,7 @@ export default function Dashboard({loginName}) {
             } else {
                 setFindUserStatusMessage(`User ${findUserText} not Found`)
             }
-            
-        })
+        }).catch(err => console.log("findUser() Dashboard.js error", err))
         setFindUserText("")
     }
 
@@ -146,7 +146,11 @@ export default function Dashboard({loginName}) {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({username : user, friendname : friend, friendstatus : status})
-          })
+          }).then(res => {
+            if (res.status === 200) {
+                return  
+            } 
+        }).catch(err => console.log("changeFriendStatus() error: ", err))
     }
 
     async function sendFriendRequest() {
@@ -210,7 +214,7 @@ export default function Dashboard({loginName}) {
                         </a>    
                     </Navbar.Text>
                   </div>
-        } else if (friendData.friendstatus == 2) {
+        } else if (friendData.friendstatus === 2) {
             return (        
                 <div style={{width : "max-content", 
                              margin : "10px", 
@@ -246,7 +250,8 @@ export default function Dashboard({loginName}) {
             if (res.status === 200) {
                 return res.json()
             }
-        })
+
+        }).catch(err => console.log("PopulateFriendList: ", err))
         let updatedFriendList = []
         friendData.forEach(friend => {
             const friendListItem = createFriendlistItem(friend)

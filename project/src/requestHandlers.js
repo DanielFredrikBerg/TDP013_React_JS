@@ -1,16 +1,40 @@
 const {MongoClient, ObjectId} = require('mongodb');
 let url = "mongodb://localhost:27017"
 
+function checkIfValidMD5Hash(str) {
+    const regexExp = /^[a-f0-9]{32}$/gi;
+    return regexExp.test(str);
+  }
+
 function checkCredentials(credentials) {
-    if(credentials !== null 
+    return credentials !== null 
         && JSON.stringify(credentials) !== "{}"
         && Object.keys(credentials).length === 2 
+        && credentials.hasOwnProperty('username')
         && JSON.stringify(credentials.username) !== "{}"
-        && JSON.stringify(credentials.md5password) !== "{}" )
-        {
-            return true;
-        }
-    else { return false; }
+        && credentials.hasOwnProperty('md5password')
+        && JSON.stringify(credentials.md5password) !== "{}"
+        && checkIfValidMD5Hash(credentials.md5password)
+}
+
+function checkUserName(username) {
+    return username !== null
+        && JSON.stringify(username) !== "{}"
+        && Object.keys(username).length === 1
+        && username.hasOwnProperty('username') 
+        && JSON.stringify(username.username) !== "{}"
+}
+
+function checkDbEntry(dbEntry) {
+    return JSON.stringify(dbEntry) !== "{}"
+        && Object.keys(dbEntry).length === 3
+        && dbEntry.hasOwnProperty("_id")
+        && JSON.stringify(dbEntry._id) !== "{}"
+        && dbEntry.hasOwnProperty("username")
+        && JSON.stringify(dbEntry.username) !== "{}"
+        && dbEntry.hasOwnProperty("md5password")
+        && JSON.stringify(dbEntry.md5password) !== "{}"
+        && checkIfValidMD5Hash(dbEntry.md5password)
 }
 
 async function login(credentials) {
@@ -49,8 +73,9 @@ async function createAccount(credentials) {
             }
         }).then(() => {
             return dbo.collection("user_accounts").insertOne(credentials)
-        }).then(result => {console.log(result); return result})
-        .catch(err => {throw new Error(err)} )
+        }).then(result => {
+            return result
+        }).catch(err => {throw new Error(err)} )
     } else {
         throw new Error("user credentials empty.")
     }
@@ -75,11 +100,20 @@ async function getMessages(userData) {
 }
 
 async function findUser(userData) {
-    const db = await MongoClient.connect(url)
-    const dbo = db.db("tdp013")
-    const result = await dbo.collection("user_accounts").findOne( {username : userData.username }  )
-    db.close()
-    return result  
+    if( checkUserName(userData) ){
+        const db = await MongoClient.connect(url)
+        const dbo = db.db("tdp013")
+        const result = await dbo.collection("user_accounts").findOne( {username : userData.username }  )
+        db.close()
+        if(checkDbEntry(result)){
+            return { username: result.username }
+        } else { 
+            throw new Error("User does not exist.") 
+        }
+    } else {
+        throw new Error("Invalid username in findUser.")
+    }
+      
 }
 
 
