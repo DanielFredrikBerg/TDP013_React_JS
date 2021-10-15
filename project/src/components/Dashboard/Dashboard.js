@@ -276,8 +276,7 @@ export default function Dashboard({loginName}) {
                             </Dropdown>
                         </Navbar.Collapse>
 
-                        <Navbar.Collapse id="navbar-dark" 
-                                         className="justify-content-center">
+                        <Navbar.Collapse id="navbar-dark" className="justify-content-center">
                             <form className="findUserForm">
                                 <p>
                                     <Navbar.Text className="findUserText">

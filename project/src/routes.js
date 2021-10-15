@@ -19,6 +19,7 @@ router.use('/CreateAccount', (req, res) => {
 });
 
 router.use('/AddMessage', (req, res) => {
+    console.log(sanitize(req.body))
     handlers.addMessage(sanitize(req.body)).then(result => {
         res.send(result);
     }).catch((err) => res.status(410).send(err.message));

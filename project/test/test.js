@@ -11,8 +11,7 @@ let url = "mongodb://localhost:27017";
 async function clearDb() {
     const db = await MongoClient.connect(url)
     const dbo = db.db("tdp013_tests");
-    await dbo.collection("user_accounts").deleteMany({})
-    await dbo.collection("UserA_messages").deleteMany({})
+    await dbo.dropDatabase()
     db.close()
 }
 
@@ -20,6 +19,21 @@ async function addUser(name) {
     const db = await MongoClient.connect(url)
     const dbo = db.db("tdp013_tests");
     await dbo.collection("user_accounts").insertOne({username : name, md5password : md5("password")})
+    db.close()
+}
+
+async function setFriends(user1, user2) {
+    const db = await MongoClient.connect(url)
+    const dbo = db.db("tdp013_tests");
+    await dbo.collection(`${user1}_friends`).insertOne({friendname : user2, friendstatus : 3})
+    await dbo.collection(`${user2}_friends`).insertOne({friendname : user1, friendstatus : 3})
+    db.close()
+}
+
+async function addMsg(user, msg) {
+    const db = await MongoClient.connect(url)
+    const dbo = db.db("tdp013_tests");
+    await dbo.collection(`${user}_messages`).insertOne({msg : msg, creator : user, page : user})
     db.close()
 }
 
@@ -299,8 +313,8 @@ describe('Handlers', () => {
 
     describe('login', () => {
 
-        before(() => {
-            clearDb()
+        before(async () => {
+            await clearDb()
             addUser("UserA")
         })
 
@@ -340,9 +354,12 @@ describe('Handlers', () => {
 
     describe('addMessage', () => {
 
-        before(() => {
-            clearDb()
+        before(async () => {
+            await clearDb()
             addUser("UserA")
+            addUser("UserC")
+            addUser("UserD")
+            setFriends("UserA", "UserC")
         })
 
         it("try adding a message to existing user's own page", async () => {
@@ -356,36 +373,117 @@ describe('Handlers', () => {
             } catch (err) {
                 assert(err.message === "User does not exist.")
             }
-
         })
 
-        it("try adding a message to friend of existing user's page", () => {
-
+        it("try adding a message to friend of existing user's page", async () => {
+            const result = await handlers.addMessage({msg : "message", creator : "UserA", page : "UserC"}, "tdp013_tests")
+            assert(result['acknowledged'])
         })
 
-        it("try adding a message to non-friend of existing user's page", () => {
-
+        it("try adding a message to non-friend of existing user's page", async () => {
+            try {
+                await handlers.addMessage({msg : "message", creator : "UserA", page : "UserD"}, "tdp013_tests")
+            } catch (err) {
+                assert(err.message === "User does not have permission to post message.")
+            }
         })
 
     })
 
     describe('getMessages', () => {
 
+        before( async () => {
+            await clearDb()
+            await addMsg("UserA", "message")
+        })
+
+        it('try getting messages that exist', async () => {
+            const result = await handlers.getMessages({username : "UserA"}, "tdp013_tests")
+            assert(result[0].msg === "message" && result[0].creator === "UserA")
+        })
+
+        it('try getting messages that does not exist', async () => {
+            const result = await handlers.getMessages({username : "UserB"}, "tdp013_tests")
+            assert(result.length === 0)
+        })
+
     })
 
     describe('findUser', () => {
 
+        before( async () => {
+            await clearDb()
+            addUser("UserA")
+        })
+
+        it('try to find an user that exist', async () => {
+            const result = await handlers.findUser({username : "UserA"}, "tdp013_tests")
+            assert(result.username === "UserA")
+        })
+
+        it("try to find an user that doesn't exist", async () => {
+            try {
+                await handlers.findUser({username : "UserA"}, "tdp013_tests")
+            } catch (err) {
+                assert(err.message === "User does not exist.")
+            }
+        })
     })
 
     describe('getFriendStatus', () => {
 
+        before( async () => {
+            await clearDb()
+            setFriends("UserA", "UserB")
+        })
+
+
+        it('try to get a friend status that exist', async () => {
+            const result = await handlers.getFriendStatus({username : "UserA", friendname : "UserB"}, "tdp013_tests")
+            assert(result.friendstatus === 3)
+        })
+
+        it("try to get a friend status that doesn't exist", async () => {
+            const result = await handlers.getFriendStatus({username : "UserA", friendname : "UserC"}, "tdp013_tests")
+            assert(result.friendstatus === 0)
+        })
     })
 
     describe('setFriendStatus', () => {
 
+        before( async () => {
+            await clearDb()
+            setFriends("UserA", "UserB")
+        })
+
+        it('try to set a new friend status', async () => {
+            const result = await handlers.setFriendStatus({username : "UserA", friendname : "UserC", friendstatus : 3}, "tdp013_tests")
+            assert(result['acknowledged'])
+        })
+
+        it('try to update a friend status', async () => {
+            const result = await handlers.setFriendStatus({username : "UserA", friendname : "UserB", friendstatus : 0}, "tdp013_tests")
+            assert(result['acknowledged'])
+        })
+
     })
 
     describe('getAllFriends', () => {
+
+        before( async () => {
+            await clearDb()
+            setFriends("UserA", "UserB")
+        })
+
+        it('try to get existing frinds', async () => {
+            const result = await handlers.getAllFriends({username : "UserA"}, "tdp013_tests")
+            assert(result[0].friendname === "UserB" && result[0].friendstatus === 3)
+        })
+
+        it('try to get non-existing friends', async () => {
+            const result = await handlers.getAllFriends({username : "UserC"}, "tdp013_tests")
+            assert(result.length === 0)  
+        })
         
     })
 }) 
