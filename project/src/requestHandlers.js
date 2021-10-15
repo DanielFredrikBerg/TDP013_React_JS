@@ -64,7 +64,7 @@ async function login(credentials, dbName="tdp013") {
         if ( result !== null ){
             return result;
         } else {
-            throw new Error("user does not exist.")
+            throw new Error("User does not exist.")
         }
    /*  } else {
         throw new Error("login credentials empty.")
@@ -79,7 +79,7 @@ async function createAccount(credentials, dbName="tdp013") {
         const isAccount = await dbo.collection("user_accounts").findOne({username: credentials.username, md5password: credentials.md5password})
         if (isAccount !== null ){
             db.close()
-            throw new Error("user already exists.")
+            throw new Error("User already exists.")
         } 
         const result = await dbo.collection("user_accounts").insertOne(credentials)
         db.close()
@@ -91,18 +91,18 @@ async function createAccount(credentials, dbName="tdp013") {
     
 
 
-async function addMessage(msgData) {
+async function addMessage(msgData, dbName="tdp013") {
     //if (validateMessageForm(msgData)) {
         const user = msgData.creator
-        const isUser = await findUser({username: user})
+        const isUser = await findUser({username: user}, dbName)
         if(isUser) {
             const db = await MongoClient.connect(url)
-            const dbo = db.db("tdp013")
+            const dbo = db.db(dbName)
             const result = await dbo.collection(`${msgData.page}_messages`).insertOne(msgData)
             db.close()
             return result
         } else {
-            throw new Error("user does not exist.")
+            throw new Error("User does not exist.")
         }
     /* } else {
         throw new Error("Invalid message form.")
@@ -118,13 +118,13 @@ async function getMessages(userData) {
     return result 
 }
 
-async function findUser(userData) {
+async function findUser(userData, dbName="tdp013") {
     //if( checkUserName(userData) ){
         const db = await MongoClient.connect(url)
-        const dbo = db.db("tdp013")
+        const dbo = db.db(dbName)
         const result = await dbo.collection("user_accounts").findOne( {username : userData.username } )
         db.close()
-        if(checkDbEntry(result)){
+        if(result && checkDbEntry(result)){
             return { username: result.username }
         } else { 
             throw new Error("User does not exist.") 

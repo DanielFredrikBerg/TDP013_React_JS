@@ -12,6 +12,7 @@ async function clearDb() {
     const db = await MongoClient.connect(url)
     const dbo = db.db("tdp013_tests");
     await dbo.collection("user_accounts").deleteMany({})
+    await dbo.collection("UserA_messages").deleteMany({})
     db.close()
 }
 
@@ -312,7 +313,7 @@ describe('Handlers', () => {
             try {
                 await handlers.login({username : "UserB", md5password : md5("password")}, "tdp013_tests")
             } catch (err) {
-                assert(err.message === "user does not exist.")
+                assert(err.message === "User does not exist.")
             }
         })
     })
@@ -332,7 +333,7 @@ describe('Handlers', () => {
             try {
                 await handlers.createAccount({username : "UserA", md5password : md5("password")}, "tdp013_tests")
             } catch (err) {
-                assert(err.message === "user already exists.")
+                assert(err.message === "User already exists.")
             }
         })
     })
@@ -341,14 +342,28 @@ describe('Handlers', () => {
 
         before(() => {
             clearDb()
-            addUser()
+            addUser("UserA")
         })
 
-        it('try adding message for existing user', () => {
+        it("try adding a message to existing user's own page", async () => {
+            const result = await handlers.addMessage({msg : "message", creator : "UserA", page : "UserA"}, "tdp013_tests")
+            assert(result['acknowledged'])
+        })
+
+        it('try adding a message to non-existing user', async () => {
+            try {
+                await handlers.addMessage({msg : "message", creator : "UserB", page : "UserB"}, "tdp013_tests")
+            } catch (err) {
+                assert(err.message === "User does not exist.")
+            }
 
         })
 
-        it('try adding message for non-existing user', () => {
+        it("try adding a message to friend of existing user's page", () => {
+
+        })
+
+        it("try adding a message to non-friend of existing user's page", () => {
 
         })
 
