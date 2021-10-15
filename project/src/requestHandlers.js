@@ -11,9 +11,9 @@ function checkCredentials(credentials) {
         && JSON.stringify(credentials) !== "{}"
         && Object.keys(credentials).length === 2 
         && credentials.hasOwnProperty('username')
-        && JSON.stringify(credentials.username) !== "{}"
+        && JSON.stringify(credentials.username).length > 3
         && credentials.hasOwnProperty('md5password')
-        && JSON.stringify(credentials.md5password) !== "{}"
+        && JSON.stringify(credentials.md5password).length > 3
         && checkIfValidMD5Hash(credentials.md5password)
 }
 
@@ -54,11 +54,11 @@ function validateMessageForm(msgData) {
         && msgData.page !== ""
 }
 
-async function login(credentials, dbName="tdp013") {
+async function login(credentials) {
     /* if ( checkCredentials(credentials) )
         { */
         const db = await MongoClient.connect(url)
-        const dbo = db.db(dbName)
+        const dbo = db.db("tdp013")
         const result = await dbo.collection("user_accounts").findOne({username: credentials.username, md5password: credentials.md5password})
         db.close()
         if ( result !== null ){
@@ -71,11 +71,10 @@ async function login(credentials, dbName="tdp013") {
     } */
 }
 
-async function createAccount(credentials, dbName="tdp013") {
-    //if ( checkCredentials(credentials) )
-        //{
+async function createAccount(credentials) {
+    if ( checkCredentials(credentials) ) {
         const db = await MongoClient.connect(url)
-        const dbo = db.db(dbName)
+        const dbo = db.db("tdp013")
         const isAccount = await dbo.collection("user_accounts").findOne({username: credentials.username, md5password: credentials.md5password})
         if (isAccount !== null ){
             db.close()
@@ -84,27 +83,26 @@ async function createAccount(credentials, dbName="tdp013") {
         const result = await dbo.collection("user_accounts").insertOne(credentials)
         db.close()
         return result
-    /* } else {
+    } else {
         throw new Error("user credentials empty.")
-    } */
+    }
 }
     
 
 
-async function addMessage(msgData, dbName="tdp013") {
+async function addMessage(msgData) {
     //if (validateMessageForm(msgData)) {
         const user = msgData.creator
-        const isUser = await findUser({username: user}, dbName)
-        console.log(isUser)
+        const isUser = await findUser({username: user})
         if(isUser) {
             if (msgData.creator !== msgData.page) {
-                const friendData = await getFriendStatus({username : msgData.creator, friendname : msgData.page}, dbName)
+                const friendData = await getFriendStatus({username : msgData.creator, friendname : msgData.page})
                 if (friendData.friendstatus != 3) {
                     throw new Error("User does not have permission to post message.")
                 }
             }
             const db = await MongoClient.connect(url)
-            const dbo = db.db(dbName)
+            const dbo = db.db("tdp013")
             const result = await dbo.collection(`${msgData.page}_messages`).insertOne(msgData)
             db.close()
             return result
@@ -117,9 +115,9 @@ async function addMessage(msgData, dbName="tdp013") {
      
 }
 
-async function getMessages(userData, dbName="tdp013") {
+async function getMessages(userData) {
     const db = await MongoClient.connect(url)
-    const dbo = db.db(dbName)
+    const dbo = db.db("tdp013")
     const result = await dbo.collection(`${userData.username}_messages`).find().toArray()
     db.close()
     if (result) {
@@ -130,10 +128,10 @@ async function getMessages(userData, dbName="tdp013") {
     
 }
 
-async function findUser(userData, dbName="tdp013") {
+async function findUser(userData) {
     //if( checkUserName(userData) ){
         const db = await MongoClient.connect(url)
-        const dbo = db.db(dbName)
+        const dbo = db.db("tdp013")
         const result = await dbo.collection("user_accounts").findOne( {username : userData.username } )
         db.close()
         if(result && checkDbEntry(result)){
@@ -147,11 +145,9 @@ async function findUser(userData, dbName="tdp013") {
       
 }
 
-
-
-async function getFriendStatus(userData, dbName="tdp013") {
+async function getFriendStatus(userData) {
     const db = await MongoClient.connect(url)
-    const dbo = db.db(dbName)
+    const dbo = db.db("tdp013")
     const result = await dbo.collection(`${userData.username}_friends`).findOne({friendname : userData.friendname})
     db.close()
     if (result) {
@@ -162,9 +158,9 @@ async function getFriendStatus(userData, dbName="tdp013") {
     
 }
 
-async function setFriendStatus(userData, dbName="tdp013") {
+async function setFriendStatus(userData) {
     const db = await MongoClient.connect(url)
-    const dbo = db.db(dbName)
+    const dbo = db.db("tdp013")
     const entryExists = await dbo.collection(`${userData.username}_friends`).findOne({friendname : userData.friendname})
     if (entryExists) {
         const result = await dbo.collection(`${userData.username}_friends`).updateOne(
@@ -181,9 +177,9 @@ async function setFriendStatus(userData, dbName="tdp013") {
     }
 }
 
-async function getAllFriends(userData, dbName="tdp013") {
+async function getAllFriends(userData) {
     const db = await MongoClient.connect(url)
-    const dbo = db.db(dbName)
+    const dbo = db.db("tdp013")
     const result = await dbo.collection(`${userData.username}_friends`).find({}).toArray()
     db.close()
     if (result) {

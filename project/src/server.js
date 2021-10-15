@@ -4,7 +4,7 @@ const { Server } = require("socket.io");
 
 const app = express();
 app.use(cors({origin : "http://localhost:3000"}));
-app.use(require('./src/routes'))
+app.use(require('./routes'))
 
 const server = require('http').createServer(app)
 
@@ -15,7 +15,6 @@ const io = new Server(server, {
         method: ["GET", "POST"],
     },
 });
-
 
 
 io.on("connection", (socket) => {
@@ -41,6 +40,37 @@ io.on("connection", (socket) => {
 
 const PORT = 3001;
 const expressPort = 8080;
-app.listen(8080, () => console.log(`Express running on port ${expressPort}`))
-server.listen(PORT, () => console.log(`chat server is running on port ${PORT}`))
+
+let expressServer
+function startExpressServer(quietly = false) {
+    expressServer = app.listen(8080)
+    if (!quietly) {
+        console.log(`Express running on port ${expressPort}`)
+    }
+}
+
+function stopExpressServer(quietly = false) {
+    expressServer.close() 
+    if (!quietly) {
+        console.log("Express server stopped")
+    }  
+}
+
+let chatServer
+function startChatServer(quietly = false) {
+    chatServer = server.listen(PORT)
+    if (!quietly) {
+        console.log(`chat server is running on port ${PORT}`)
+    }
+}
+
+function stopChatServer(quietly = false) {
+    chatServer.close() 
+    if (!quietly) {
+        console.log("Chat server stopped")
+    }  
+}
+
+
+module.exports =  {startExpressServer, stopExpressServer, startChatServer, stopChatServer}
 

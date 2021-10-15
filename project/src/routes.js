@@ -6,54 +6,59 @@ const router = express.Router()
 router.use(express.json()); 
 
 
-router.use('/Login', (req, res) => {
+router.post('/Login', (req, res) => {
     handlers.login(sanitize(req.body)).then(result => {
         res.send(result);  
-    }).catch((err) => res.status(409).send(err.message));
+    }).catch((err) => res.status(400).send(err.message));
 });
   
-router.use('/CreateAccount', (req, res) => {
+router.post('/CreateAccount', (req, res) => {
     handlers.createAccount(sanitize(req.body)).then( (result) => {
         res.send(result);
-    }).catch((err) => res.status(407).send(err.message));
+    }).catch((err) => res.status(400).send(err.message));
 });
 
-router.use('/AddMessage', (req, res) => {
-    console.log(sanitize(req.body))
+router.post('/AddMessage', (req, res) => {
+ 
     handlers.addMessage(sanitize(req.body)).then(result => {
         res.send(result);
-    }).catch((err) => res.status(410).send(err.message));
+    }).catch((err) => res.status(400).send(err.message));
 })
 
-router.use('/GetMessages', (req, res) => {
+router.post('/GetMessages', (req, res) => {
     handlers.getMessages(sanitize(req.body)).then(result => {
         res.send(result);
-    }).catch((err) => res.status(411).send(err.message));
+    }).catch((err) => res.status(400).send(err.message));
 
 })
 
-router.use('/FindUser', (req, res) => {
+router.post('/FindUser', (req, res) => {
     handlers.findUser(sanitize(req.body)).then(result => {
         res.send(result);
-    }).catch((err) => res.status(412).send(err.message));
+    }).catch((err) => res.status(400).send(err.message));
 })
 
-router.use('/GetFriendStatus', (req, res) => {
+router.post('/GetFriendStatus', (req, res) => {
     handlers.getFriendStatus(sanitize(req.body)).then(result => {
         res.send(result);
-    }).catch((err) => res.status(444).send(err.message));
+    }).catch((err) => res.status(400).send(err.message));
 })
 
-router.use('/SetFriendStatus', (req, res) => {
+router.post('/SetFriendStatus', (req, res) => {
     handlers.setFriendStatus(sanitize(req.body)).then(result => {
         res.send(result);
-    }).catch((err) => res.status(454).send(err.message));
+    }).catch((err) => res.status(400).send(err.message));
 })
 
-router.use('/GetAllFriends', (req, res) => {
+router.post('/GetAllFriends', (req, res) => {
     handlers.getAllFriends(sanitize(req.body)).then(result => {
         res.send(result);
-    }).catch((err) => res.status(478).send(err.message));
+    }).catch((err) => res.status(400).send(err.message));
 })
+
+router.post('*', function(req, res) {
+    res.status(404).send("Status 404 Not Found")
+})
+
 
 module.exports = router

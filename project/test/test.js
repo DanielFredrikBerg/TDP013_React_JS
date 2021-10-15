@@ -3,28 +3,28 @@ const md5 = require('md5')
 const superagent = require('superagent');
 const handlers = require('../src/requestHandlers')
 const routes = require('../src/routes')
-//const server = require('../server')
+const server = require('../src/server')
 const {MongoClient} = require('mongodb');
 let url = "mongodb://localhost:27017";
 
 
 async function clearDb() {
     const db = await MongoClient.connect(url)
-    const dbo = db.db("tdp013_tests");
+    const dbo = db.db("tdp013");
     await dbo.dropDatabase()
     db.close()
 }
 
 async function addUser(name) {
     const db = await MongoClient.connect(url)
-    const dbo = db.db("tdp013_tests");
+    const dbo = db.db("tdp013");
     await dbo.collection("user_accounts").insertOne({username : name, md5password : md5("password")})
     db.close()
 }
 
 async function setFriends(user1, user2) {
     const db = await MongoClient.connect(url)
-    const dbo = db.db("tdp013_tests");
+    const dbo = db.db("tdp013");
     await dbo.collection(`${user1}_friends`).insertOne({friendname : user2, friendstatus : 3})
     await dbo.collection(`${user2}_friends`).insertOne({friendname : user1, friendstatus : 3})
     db.close()
@@ -32,167 +32,168 @@ async function setFriends(user1, user2) {
 
 async function addMsg(user, msg) {
     const db = await MongoClient.connect(url)
-    const dbo = db.db("tdp013_tests");
+    const dbo = db.db("tdp013");
     await dbo.collection(`${user}_messages`).insertOne({msg : msg, creator : user, page : user})
     db.close()
 }
 
 async function getPostsOfUser(userName) {
     const db = await MongoClient.connect(url)
-    const dbo = db.db("tdp013_tests");
+    const dbo = db.db("tdp013");
     const result = await dbo.collection("user_accounts").findOne({username: userName } )
     db.close()
     return result
 }
 
 describe('Routes', () => {
+
+    beforeEach(() => {
+        server.startExpressServer(true)
+    })
+
     afterEach(() => {
-        clearDb()
+        server.stopExpressServer(true)
+    })
+
+    describe('try invalid function', () => {
+        it('try /asdf', async () => {
+            superagent.post('http://localhost:8080/asdf').send({}).end((err, res) => {
+                assert(res.status == 404)
+            })
+        })
     })
 
     describe('/Login', () => {
 
-        before(() => {
-            addUser("userA")
-            addUser("userB")
-            addUser("userC")
+        before( async () => {
+            await clearDb()
+            await addUser("userA")
+            await addUser("userB")
+            await addUser("userC")
         })
 
-        it('try valid username / password', (done) => {
+        it('try valid username / password', () => {
             const credentials = { username : "userB", md5password : md5("password")}
             const result = superagent.post('http://localhost:8080/Login').send(credentials)
             assert(result)
-            done()
         })
 
-        it('try invalid password', (done) => {
+        it('try invalid password', () => {
             const credentials = { username : "userB", md5password : md5("invalid_password")}
             superagent.post('http://localhost:8080/Login').send(credentials).end((err, res) => {
-                assert(res.status == 409)
-                done()
+                assert(res.status == 400)
             })
         })
 
-        it('try invalid username', (done) => {
+        it('try invalid username', () => {
             const credentials = { username : "userAlaskmflskmlkno32i2", md5password : md5("password")}
             superagent.post('http://localhost:8080/Login').send(credentials).end((err, res) => {
-                assert(res.status == 409)
-                done()
+                assert(res.status == 400)
             })
         })
 
-        it('try empty user', (done) => {
+        it('try empty user', () => {
             const credentials = {}
             superagent.post('http://localhost:8080/Login').send(credentials).end((err, res) => {
-                assert(res.status == 409)
-                done()
+                assert(res.status == 400)
             })
         })
 
-        it('try empty password with correct user', (done) => {
+        it('try empty password with correct user', () => {
             const credentials = {username : "userB", md5password : {}}
             superagent.post('http://localhost:8080/Login').send(credentials).end((err, res) => {
-                assert(res.status == 409)
-                done()
+                assert(res.status == 400)
             })
         })
 
-        it('try empty password fields', (done) => {
+        it('try empty password fields', () => {
             const credentials = { username : {}, md5password : {} }
             superagent.post('http://localhost:8080/Login').send(credentials).end((err, res) => {
-                assert(res.status == 409)
-                done()
+                assert(res.status == 400)
             })
         })
 
-        it('try with nosql injection', (done) => {
+        it('try with nosql injection', () => {
             const credentials = { $where: function() { return (this.name == "userB") } } ;
             superagent.post('http://localhost:8080/Login').send(credentials).end((err, res) => {
-                assert(res.status == 409)
-                done()
+                assert(res.status == 400)
             })
         })
 
-        it('TODO', (done) => {
-            done()
+        it('TODO', () => {
+ 
         })
     })
 
-   /*  describe('/CreateAccount', () => {
+    
+   describe('/CreateAccount', () => {
 
-        before( () => {
-            addUser("userA")
+        before( async () => {
+            await clearDb()
+            await addUser("userA")
         })
 
-        it('try valid username / password', (done) => {
+        it('try valid username / password', () => {
             const credentials = { username : "userklasj", md5password : md5("password")}
             superagent.post('http://localhost:8080/CreateAccount').send(credentials).end((err, res) => {
                 assert(res.status == 200)
-                done()
             })
         })
 
-        it('try already existing user', (done) => {
-            addUser("userA") // Vet inte varför den inte lägger till i before ovan..
-            
+        it('try already existing user', () => {       
             const credentials = { username : "userA", md5password : md5("password")}
             superagent.post('http://localhost:8080/CreateAccount').send(credentials).end((err, res) => {
-                assert(res.status == 407)
-                done()
+                assert(res.status == 400)
             })
         })
 
-        it('try empty credentials', (done) => {
+        it('try empty credentials', () => {
             const credentials = {}
             superagent.post('http://localhost:8080/CreateAccount').send(credentials).end((err, res) => {
-                assert(res.status == 407)
-                done()
+                assert(res.status == 400)
             })
         })
 
-        it('try empty username and empty password', (done) => {
-            const credentials = { username: {} , md5password: {} }
+        it('try empty username and empty password', () => {
+            const credentials = { username: "" , md5password: "" }
             superagent.post('http://localhost:8080/CreateAccount').send(credentials).end((err, res) => {
-                assert(res.status == 407)
-                done()
+                assert(res.status == 400)
             })
         })
 
-        it('try empty password only', (done) => {
-            const credentials = { username : "userA", md5password : {} }
+        it('try empty password only', () => {
+            const credentials = { username : "userA", md5password : "" }
             superagent.post('http://localhost:8080/CreateAccount').send(credentials).end((err, res) => {
-                assert(res.status == 407)
-                done()
+                assert(res.status == 400)
             })
         })
 
-        it('try empty username only with correct password', (done) => {
-            const credentials = { username: {}, md5password : md5("password") }
+        it('try empty username only with correct password', () => {
+            const credentials = { username: "", md5password : md5("password") }
             superagent.post('http://localhost:8080/CreateAccount').send(credentials).end((err, res) => {
-                assert(res.status == 407)
-                done()
+                console.log(res.status)
+                assert(res.status == 400)
             })
         })
 
-        it('try only with correct password', (done) => {
+        it('try only with correct password', () => {
             const credentials = { md5password : md5("password") }
             superagent.post('http://localhost:8080/CreateAccount').send(credentials).end((err, res) => {
-                assert(res.status == 407)
-                done()
+                assert(res.status == 400)
             })
         })
 
-        it('try only with correct username', (done) => {
+        it('try only with correct username', () => {
             const credentials = { username : "userA" }
             superagent.post('http://localhost:8080/CreateAccount').send(credentials).end((err, res) => {
-                assert(res.status == 407)
-                done()
+                assert(res.status == 400)
             })
         })
 
         
-    })
+    }) 
 
+    /*
     describe('/AddMessage', () => {
 
         before( () => {
@@ -213,19 +214,21 @@ describe('Routes', () => {
         it('try valid username / password', (done) => {
             done()
         })
-    }) */
+    }) 
 
     describe('/FindUser', () => {
 
-        before( () => {
-            addUser("UserA")
-            addUser("UserB")
-            addUser("UserC")
+        before( async () => {
+            await clearDb()
+            await addUser("UserA")
+            await addUser("UserB")
+            await addUser("UserC")
         })
 
         it('find user by inserting only correct username', (done) => {
             const credentials = { username : "UserB" }
             superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
+                console.log(res.status)
                 assert(res.status == 200)
                 done()
             })
@@ -234,7 +237,7 @@ describe('Routes', () => {
         it('try find user vid correct username & password', (done) => {
             const credentials = { username : "userC", md5password : md5("password")}
             superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
-                assert(res.status == 412)
+                assert(res.status == 400)
                 done()
             })
         })
@@ -242,7 +245,7 @@ describe('Routes', () => {
         it('find user by inserting only empty username', (done) => {
             const credentials = { username : {} }
             superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
-                assert(res.status == 412)
+                assert(res.status == 400)
                 done()
             })
         })
@@ -250,7 +253,7 @@ describe('Routes', () => {
         it('find user by inserting only empty password', (done) => {
             const credentials = { md5password : {} }
             superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
-                assert(res.status == 412)
+                assert(res.status == 400)
                 done()
             })
         })
@@ -258,7 +261,7 @@ describe('Routes', () => {
         it('find user by inserting empty username & empty password', (done) => {
             const credentials = { username: {}, md5password : {} }
             superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
-                assert(res.status == 412)
+                assert(res.status == 400)
                 done()
             })
         })
@@ -266,43 +269,76 @@ describe('Routes', () => {
         it('find user by inserting empty query', (done) => {
             const credentials = {}
             superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
-                assert(res.status == 412)
+                assert(res.status == 400)
                 done()
             })
         })
        
-    })
+    }) */
 
     describe('/GetFriendStatus', () => {
 
-        before( () => {
-            clearDb();
+        before( async () => {
+            await clearDb()
+            await setFriends("User1", "User2")
         })
 
-        it('try valid username / password', (done) => {
-            done()
+        it('try to get a friend status that exist', async () => {
+            const userData = {username : "User1", friendname : "User2"}
+            superagent.post('http://localhost:8080/GetFriendStatus').send(userData).end((err, res) => {
+                assert(res.status == 200)
+            })
+        })
+
+        it("try to get a friend status that doesn't exist", async () => {
+            const userData = {username : "User1", friendname : "User3"}
+            superagent.post('http://localhost:8080/GetFriendStatus').send(userData).end((err, res) => {
+                assert(res.status == 200)
+            })
         })
     })
 
     describe('/SetFriendStatus', () => {
 
-        before( () => {
-            clearDb();
+        before( async () => {
+            await clearDb();
+            await setFriends("User1", "User2")
         })
 
-        it('try valid username / password', (done) => {
-            done()
+        it('try to set a new friend status', async () => {
+            const userData = {username : "User1", friendname : "User3", friendstatus : 2}
+            superagent.post('http://localhost:8080/SetFriendStatus').send(userData).end((err, res) => {
+                assert(res.status == 200)
+            })
+        })
+
+        it('try to update a friend status', async () => {
+            const userData ={username : "User1", friendname : "User2", friendstatus : 1}
+            superagent.post('http://localhost:8080/SetFriendStatus').send(userData).end((err, res) => {
+                assert(res.status == 200)
+            })
         })
     })
 
     describe('/GetAllFriends', () => {
 
-        before( () => {
-            clearDb();
+        before( async () => {
+            await clearDb()
+            await setFriends("User1", "User2")
         })
 
-        it('try valid username / password', (done) => {
-            done()
+        it('try to get existing frinds', async () => {
+            const userData = {username : "User1"}
+            superagent.post('http://localhost:8080/GetAllFriends').send(userData).end((err, res) => {
+                assert(res.status == 200)
+            })
+        })
+
+        it('try to get non-existing friends', async () => {
+            const userData = {username : "User3"}
+            superagent.post('http://localhost:8080/GetAllFriends').send(userData).end((err, res) => {
+                assert(res.status == 200)
+            })
         })
     })
 
@@ -315,17 +351,19 @@ describe('Handlers', () => {
 
         before(async () => {
             await clearDb()
-            addUser("UserA")
+            await addUser("UserA")
         })
 
         it('try valid username / password', async () => {
-            const result = await handlers.login({username : "UserA", md5password : md5("password")}, "tdp013_tests")
+            const userData = {username : "UserA", md5password : md5("password")}
+            const result = await handlers.login(userData)
             assert(result.username === "UserA")
         })
 
         it('try invalid username / password', async () => {
             try {
-                await handlers.login({username : "UserB", md5password : md5("password")}, "tdp013_tests")
+                const userData = {username : "UserB", md5password : md5("password")}
+                await handlers.login(userData)
             } catch (err) {
                 assert(err.message === "User does not exist.")
             }
@@ -334,18 +372,20 @@ describe('Handlers', () => {
 
     describe('createAccount', () => {
 
-        before(() => {
-            clearDb()
+        before( async () => {
+            await clearDb()
         })
 
         it('try creating non-existing account', async () => {
-            const result = await handlers.createAccount({username : "UserA", md5password : md5("password")}, "tdp013_tests")
+            const userData = {username : "UserA", md5password : md5("password")}
+            const result = await handlers.createAccount(userData)
             assert(result['acknowledged'])
         })
 
         it('try creating already existing account', async () => {
             try {
-                await handlers.createAccount({username : "UserA", md5password : md5("password")}, "tdp013_tests")
+                const userData = {username : "UserA", md5password : md5("password")}
+                await handlers.createAccount(userData)
             } catch (err) {
                 assert(err.message === "User already exists.")
             }
@@ -356,33 +396,37 @@ describe('Handlers', () => {
 
         before(async () => {
             await clearDb()
-            addUser("UserA")
-            addUser("UserC")
-            addUser("UserD")
-            setFriends("UserA", "UserC")
+            await addUser("UserA")
+            await addUser("UserC")
+            await addUser("UserD")
+            await setFriends("UserA", "UserC")
         })
 
         it("try adding a message to existing user's own page", async () => {
-            const result = await handlers.addMessage({msg : "message", creator : "UserA", page : "UserA"}, "tdp013_tests")
+            const msgData = {msg : "message", creator : "UserA", page : "UserA"}
+            const result = await handlers.addMessage(msgData)
             assert(result['acknowledged'])
         })
 
         it('try adding a message to non-existing user', async () => {
             try {
-                await handlers.addMessage({msg : "message", creator : "UserB", page : "UserB"}, "tdp013_tests")
+                const msgData = {msg : "message", creator : "UserB", page : "UserB"}
+                await handlers.addMessage(msgData)
             } catch (err) {
                 assert(err.message === "User does not exist.")
             }
         })
 
         it("try adding a message to friend of existing user's page", async () => {
-            const result = await handlers.addMessage({msg : "message", creator : "UserA", page : "UserC"}, "tdp013_tests")
+            const msgData = {msg : "message", creator : "UserA", page : "UserC"}
+            const result = await handlers.addMessage(msgData)
             assert(result['acknowledged'])
         })
 
         it("try adding a message to non-friend of existing user's page", async () => {
             try {
-                await handlers.addMessage({msg : "message", creator : "UserA", page : "UserD"}, "tdp013_tests")
+                const msgData = {msg : "message", creator : "UserA", page : "UserD"}
+                await handlers.addMessage(msgData)
             } catch (err) {
                 assert(err.message === "User does not have permission to post message.")
             }
@@ -398,12 +442,14 @@ describe('Handlers', () => {
         })
 
         it('try getting messages that exist', async () => {
-            const result = await handlers.getMessages({username : "UserA"}, "tdp013_tests")
+            const userData = {username : "UserA"}
+            const result = await handlers.getMessages(userData)
             assert(result[0].msg === "message" && result[0].creator === "UserA")
         })
 
         it('try getting messages that does not exist', async () => {
-            const result = await handlers.getMessages({username : "UserB"}, "tdp013_tests")
+            const userData = {username : "UserB"}
+            const result = await handlers.getMessages(userData)
             assert(result.length === 0)
         })
 
@@ -413,17 +459,19 @@ describe('Handlers', () => {
 
         before( async () => {
             await clearDb()
-            addUser("UserA")
+            await addUser("UserA")
         })
 
         it('try to find an user that exist', async () => {
-            const result = await handlers.findUser({username : "UserA"}, "tdp013_tests")
+            const userData = {username : "UserA"}
+            const result = await handlers.findUser(userData)
             assert(result.username === "UserA")
         })
 
         it("try to find an user that doesn't exist", async () => {
             try {
-                await handlers.findUser({username : "UserA"}, "tdp013_tests")
+                const userData = {username : "UserA"}
+                await handlers.findUser(userData)
             } catch (err) {
                 assert(err.message === "User does not exist.")
             }
@@ -434,17 +482,19 @@ describe('Handlers', () => {
 
         before( async () => {
             await clearDb()
-            setFriends("UserA", "UserB")
+            await setFriends("UserA", "UserB")
         })
 
 
         it('try to get a friend status that exist', async () => {
-            const result = await handlers.getFriendStatus({username : "UserA", friendname : "UserB"}, "tdp013_tests")
+            const userData = {username : "UserA", friendname : "UserB"}
+            const result = await handlers.getFriendStatus(userData)
             assert(result.friendstatus === 3)
         })
 
         it("try to get a friend status that doesn't exist", async () => {
-            const result = await handlers.getFriendStatus({username : "UserA", friendname : "UserC"}, "tdp013_tests")
+            const userData = {username : "UserA", friendname : "UserC"}
+            const result = await handlers.getFriendStatus(userData)
             assert(result.friendstatus === 0)
         })
     })
@@ -453,16 +503,18 @@ describe('Handlers', () => {
 
         before( async () => {
             await clearDb()
-            setFriends("UserA", "UserB")
+            await setFriends("UserA", "UserB")
         })
 
         it('try to set a new friend status', async () => {
-            const result = await handlers.setFriendStatus({username : "UserA", friendname : "UserC", friendstatus : 3}, "tdp013_tests")
+            const userData = {username : "UserA", friendname : "UserC", friendstatus : 3}
+            const result = await handlers.setFriendStatus(userData)
             assert(result['acknowledged'])
         })
 
         it('try to update a friend status', async () => {
-            const result = await handlers.setFriendStatus({username : "UserA", friendname : "UserB", friendstatus : 0}, "tdp013_tests")
+            const userData = {username : "UserA", friendname : "UserB", friendstatus : 0}
+            const result = await handlers.setFriendStatus(userData)
             assert(result['acknowledged'])
         })
 
@@ -472,16 +524,18 @@ describe('Handlers', () => {
 
         before( async () => {
             await clearDb()
-            setFriends("UserA", "UserB")
+            await setFriends("UserA", "UserB")
         })
 
         it('try to get existing frinds', async () => {
-            const result = await handlers.getAllFriends({username : "UserA"}, "tdp013_tests")
+            const userData = {username : "UserA"}
+            const result = await handlers.getAllFriends(userData)
             assert(result[0].friendname === "UserB" && result[0].friendstatus === 3)
         })
 
         it('try to get non-existing friends', async () => {
-            const result = await handlers.getAllFriends({username : "UserC"}, "tdp013_tests")
+            const userData = {username : "UserC"}
+            const result = await handlers.getAllFriends(userData)
             assert(result.length === 0)  
         })
         
@@ -490,5 +544,32 @@ describe('Handlers', () => {
 
 
 describe('Chat', () => {
+
+    beforeEach(() => {
+        server.startChatServer(true)
+    })
+
+    afterEach(() => {
+        server.stopChatServer(true)
+    })
+
+    describe('join_room', async () => {
+        it('try user connect to a chat room', async() => {
+
+        })
+    })
+
+    describe('send_message', async () => {
+        it('try user sending a message', async() => {
+
+        })
+
+    })
+
+    describe('disconnect', async () => {
+        it('try user disconnect', async() => {
+
+        })
+    })
 
 })
