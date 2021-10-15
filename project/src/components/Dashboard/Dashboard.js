@@ -46,6 +46,22 @@ export default function Dashboard({loginName}) {
         }
     }
 
+    function validateFindUser(username) {
+        const accpetedPattern = /^[A-Za-z0-9_]+$/
+        return username !== null
+            && typeof username === 'string'
+            && username.length > 3
+            && username.length < 20
+            && username.match(accpetedPattern)
+    }
+
+    function validatePostMessage(message) {
+        return message !== null
+            && typeof message  === 'string'
+            && message .length > 0
+            && message .length < 1400 
+    }
+
     function createPostElement(postData, index) {
         return (
             <div className="postBubble" key={index}>
@@ -80,9 +96,8 @@ export default function Dashboard({loginName}) {
     }
 
     async function createPost() {
-        if (postText.length > 0) {
+        if (validatePostMessage(postText)) {
             let postData = {msg : postText, creator : loginName, page : currentUser}
-            setPostText("")  
             await fetch('http://localhost:8080/AddMessage', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -93,7 +108,8 @@ export default function Dashboard({loginName}) {
                     setUserPosts([post, ...userPosts])
                 } 
             }).catch(err => console.log("createPost() error: ", err))
-        }
+        } 
+        setPostText("") 
     }
 
     async function getFriendStatus(friend) {
@@ -131,18 +147,22 @@ export default function Dashboard({loginName}) {
     }
 
     async function findUser() {
-        await fetch('http://localhost:8080/FindUser', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({username : findUserText})
-          }).then(res => {
-            if (res.status === 200) {
-                changeCurrentUser(findUserText)   
-                setFindUserStatusMessage("")
-            } else {
-                setFindUserStatusMessage(`User ${findUserText} not Found`)
-            }
-        }).catch(err => console.log("findUser() Dashboard.js error", err))
+        if (validateFindUser(findUserText)) {
+            await fetch('http://localhost:8080/FindUser', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username : findUserText})
+              }).then(res => {
+                if (res.status === 200) {
+                    changeCurrentUser(findUserText)   
+                    setFindUserStatusMessage("")
+                } else {
+                    setFindUserStatusMessage(`User ${findUserText} not Found`)
+                }
+            }).catch(err => console.log("findUser() Dashboard.js error", err)) 
+        } else {
+            setFindUserStatusMessage("Invalid Username")
+        }
         setFindUserText("")
     }
 

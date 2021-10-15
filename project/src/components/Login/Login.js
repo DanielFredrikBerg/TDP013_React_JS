@@ -40,60 +40,59 @@ async function createUser(credentials) {
 export default function Login({ setToken }) {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
-  const [showErrorMsg, setShowErrorMsg] = useState(false)
+  const [errorMsg, setErrorMsg] = useState("")
 
   function validateUsername(username) {
     const accpetedPattern = /^[A-Za-z0-9_]+$/
     return username !== null
         && typeof username === 'string'
         && username.length > 3
+		&& username.length < 20
         && username.match(accpetedPattern)
   }
 
   function validatePassword(password) {
-	  alert(password)
       const accpetedPattern = /^[A-Za-z0-9_]+$/
       return password !== null
           && typeof password === 'string'
           && password.length > 3
+		  && password.length < 20
           && password.match(accpetedPattern)
   }
 
-  	const handleLogin = async e => {
-		e.preventDefault();
+  	const handleLogin = async () => {
 		if (validateUsername(username)  && validatePassword(password)) {
 			const md5password = md5(password)
 			loginUser({username, md5password}).then(token => {
 				setToken(token);
 				if (token) {
-					setShowErrorMsg(false)
+					setErrorMsg("")
 					window.location.href="http://localhost:3000/Dashboard"
 				} else {
-					setShowErrorMsg(true)
+					setErrorMsg("Invalid Username / Password")
 				}     
 			}).catch(err => console.log("loginUser in Login.js Error: ", err))
 		} else {
-			setShowErrorMsg(true)
+			setErrorMsg("Invalid Username / Password")
 		}
 		setUserName("")
 		setPassword("")    
   	}
 
-    const handleCreate = async e => {
-		e.preventDefault();
+    const handleCreate = async () => {
 		if (validateUsername(username)  && validatePassword(password)) {
 			const md5password = md5(password)
 			createUser({username, md5password}).then(token => {
 				setToken(token);
 				if (token) {
-					setShowErrorMsg(false)
+					setErrorMsg("")
 					window.location.href="http://localhost:3000/Dashboard"
 				} else {
-					setShowErrorMsg(true)
+					setErrorMsg("Username already Exist")
 				}
 			});
         } else {
-			setShowErrorMsg(true)
+			setErrorMsg("Invalid Username / Password")
 		}
 		setUserName("")
 		setPassword("")
@@ -103,10 +102,10 @@ export default function Login({ setToken }) {
     <div className="loginWrapper">
         <div className="loginDiv">
           <Form className="loginForm">
-            {showErrorMsg && 
+            {errorMsg && 
             <div className="loginFormDiv"> 
                   <p className="loginFormStatusMsg">
-                      Invalid Username/Password
+                      {errorMsg}
                   </p>
             </div>}
             <Form.Group className="mb-3" controlId="formGroupEmail">

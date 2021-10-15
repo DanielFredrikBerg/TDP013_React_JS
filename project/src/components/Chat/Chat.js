@@ -23,7 +23,9 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
        
     useEffect(() => {
         socket.on("recieve_message", (data) => {
-            createChatBubble(data.message, data.author)
+            if (validateChatMessage(data.message)) {
+                createChatBubble(data.message, data.author)
+            }  
         });
         
     }, [socket])
@@ -37,6 +39,13 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
           event.preventDefault();
           sendChatMessage();
         }
+    }
+
+    function validateChatMessage(message) {
+        return message !== null
+            && typeof message  === 'string'
+            && message .length > 0
+            && message .length < 666 
     }
 
     function createChatBubble(message, sender) {
@@ -57,7 +66,7 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
     }
 
     async function sendChatMessage() {
-        if (currentMessage !== "") {
+        if (validateChatMessage(currentMessage)) {
             createChatBubble(currentMessage, loginName)
             const messageData = {
                 _id: Date.now(),
@@ -65,8 +74,7 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
                 author: loginName,
                 message: currentMessage,
                 time: new Date(Date.now()).getHours() + ":" + new Date(Date.now()).getMinutes(),
-            };
-
+            }
             await socket.emit("send_message", messageData);
             setCurrentMessage("")
         }
