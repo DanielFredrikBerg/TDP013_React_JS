@@ -7,56 +7,90 @@ function checkIfValidMD5Hash(str) {
   }
 
 function checkCredentials(credentials) {
-    return credentials !== null 
+    return typeof credentials === "object" 
         && JSON.stringify(credentials) !== "{}"
         && Object.keys(credentials).length === 2 
         && credentials.hasOwnProperty('username')
-        && JSON.stringify(credentials.username).length > 3
+        && typeof credentials.username === "string"
+        && credentials.username.length > 3
         && credentials.hasOwnProperty('md5password')
-        && JSON.stringify(credentials.md5password).length > 3
+        && typeof credentials.md5password === "string"
+        && credentials.md5password.length > 3
         && checkIfValidMD5Hash(credentials.md5password)
 }
 
 function checkUserName(username) {
-    return username !== null
+    return typeof username === "object"
         && JSON.stringify(username) !== "{}"
         && Object.keys(username).length === 1
         && username.hasOwnProperty('username') 
-        && JSON.stringify(username.username) !== "{}"
+        && typeof username.username === "string"
+        && username.username !== "{}"
 }
 
 function checkDbEntry(dbEntry) {
-    return JSON.stringify(dbEntry) !== "{}"
+    return typeof dbEntry === "object"
+        && JSON.stringify(dbEntry) !== "{}"
         && Object.keys(dbEntry).length === 3
         && dbEntry.hasOwnProperty("_id")
+        && dbEntry._id instanceof ObjectId
         && JSON.stringify(dbEntry._id) !== "{}"
         && dbEntry.hasOwnProperty("username")
-        && JSON.stringify(dbEntry.username) !== "{}"
+        && typeof dbEntry.username === "string"
+        && dbEntry.username !== "{}"
         && dbEntry.hasOwnProperty("md5password")
-        && JSON.stringify(dbEntry.md5password) !== "{}"
+        && typeof dbEntry.md5password === "string"
+        && dbEntry.md5password !== "{}"
         && checkIfValidMD5Hash(dbEntry.md5password)
 }
 
-function validateMessageForm(msgData) {
-    return JSON.stringify(msgData) !== "{}"
-        && Object.keys(msgData).length === 4
-        && msgData.hasOwnProperty("msg")
-        && JSON.stringify(msgData.msg) !== "{}"
-        && msgData.msg !== ""
-        && msgData.hasOwnProperty("_id")
-        && JSON.stringify(msgData._id) !== "{}"
-        && msgData._id !== ""
-        && msgData.hasOwnProperty("creator")
-        && JSON.stringify(msgData.creator) !== "{}"
-        && msgData.creator !== ""
-        && msgData.hasOwnProperty("page")
-        && JSON.stringify(msgData.page) !== "{}"
-        && msgData.page !== ""
+function validateMessageForm(query) {
+    return typeof query === "object"
+        && JSON.stringify(query) !== "{}"
+        && Object.keys(query).length === 3
+        && query.hasOwnProperty("msg")
+        && typeof query.msg === "string"
+        && query.msg.length > 0
+        && query.hasOwnProperty("creator")
+        && typeof query.creator === "string"
+        && query.creator.length > 0
+        && query.hasOwnProperty("page")
+        && typeof query.page === "string"
+        && query.page.length > 0
+}
+
+function validateGetFriendStatusQuery(query) {
+    return typeof query === "object"
+        && JSON.stringify(query) !== "{}"
+        && Object.keys(query).length === 2
+        && query.hasOwnProperty("username")
+        && typeof query.username === "string"
+        && query.username.length > 0
+        && query.hasOwnProperty("friendname")
+        && typeof query.friendname === "string"
+        && query.friendname.length > 0
+}
+
+function validateSetFriendStatusQuery(query) {
+    return typeof query === "object"
+        && JSON.stringify(query) !== "{}"
+        && Object.keys(query).length === 3
+        && query.hasOwnProperty("username")
+        && typeof query.username === "string"
+        && query.username.length > 0
+        && query.hasOwnProperty("friendname")
+        && typeof query.friendname === "string"
+        && query.friendname.length > 0
+        && query.hasOwnProperty("friendstatus")
+        && typeof query.friendstatus === "number"
+        && query.friendstatus > -1
+        && query.friendstatus < 4
+
 }
 
 async function login(credentials) {
-    /* if ( checkCredentials(credentials) )
-        { */
+    if ( checkCredentials(credentials) )
+        {
         const db = await MongoClient.connect(url)
         const dbo = db.db("tdp013")
         const result = await dbo.collection("user_accounts").findOne({username: credentials.username, md5password: credentials.md5password})
@@ -66,9 +100,9 @@ async function login(credentials) {
         } else {
             throw new Error("User does not exist.")
         }
-   /*  } else {
-        throw new Error("login credentials empty.")
-    } */
+    } else {
+        throw new Error("Invalid input in login.")
+    } 
 }
 
 async function createAccount(credentials) {
@@ -84,14 +118,12 @@ async function createAccount(credentials) {
         db.close()
         return result
     } else {
-        throw new Error("user credentials empty.")
+        throw new Error("Invalid input in createAccount.")
     }
 }
-    
-
 
 async function addMessage(msgData) {
-    //if (validateMessageForm(msgData)) {
+    if (validateMessageForm(msgData)) {
         const user = msgData.creator
         const isUser = await findUser({username: user})
         if(isUser) {
@@ -109,27 +141,30 @@ async function addMessage(msgData) {
         } else {
             throw new Error("User does not exist.")
         }
-    /* } else {
-        throw new Error("Invalid message form.")
-    } */
+    } else {
+        throw new Error("Invalid input in addMessage.")
+    }
      
 }
 
 async function getMessages(userData) {
-    const db = await MongoClient.connect(url)
-    const dbo = db.db("tdp013")
-    const result = await dbo.collection(`${userData.username}_messages`).find().toArray()
-    db.close()
-    if (result) {
-        return result
+    if(checkUserName(userData)) {
+        const db = await MongoClient.connect(url)
+        const dbo = db.db("tdp013")
+        const result = await dbo.collection(`${userData.username}_messages`).find().toArray()
+        db.close()
+        if (result) {
+            return result
+        } else {
+            return []
+        }
     } else {
-        return []
+        throw new Error("Invalid input in getMessages.")
     }
-    
 }
 
 async function findUser(userData) {
-    //if( checkUserName(userData) ){
+    if( checkUserName(userData) ){
         const db = await MongoClient.connect(url)
         const dbo = db.db("tdp013")
         const result = await dbo.collection("user_accounts").findOne( {username : userData.username } )
@@ -139,55 +174,65 @@ async function findUser(userData) {
         } else { 
             throw new Error("User does not exist.") 
         }
-    /* } else {
-        throw new Error("Invalid username in findUser.")
-    } */
-      
+    } else {
+        throw new Error("Invalid input in findUser.")
+    }   
 }
 
 async function getFriendStatus(userData) {
-    const db = await MongoClient.connect(url)
-    const dbo = db.db("tdp013")
-    const result = await dbo.collection(`${userData.username}_friends`).findOne({friendname : userData.friendname})
-    db.close()
-    if (result) {
-        return result 
+    if(validateGetFriendStatusQuery(userData)) {
+        const db = await MongoClient.connect(url)
+        const dbo = db.db("tdp013")
+        const result = await dbo.collection(`${userData.username}_friends`).findOne({friendname : userData.friendname})
+        db.close()
+        if (result) {
+            return result 
+        } else {
+            return {friendstatus : 0}
+        }
     } else {
-        return {friendstatus : 0}
-    }
-    
+        throw new Error("Invalid input in getFriendStatus.")
+    } 
 }
 
 async function setFriendStatus(userData) {
-    const db = await MongoClient.connect(url)
-    const dbo = db.db("tdp013")
-    const entryExists = await dbo.collection(`${userData.username}_friends`).findOne({friendname : userData.friendname})
-    if (entryExists) {
-        const result = await dbo.collection(`${userData.username}_friends`).updateOne(
-            {friendname : userData.friendname}, {$set: {friendstatus : userData.friendstatus}}
-        )
-        db.close()
-        return result
+    if(validateSetFriendStatusQuery(userData)){
+        const db = await MongoClient.connect(url)
+        const dbo = db.db("tdp013")
+        const entryExists = await dbo.collection(`${userData.username}_friends`).findOne({friendname : userData.friendname})
+        if (entryExists) {
+            const result = await dbo.collection(`${userData.username}_friends`).updateOne(
+                {friendname : userData.friendname}, {$set: {friendstatus : userData.friendstatus}}
+            )
+            db.close()
+            return result
+        } else {
+            const result = await dbo.collection(`${userData.username}_friends`).insertOne(
+                {friendname : userData.friendname, friendstatus : userData.friendstatus}
+            )
+            db.close()
+            return result
+        }
     } else {
-        const result = await dbo.collection(`${userData.username}_friends`).insertOne(
-            {friendname : userData.friendname, friendstatus : userData.friendstatus}
-        )
-        db.close()
-        return result
+        throw new Error("Invalid input in setFriendStatus.")
     }
 }
 
 async function getAllFriends(userData) {
-    const db = await MongoClient.connect(url)
-    const dbo = db.db("tdp013")
-    const result = await dbo.collection(`${userData.username}_friends`).find({}).toArray()
-    db.close()
-    if (result) {
-        return result 
+    if(checkUserName(userData)) {
+        console.log("getAllFriends", userData)
+        const db = await MongoClient.connect(url)
+        const dbo = db.db("tdp013")
+        const result = await dbo.collection(`${userData.username}_friends`).find({}).toArray()
+        db.close()
+        if (result) {
+            return result 
+        } else {
+            return []
+        }
     } else {
-        return []
+        throw new Error("Invalid input in getAllFriends.")
     }
-    
 }
 
 module.exports = {login, createAccount, addMessage, getMessages, findUser, getFriendStatus, setFriendStatus, getAllFriends}

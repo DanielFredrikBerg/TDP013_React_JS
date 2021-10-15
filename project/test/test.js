@@ -47,11 +47,11 @@ async function getPostsOfUser(userName) {
 
 describe('Routes', () => {
 
-    beforeEach(() => {
+    before(() => { // Behövde ändra från Each för Mocha kastade Errors
         server.startExpressServer(true)
     })
 
-    afterEach(() => {
+    after(() => { // Behövde ändra från Each för Mocha kastade Errors
         server.stopExpressServer(true)
     })
 
@@ -74,8 +74,10 @@ describe('Routes', () => {
 
         it('try valid username / password', () => {
             const credentials = { username : "userB", md5password : md5("password")}
-            const result = superagent.post('http://localhost:8080/Login').send(credentials)
-            assert(result)
+            superagent.post('http://localhost:8080/Login').send(credentials).end((err, res) => {
+                assert(res.status == 200)
+                
+            })
         })
 
         it('try invalid password', () => {
@@ -171,7 +173,6 @@ describe('Routes', () => {
         it('try empty username only with correct password', () => {
             const credentials = { username: "", md5password : md5("password") }
             superagent.post('http://localhost:8080/CreateAccount').send(credentials).end((err, res) => {
-                console.log(res.status)
                 assert(res.status == 400)
             })
         })
@@ -191,30 +192,7 @@ describe('Routes', () => {
         })
 
         
-    }) 
-
-    /*
-    describe('/AddMessage', () => {
-
-        before( () => {
-            //clearDb();
-        })
-
-        it('try valid username / password', (done) => {
-            done()
-        })
-    })
-
-    describe('/GetMessages', () => {
-
-        before( () => {
-            //clearDb();
-        })
-
-        it('try valid username / password', (done) => {
-            done()
-        })
-    }) 
+    })  
 
     describe('/FindUser', () => {
 
@@ -225,56 +203,55 @@ describe('Routes', () => {
             await addUser("UserC")
         })
 
-        it('find user by inserting only correct username', (done) => {
+        it('find user by inserting only correct username', () => {
             const credentials = { username : "UserB" }
             superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
-                console.log(res.status)
                 assert(res.status == 200)
-                done()
+                
             })
         })
 
-        it('try find user vid correct username & password', (done) => {
+        it('try find user vid correct username & password', () => {
             const credentials = { username : "userC", md5password : md5("password")}
             superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
                 assert(res.status == 400)
-                done()
+                
             })
         })
 
-        it('find user by inserting only empty username', (done) => {
+        it('find user by inserting only empty username', () => {
             const credentials = { username : {} }
             superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
                 assert(res.status == 400)
-                done()
+                
             })
         })
 
-        it('find user by inserting only empty password', (done) => {
+        it('find user by inserting only empty password', () => {
             const credentials = { md5password : {} }
             superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
                 assert(res.status == 400)
-                done()
+                
             })
         })
 
-        it('find user by inserting empty username & empty password', (done) => {
+        it('find user by inserting empty username & empty password', () => {
             const credentials = { username: {}, md5password : {} }
             superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
                 assert(res.status == 400)
-                done()
+                
             })
         })
 
-        it('find user by inserting empty query', (done) => {
+        it('find user by inserting empty query', () => {
             const credentials = {}
             superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
                 assert(res.status == 400)
-                done()
+                
             })
         })
        
-    }) */
+    })
 
     describe('/GetFriendStatus', () => {
 
@@ -432,6 +409,15 @@ describe('Handlers', () => {
             }
         })
 
+        it("try adding a message with invalid message input data", async () => {
+            try {
+                const msgData = {msg : "message"}
+                await handlers.addMessage(msgData)
+            } catch (err) {
+                assert(err.message === "Invalid input in addMessage.")
+            }
+        })
+
     })
 
     describe('getMessages', () => {
@@ -453,6 +439,15 @@ describe('Handlers', () => {
             assert(result.length === 0)
         })
 
+        it('try invalid input in getMessages', async () => {
+            const userData = {}
+            try {
+                await handlers.getMessages(userData)
+                
+            } catch(err) {
+                assert(err.message === "Invalid input in getMessages.")
+            }
+        })
     })
 
     describe('findUser', () => {
@@ -497,6 +492,15 @@ describe('Handlers', () => {
             const result = await handlers.getFriendStatus(userData)
             assert(result.friendstatus === 0)
         })
+
+        it("try invalid input", async () => {
+            const userData = {}
+            try {
+                await handlers.getFriendStatus(userData)
+            } catch (err) {
+                assert(err.message === "Invalid input in getFriendStatus.")
+            }  
+        })
     })
 
     describe('setFriendStatus', () => {
@@ -516,6 +520,15 @@ describe('Handlers', () => {
             const userData = {username : "UserA", friendname : "UserB", friendstatus : 0}
             const result = await handlers.setFriendStatus(userData)
             assert(result['acknowledged'])
+        })
+
+        it("try invalid input", async () => {
+            const userData = {}
+            try {
+                await handlers.setFriendStatus(userData)
+            } catch (err) {
+                assert(err.message === "Invalid input in setFriendStatus.")
+            }  
         })
 
     })
@@ -539,11 +552,23 @@ describe('Handlers', () => {
             assert(result.length === 0)  
         })
         
+        it("try invalid input", async () => {
+            const userData = {}
+            try {
+                await handlers.getAllFriends(userData)
+            } catch (err) {
+                assert(err.message === "Invalid input in getAllFriends.")
+            }  
+        })
     })
 }) 
 
 
 describe('Chat', () => {
+
+    before( async () => {
+        await addUser()
+    })
 
     beforeEach(() => {
         server.startChatServer(true)
