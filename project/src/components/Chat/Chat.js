@@ -18,7 +18,6 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
     useEffect(() => {
         if (chatFriend && roomId !== "") {
             socket.emit("join_room", roomId);
-            console.log(roomId)
         }
     }, [roomId])
        
@@ -74,6 +73,9 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
     }
 
     async function closeChatWindow() {
+        if (chatFriend && roomId !== "") {
+            socket.emit("leave_room", roomId);
+        }
         setChatFriend("") 
         setShowChatWindow(false) 
     }

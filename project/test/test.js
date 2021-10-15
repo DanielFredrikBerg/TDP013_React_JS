@@ -1,9 +1,12 @@
+import io from "socket.io-client";
+
 const assert = require('assert')
 const md5 = require('md5')
 const superagent = require('superagent');
 const handlers = require('../src/requestHandlers')
 const routes = require('../src/routes')
 const server = require('../src/server')
+const socket = require('../src/components/Chat/Chat')(socket)
 const {MongoClient} = require('mongodb');
 let url = "mongodb://localhost:27017";
 
