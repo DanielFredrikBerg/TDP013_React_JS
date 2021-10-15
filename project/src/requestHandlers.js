@@ -85,7 +85,6 @@ function validateSetFriendStatusQuery(query) {
         && typeof query.friendstatus === "number"
         && query.friendstatus > -1
         && query.friendstatus < 4
-
 }
 
 async function login(credentials) {
@@ -220,7 +219,6 @@ async function setFriendStatus(userData) {
 
 async function getAllFriends(userData) {
     if(checkUserName(userData)) {
-        console.log("getAllFriends", userData)
         const db = await MongoClient.connect(url)
         const dbo = db.db("tdp013")
         const result = await dbo.collection(`${userData.username}_friends`).find({}).toArray()

@@ -1,70 +1,39 @@
-# Getting Started with Create React App
+# TDP013 HT2021 vikro653 danhu849
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## Projekt - En social webbplats
 
-In the project directory, you can run:
+Nedan finns instruktioner för installation och uppsättning av denna sociala webbplats. Webbplatsen är utvecklad i React och Node.js Express, nyttjar Mongodb för lagring och stödjer chat i realtid mellan användare mha socket.io.
 
-### `npm start`
+Full funktionalitet har uppnåtts både på Ubuntu 20.04 och Windows 10 Pro.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Instruktioner för installation och uppstart
+1. Starta en mongodb instans med default port: 27017
+2. git clone git@gitlab.liu.se:vikro653/tdp013_gruppc_vikro653_danhu849.git
+3. Starta en terminal och cd:a till tdp013_gruppc_vikro653_danhu849/project
+4. Installera nödvändiga paket med pakethanteraren npm. Paketen som behövs hittas i [package.json](./package.json).
+5. Öppna en terminal från tdp013_gruppc_vikro653_danhu849/project och starta node.js servern med: _npm run start_
+6. Öppna en terminal från tdp013_gruppc_vikro653_danhu849/project och starta React dev server med: _npm run server_
+7. Efter en stund startas en webbläsare och du möts av en inloggningssida.
+8. Skriv in användarnamn och lösenord i respektive fält och klicka på Create User.
+9. Därefter kan du posta meddelanden på din vägg, leta efter andra användare (du kommer behöva skapa ett par användare först) samt skicka vänförfrågningar till de användare du hittat. 
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Sök efter användare i fältet högst upp under "Find User", klicka på Search eller tryck Enter för att söka. Vänförfrågningar besvaras genom att klicka på dropdownlistan Friends högst upp till vänster på sidan.
 
-### `npm test`
+### Filstruktur
+* Katalogen [components/](./src/components/) innehåller komponenterna App, Chat, Dashboard och Login.
+* Filen [server.js](./src/server.js) innehåller Node.js och socket.io server.
+* Filen [requestHandlers.js](./requestHandlers.js) innehåller funktioner för manipulering av Mongodb databasen.
+* Filen [routes.js](./routes.js) är middleware.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Huvudkomponenten för appen är [Dashboard.js](./src/components/Dashboard.js) som innehåller den huvudsakliga funktionaliteten för webbplatsen.
 
-### `npm run build`
+### Tester
+[Fil med Tester](./test/test.js)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Starta en mongodb instans med default port: 27017
+2. Om en node.js är igång stäng av den. Testfilen startar node.js vid behov.
+3. Öppna en till terminal, cd:a till tdp013_gruppc_vikro653_danhu849/project och kör testerna med: _npm run test_
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+ 
