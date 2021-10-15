@@ -10,6 +10,7 @@
     max-width: 245px;
     text-align: right;
     margin-left: auto;
+    word-wrap: break-word;
 }
 
 .chatBubbleReciever {
@@ -22,6 +23,7 @@
     margin-left: 15px; 
     min-width: 125px; 
     max-width: 245px;
+    word-wrap: break-word;
 }
 
 .chatWindow {

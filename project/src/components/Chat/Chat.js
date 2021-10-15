@@ -45,7 +45,7 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
         return message !== null
             && typeof message  === 'string'
             && message .length > 0
-            && message .length < 666 
+            && message .length < 333 
     }
 
     function createChatBubble(message, sender) {
@@ -75,9 +75,9 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
                 message: currentMessage,
                 time: new Date(Date.now()).getHours() + ":" + new Date(Date.now()).getMinutes(),
             }
-            await socket.emit("send_message", messageData);
-            setCurrentMessage("")
+            await socket.emit("send_message", messageData); 
         }
+        setCurrentMessage("")
     }
 
     async function closeChatWindow() {

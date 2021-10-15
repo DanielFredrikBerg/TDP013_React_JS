@@ -56,6 +56,7 @@ a:hover {
   padding: 10px;
   border-radius: 5px;
   color: #8a9a93;
+  word-wrap: break-word;
 }
 
 .friendListItem {
