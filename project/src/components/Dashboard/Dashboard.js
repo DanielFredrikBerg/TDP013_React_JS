@@ -29,14 +29,14 @@ export default function Dashboard({loginName}) {
             const storedCurrentUser = sessionStorage.getItem('currentUser')
             currentUser = storedCurrentUser
             setCurrentUser(storedCurrentUser)
-            const status = await GetFriendStatus(storedCurrentUser)
+            const status = await getFriendStatus(storedCurrentUser)
             setCurrentUserFriendStatus(status)
-            DisplayAllPosts(storedCurrentUser)
+            displayAllPosts(storedCurrentUser)
         } else {
             setCurrentUser(loginName)
-            DisplayAllPosts(loginName)
+            displayAllPosts(loginName)
         }
-        PopulateFriendList()
+        populateFriendList()
     },[])
 
     function onKeyPress(event) {
@@ -46,12 +46,12 @@ export default function Dashboard({loginName}) {
         }
     }
 
-    function createPostElement(postData) {
+    function createPostElement(postData, index) {
         return (
-            <div className="postBubble" key={Date.now()}>
+            <div className="postBubble" key={index}>
                 <h4>
                     <a href="#"
-                       onClick={() => ChangeCurrentUser(postData.creator)}>
+                       onClick={() => changeCurrentUser(postData.creator)}>
                        {postData.creator}
                     </a>
                 </h4>
@@ -59,20 +59,23 @@ export default function Dashboard({loginName}) {
             </div>)
     }
 
-    async function DisplayAllPosts(user) { 
+    async function displayAllPosts(user) { 
         const msgData = await fetch('http://localhost:8080/GetMessages', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({username : user})
-          }).then(res => {  
+        }).then(res => {  
             if (res.status === 200) {
                 return res.json()
-             } 
-        }).catch(err => console.log("DisplayAllPosts Error: ", err))
-        var updatedUserPosts = []
-        if (msgData) {
-            msgData.forEach(msg => updatedUserPosts.unshift(createPostElement(msg)))
-        }
+            } 
+        }).catch(err => console.log("displayAllPosts Error: ", err))
+        let updatedUserPosts = []
+        msgData.forEach((msg, index) => {
+            const userPost = createPostElement(msg, index)
+            if (userPost) {
+                updatedUserPosts.unshift(userPost)
+            }
+        })
         setUserPosts(updatedUserPosts)
     }
 
@@ -93,12 +96,12 @@ export default function Dashboard({loginName}) {
         }
     }
 
-    async function GetFriendStatus(friend) {
+    async function getFriendStatus(friend) {
         if (friend === loginName) {
             return -1
         }
         
-        const result = await fetch('http://localhost:8080/GetFriendStatus', {
+        const result = await fetch('http://localhost:8080/getFriendStatus', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({username : loginName, friendname : friend})
@@ -106,7 +109,7 @@ export default function Dashboard({loginName}) {
             if (res.status === 200) {
                 return res.json()
             }   
-        }).catch(err => console.log("GetFriendStatus(friend) error: ", err) )
+        }).catch(err => console.log("getFriendStatus(friend) error: ", err) )
         if (result) {
             return result.friendstatus 
         } else {
@@ -114,17 +117,17 @@ export default function Dashboard({loginName}) {
         } 
     }
 
-    async function ChangeCurrentUser(user) {
+    async function changeCurrentUser(user) {
         if (user === loginName) {
             setCurrentUserFriendStatus(-1)
         } else {
-            const status = await GetFriendStatus(user)
+            const status = await getFriendStatus(user)
             setCurrentUserFriendStatus(status) 
         }
         sessionStorage.setItem('currentUser', user) 
         currentUser = user  
         setCurrentUser(user)
-        DisplayAllPosts(user) 
+        displayAllPosts(user) 
     }
 
     async function findUser() {
@@ -134,7 +137,7 @@ export default function Dashboard({loginName}) {
             body: JSON.stringify({username : findUserText})
           }).then(res => {
             if (res.status === 200) {
-                ChangeCurrentUser(findUserText)   
+                changeCurrentUser(findUserText)   
                 setFindUserStatusMessage("")
             } else {
                 setFindUserStatusMessage(`User ${findUserText} not Found`)
@@ -168,7 +171,7 @@ export default function Dashboard({loginName}) {
             currentUserFriendStatus = 3
             setCurrentUserFriendStatus(3)
         }
-        PopulateFriendList()
+        populateFriendList()
     }
 
     async function removeFriend(friend) {
@@ -178,10 +181,10 @@ export default function Dashboard({loginName}) {
             currentUserFriendStatus = 0
             setCurrentUserFriendStatus(0)
         }
-        PopulateFriendList()
+        populateFriendList()
     }
 
-    function openChatWindow(friend) {
+    function toggleChatWindow(friend) {
         if (chatFriendRef === friend) {
             chatFriend = null
             setChatFriend(null)
@@ -197,10 +200,10 @@ export default function Dashboard({loginName}) {
         if (friendData.friendstatus == 3) {
            return <div key={index} className="friendListItem">
                     <Navbar.Text className="friendListText"> 
-                        <a href='#' onClick={() => ChangeCurrentUser(friendData.friendname)}>
+                        <a href='#' className="friendListUserLink" onClick={() => changeCurrentUser(friendData.friendname)}>
                             {friendData.friendname}
                         </a>
-                        <a href="#" onClick={() => openChatWindow(friendData.friendname)}>
+                        <a href="#" onClick={() => toggleChatWindow(friendData.friendname)}>
                             <ChatLeftText className="friendListChatIcon"></ChatLeftText>
                         </a> 
                         <a href="#" onClick={() => removeFriend(friendData.friendname)}>
@@ -211,7 +214,7 @@ export default function Dashboard({loginName}) {
         } else if (friendData.friendstatus === 2) {
             return <div key={index} className="friendListItem">
                         <Navbar.Text className="friendListText"> 
-                            <a href='#' onClick={() => ChangeCurrentUser(friendData.friendname)}>
+                            <a href='#' className="friendListUserLink" onClick={() => changeCurrentUser(friendData.friendname)}>
                                 {friendData.friendname}
                             </a> 
                             <a href="#" onClick={() => acceptFriendRequest(friendData.friendname)}>
@@ -225,7 +228,7 @@ export default function Dashboard({loginName}) {
         }
     }
 
-    async function PopulateFriendList() {
+    async function populateFriendList() {
         const friendData = await fetch('http://localhost:8080/GetAllFriends', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -235,7 +238,7 @@ export default function Dashboard({loginName}) {
                 return res.json()
             }
 
-        }).catch(err => console.log("PopulateFriendList: ", err))
+        }).catch(err => console.log("populateFriendList: ", err))
         let updatedFriendList = []
         friendData.forEach((friend, index) => {
             const friendListItem = createFriendlistItem(friend, index)
@@ -243,14 +246,13 @@ export default function Dashboard({loginName}) {
                 updatedFriendList.unshift(friendListItem)
             }  
         })
-        console.log(updatedFriendList)
         setFriendList(updatedFriendList)
     }
 
     return(
         <div>
             <div id="top">
-                <Navbar variant="dark" 
+                <Navbar letiant="dark" 
                         bg="dark" 
                         expand="sm" 
                         fixed="top"
@@ -267,7 +269,7 @@ export default function Dashboard({loginName}) {
                                 <Dropdown.Menu className="friendList">
                                     {friendList.length === 0 && 
                                     <div className="friendListItem">
-                                        <Navbar.Text className="friendListText">
+                                        <Navbar.Text id="friendListText">
                                             You don't have any Friends
                                         </Navbar.Text>
                                     </div>}
@@ -279,7 +281,7 @@ export default function Dashboard({loginName}) {
                         <Navbar.Collapse id="navbar-dark" className="justify-content-center">
                             <form className="findUserForm">
                                 <p>
-                                    <Navbar.Text className="findUserText">
+                                    <Navbar.Text id="findUserText">
                                         Find User
                                     </Navbar.Text>
                                 </p>
@@ -289,8 +291,8 @@ export default function Dashboard({loginName}) {
                                            onKeyPress={e => onKeyPress(e)} 
                                            onChange={e => setFindUserText(e.target.value)}/>
                                 </label>
-                                <Navbar.Text className="findUserLink">
-                                    <a href='#' onClick={findUser}>
+                                <Navbar.Text>
+                                    <a href='#' id="findUserLink" onClick={findUser}>
                                        Search
                                     </a>
                                 </Navbar.Text>
@@ -301,15 +303,14 @@ export default function Dashboard({loginName}) {
                         </Navbar.Collapse>
 
                         <Navbar.Collapse className="justify-content-end logout">
-                            <Navbar.Text className="logoutText">
+                            <Navbar.Text id="logoutText">
                                 {"Signed in as: "}
-                                <a href="#" onClick={() => ChangeCurrentUser(loginName)}>
+                                <a href="#" onClick={() => changeCurrentUser(loginName)} id="logoutUserLink">
                                    {loginName}
                                 </a>
                                 <p>
-                                    <Navbar.Text onClick={() => sessionStorage.clear()} 
-                                                 className="logoutLink">
-                                        <a href='http://localhost:3000/Login'>
+                                    <Navbar.Text onClick={() => sessionStorage.clear()} >
+                                        <a href='http://localhost:3000/Login' id="logoutLink">
                                             Sign Out
                                         </a>
                                     </Navbar.Text>

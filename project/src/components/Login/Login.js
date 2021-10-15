@@ -83,25 +83,22 @@ export default function Login({ setToken }) {
   }
 
   return(
-    <div id="login-wrapper">
-        <div id="login-forms">
-          <Form style={{backgroundColor : "#212529", 
-                        color : "#8a9a93", 
-                        padding : "30px 50px 30px 50px", 
-                        borderRadius : "15px"}}>
+    <div className="loginWrapper">
+        <div className="loginDiv">
+          <Form className="loginForm">
             {showErrorMsg && 
-            <div style={{textAlign : "center"}}> 
-                  <p style={{color : "red"}}>
-                    Invalid Username/Password
+            <div className="loginFormDiv"> 
+                  <p className="loginFormStatusMsg">
+                      Invalid Username/Password
                   </p>
             </div>}
-            <Form.Group className="mb-3" 
-                        controlId="formGroupEmail">
+            <Form.Group className="mb-3" controlId="formGroupEmail">
                 <Form.Label>Username</Form.Label>
                 <Form.Control type="email" 
                               placeholder="Enter username" 
                               value={username} 
-                              onChange={e => setUserName(e.target.value)}/>
+                              onChange={e => setUserName(e.target.value)}
+                              required/>
             </Form.Group>
             <Form.Group className="mb-3" 
                         controlId="formGroupPassword">
@@ -109,16 +106,16 @@ export default function Login({ setToken }) {
                 <Form.Control type="password" 
                               placeholder="Password" 
                               value={password} 
-                              onChange={e => setPassword(e.target.value)}/>
+                              onChange={e => setPassword(e.target.value)}
+                              required/>
             </Form.Group>
-            <div style={{marginTop: "10px"}}>
+            <div className="linkDiv">
                 <a href="#" 
-                   style={{color : "white"}} 
                    onClick={handleLogin}>
                    Log In
                 </a> 
                 <a href="#" 
-                   style={{color : "white", float : "right"}} 
+                   className="createAccountLink"
                    onClick={handleCreate}>
                    Create Account
                 </a> 

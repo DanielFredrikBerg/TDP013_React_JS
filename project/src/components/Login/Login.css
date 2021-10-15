@@ -1,4 +1,4 @@
-#login-wrapper {
+.loginWrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -6,10 +6,33 @@
     height : 100vh;
 }
 
-#login-forms{
-    background-color: #212529;
+.loginDiv {
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+    
+}
+
+.loginForm {
+    background-color: #212529; 
+    color: #8a9a93; 
+    padding: 30px 50px 30px 50px; 
+    border-radius: 15px;
+}
+
+.loginFormDiv {
+   text-align: center;
+}
+
+.loginFormStatusMsg {
+    color: red;
+}
+
+.linkDiv {
+    margin-top: 10px;
+}
+
+.createAccountLink {
+    float : right;
 }
