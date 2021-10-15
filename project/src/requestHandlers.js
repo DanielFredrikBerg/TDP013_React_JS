@@ -54,44 +54,36 @@ function validateMessageForm(msgData) {
         && msgData.page !== ""
 }
 
-async function login(credentials) {
+async function login(credentials, dbName="tdp013") {
     /* if ( checkCredentials(credentials) )
         { */
         const db = await MongoClient.connect(url)
-        const dbo = db.db("tdp013")
-        await dbo.collection("user_accounts")
-        .findOne({username: credentials.username, md5password: credentials.md5password})
-        .then((res) => {
-            db.close()
-            if ( res !== null ){
-                return res;
-            } else {
-                throw new Error("user does not exist.")
-            }
-        })
+        const dbo = db.db(dbName)
+        const result = await dbo.collection("user_accounts").findOne({username: credentials.username, md5password: credentials.md5password})
+        db.close()
+        if ( result !== null ){
+            return result;
+        } else {
+            throw new Error("user does not exist.")
+        }
    /*  } else {
         throw new Error("login credentials empty.")
     } */
 }
 
-async function createAccount(credentials) {
+async function createAccount(credentials, dbName="tdp013") {
     //if ( checkCredentials(credentials) )
         //{
         const db = await MongoClient.connect(url)
-        const dbo = db.db("tdp013")
-        await dbo.collection("user_accounts")
-        .findOne({username: credentials.username, md5password: credentials.md5password})
-        .then((res) => {
-            if ( res == null ){
-                return;
-            } else {
-                throw new Error("user already exists.")
-            }
-        }).then(() => {
-            return dbo.collection("user_accounts").insertOne(credentials)
-        }).then(result => {
-            return result
-        }).catch(err => {throw new Error(err)} )
+        const dbo = db.db(dbName)
+        const isAccount = await dbo.collection("user_accounts").findOne({username: credentials.username, md5password: credentials.md5password})
+        if (isAccount !== null ){
+            db.close()
+            throw new Error("user already exists.")
+        } 
+        const result = await dbo.collection("user_accounts").insertOne(credentials)
+        db.close()
+        return result
     /* } else {
         throw new Error("user credentials empty.")
     } */
@@ -109,6 +101,8 @@ async function addMessage(msgData) {
             const result = await dbo.collection(`${msgData.page}_messages`).insertOne(msgData)
             db.close()
             return result
+        } else {
+            throw new Error("user does not exist.")
         }
     /* } else {
         throw new Error("Invalid message form.")

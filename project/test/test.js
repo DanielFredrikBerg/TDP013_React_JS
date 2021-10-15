@@ -10,21 +10,21 @@ let url = "mongodb://localhost:27017";
 
 async function clearDb() {
     const db = await MongoClient.connect(url)
-    const dbo = db.db("tdp013");
+    const dbo = db.db("tdp013_tests");
     await dbo.collection("user_accounts").deleteMany({})
     db.close()
 }
 
 async function addUser(name) {
     const db = await MongoClient.connect(url)
-    const dbo = db.db("tdp013");
+    const dbo = db.db("tdp013_tests");
     await dbo.collection("user_accounts").insertOne({username : name, md5password : md5("password")})
     db.close()
 }
 
 async function getPostsOfUser(userName) {
     const db = await MongoClient.connect(url)
-    const dbo = db.db("tdp013");
+    const dbo = db.db("tdp013_tests");
     const result = await dbo.collection("user_accounts").findOne({username: userName } )
     db.close()
     return result
@@ -293,9 +293,89 @@ describe('Routes', () => {
 
 })
 
-/*
+
 describe('Handlers', () => {
-    describe(() => {
+
+    describe('login', () => {
+
+        before(() => {
+            clearDb()
+            addUser("UserA")
+        })
+
+        it('try valid username / password', async () => {
+            const result = await handlers.login({username : "UserA", md5password : md5("password")}, "tdp013_tests")
+            assert(result.username === "UserA")
+        })
+
+        it('try invalid username / password', async () => {
+            try {
+                await handlers.login({username : "UserB", md5password : md5("password")}, "tdp013_tests")
+            } catch (err) {
+                assert(err.message === "user does not exist.")
+            }
+        })
+    })
+
+    describe('createAccount', () => {
+
+        before(() => {
+            clearDb()
+        })
+
+        it('try creating non-existing account', async () => {
+            const result = await handlers.createAccount({username : "UserA", md5password : md5("password")}, "tdp013_tests")
+            assert(result['acknowledged'])
+        })
+
+        it('try creating already existing account', async () => {
+            try {
+                await handlers.createAccount({username : "UserA", md5password : md5("password")}, "tdp013_tests")
+            } catch (err) {
+                assert(err.message === "user already exists.")
+            }
+        })
+    })
+
+    describe('addMessage', () => {
+
+        before(() => {
+            clearDb()
+            addUser()
+        })
+
+        it('try adding message for existing user', () => {
+
+        })
+
+        it('try adding message for non-existing user', () => {
+
+        })
 
     })
-}) */
+
+    describe('getMessages', () => {
+
+    })
+
+    describe('findUser', () => {
+
+    })
+
+    describe('getFriendStatus', () => {
+
+    })
+
+    describe('setFriendStatus', () => {
+
+    })
+
+    describe('getAllFriends', () => {
+        
+    })
+}) 
+
+
+describe('Chat', () => {
+
+})
