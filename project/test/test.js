@@ -1,12 +1,9 @@
-import io from "socket.io-client";
-
 const assert = require('assert')
 const md5 = require('md5')
 const superagent = require('superagent');
 const handlers = require('../src/requestHandlers')
 const routes = require('../src/routes')
 const server = require('../src/server')
-const socket = require('../src/components/Chat/Chat')(socket)
 const {MongoClient} = require('mongodb');
 let url = "mongodb://localhost:27017";
 
@@ -566,38 +563,3 @@ describe('Handlers', () => {
     })
 }) 
 
-
-describe('Chat', () => {
-
-    before( async () => {
-        await addUser()
-    })
-
-    beforeEach(() => {
-        server.startChatServer(true)
-    })
-
-    afterEach(() => {
-        server.stopChatServer(true)
-    })
-
-    describe('join_room', async () => {
-        it('try user connect to a chat room', async() => {
-
-        })
-    })
-
-    describe('send_message', async () => {
-        it('try user sending a message', async() => {
-
-        })
-
-    })
-
-    describe('disconnect', async () => {
-        it('try user disconnect', async() => {
-
-        })
-    })
-
-})

@@ -42,45 +42,62 @@ export default function Login({ setToken }) {
   const [password, setPassword] = useState("");
   const [showErrorMsg, setShowErrorMsg] = useState(false)
 
-  const handleLogin = async e => {
-    e.preventDefault();
-    if ( username !== null 
-      && username !==  ""
-      && password !== null 
-      && password !== "" ) {
-        const md5password = md5(password)
-        loginUser({username, md5password}).then(token => {
-          setUserName("")
-          setPassword("")
-          setToken(token);
-          if (token) {
-            window.location.href="http://localhost:3000/Dashboard"
-          }
-          
-        }).catch(err => console.log("loginUser in Login.js Error: ", err))
-      }
-     
-    }
-
-  const handleCreate = async e => {
-    e.preventDefault();
-    if ( username !== null 
-      && username !==  ""
-      && password !== null 
-      && password !== "" ) {
-        //console.log("PASSWORD: ", password)
-      const md5password = md5(password)
-        createUser({username, md5password}).then(token => {
-          setToken(token);
-          setUserName("")
-          setPassword("")
-          if (token) {
-            window.location.href="http://localhost:3000/Dashboard"
-          }
-        });
-      }
-    
+  function validateUsername(username) {
+    const accpetedPattern = /^[A-Za-z0-9_]+$/
+    return username !== null
+        && typeof username === 'string'
+        && username.length > 3
+        && username.match(accpetedPattern)
   }
+
+  function validatePassword(password) {
+	  alert(password)
+      const accpetedPattern = /^[A-Za-z0-9_]+$/
+      return password !== null
+          && typeof password === 'string'
+          && password.length > 3
+          && password.match(accpetedPattern)
+  }
+
+  	const handleLogin = async e => {
+		e.preventDefault();
+		if (validateUsername(username)  && validatePassword(password)) {
+			const md5password = md5(password)
+			loginUser({username, md5password}).then(token => {
+				setToken(token);
+				if (token) {
+					setShowErrorMsg(false)
+					window.location.href="http://localhost:3000/Dashboard"
+				} else {
+					setShowErrorMsg(true)
+				}     
+			}).catch(err => console.log("loginUser in Login.js Error: ", err))
+		} else {
+			setShowErrorMsg(true)
+		}
+		setUserName("")
+		setPassword("")    
+  	}
+
+    const handleCreate = async e => {
+		e.preventDefault();
+		if (validateUsername(username)  && validatePassword(password)) {
+			const md5password = md5(password)
+			createUser({username, md5password}).then(token => {
+				setToken(token);
+				if (token) {
+					setShowErrorMsg(false)
+					window.location.href="http://localhost:3000/Dashboard"
+				} else {
+					setShowErrorMsg(true)
+				}
+			});
+        } else {
+			setShowErrorMsg(true)
+		}
+		setUserName("")
+		setPassword("")
+    }
 
   return(
     <div className="loginWrapper">
@@ -94,11 +111,11 @@ export default function Login({ setToken }) {
             </div>}
             <Form.Group className="mb-3" controlId="formGroupEmail">
                 <Form.Label>Username</Form.Label>
-                <Form.Control type="email" 
-                              placeholder="Enter username" 
+                <Form.Control placeholder="Enter username" 
                               value={username} 
                               onChange={e => setUserName(e.target.value)}
-                              required/>
+                              required
+                              minlength="4"/>
             </Form.Group>
             <Form.Group className="mb-3" 
                         controlId="formGroupPassword">
@@ -107,7 +124,8 @@ export default function Login({ setToken }) {
                               placeholder="Password" 
                               value={password} 
                               onChange={e => setPassword(e.target.value)}
-                              required/>
+                              required
+                              minlength="4"/>
             </Form.Group>
             <div className="linkDiv">
                 <a href="#" 
