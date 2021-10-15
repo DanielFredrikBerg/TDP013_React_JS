@@ -18,6 +18,7 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
     useEffect(() => {
         if (chatFriend && roomId !== "") {
             socket.emit("join_room", roomId);
+            console.log(roomId)
         }
     }, [roomId])
        
@@ -40,16 +41,19 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
     }
 
     function createChatBubble(message, sender) {
+        let messageKey = chatFriend
+        if (loginName != sender) {
+            messageKey = sender
+        }
         let chatBubble = <div key={Date.now()} className={sender == loginName ? "chatBubbleSender" : "chatBubbleReciever"}>
                             <h4>{sender}</h4>
                             {message}
                         </div>
-        if(messageDictRef.current[chatFriend] === undefined) {
-            messageDict[chatFriend] = []
-            alert("a")
+        if(messageDictRef.current[messageKey] === undefined) {
+            messageDict[messageKey] = []
         }
         let updatedMessageDict = {...messageDictRef.current}
-        updatedMessageDict[chatFriend] = [chatBubble, messageDictRef.current[chatFriend]]
+        updatedMessageDict[messageKey] = [chatBubble, messageDictRef.current[messageKey]]
         setMessageDict(updatedMessageDict)
     }
 
