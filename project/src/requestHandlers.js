@@ -85,7 +85,6 @@ function validateSetFriendStatusQuery(query) {
         && typeof query.friendstatus === "number"
         && query.friendstatus > -1
         && query.friendstatus < 4
-
 }
 
 async function login(credentials) {
