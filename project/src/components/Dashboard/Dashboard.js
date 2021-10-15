@@ -390,7 +390,7 @@ export default function Dashboard({loginName}) {
                 <div className="postDiv">
                     {userPosts}
                 </div>
-                <div className="fixed-bottom" >
+                <div className="fixed-bottom chatDiv" >
                     {Chat({loginName, chatFriend, setChatFriend, showChatWindow, setShowChatWindow})}        
                 </div>
 
