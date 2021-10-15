@@ -40,65 +40,81 @@ async function createUser(credentials) {
 export default function Login({ setToken }) {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
-  const [showErrorMsg, setShowErrorMsg] = useState(false)
+  const [errorMsg, setErrorMsg] = useState("")
 
-  const handleLogin = async e => {
-    e.preventDefault();
-    if ( username !== null 
-      && username !==  ""
-      && password !== null 
-      && password !== "" ) {
-        const md5password = md5(password)
-        loginUser({username, md5password}).then(token => {
-          setUserName("")
-          setPassword("")
-          setToken(token);
-          if (token) {
-            window.location.href="http://localhost:3000/Dashboard"
-          }
-          
-        }).catch(err => console.log("loginUser in Login.js Error: ", err))
-      }
-     
-    }
-
-  const handleCreate = async e => {
-    e.preventDefault();
-    if ( username !== null 
-      && username !==  ""
-      && password !== null 
-      && password !== "" ) {
-        //console.log("PASSWORD: ", password)
-      const md5password = md5(password)
-        createUser({username, md5password}).then(token => {
-          setToken(token);
-          setUserName("")
-          setPassword("")
-          if (token) {
-            window.location.href="http://localhost:3000/Dashboard"
-          }
-        });
-      }
-    
+  function validateUsername(username) {
+    const accpetedPattern = /^[A-Za-z0-9_]+$/
+    return username !== null
+        && typeof username === 'string'
+        && username.length > 3
+		&& username.length < 20
+        && username.match(accpetedPattern)
   }
+
+  function validatePassword(password) {
+      const accpetedPattern = /^[A-Za-z0-9_]+$/
+      return password !== null
+          && typeof password === 'string'
+          && password.length > 3
+		  && password.length < 20
+          && password.match(accpetedPattern)
+  }
+
+  	const handleLogin = async () => {
+		if (validateUsername(username)  && validatePassword(password)) {
+			const md5password = md5(password)
+			loginUser({username, md5password}).then(token => {
+				setToken(token);
+				if (token) {
+					setErrorMsg("")
+					window.location.href="http://localhost:3000/Dashboard"
+				} else {
+					setErrorMsg("Invalid Username / Password")
+				}     
+			}).catch(err => console.log("loginUser in Login.js Error: ", err))
+		} else {
+			setErrorMsg("Invalid Username / Password")
+		}
+		setUserName("")
+		setPassword("")    
+  	}
+
+    const handleCreate = async () => {
+		if (validateUsername(username)  && validatePassword(password)) {
+			const md5password = md5(password)
+			createUser({username, md5password}).then(token => {
+				setToken(token);
+				if (token) {
+					setErrorMsg("")
+					window.location.href="http://localhost:3000/Dashboard"
+				} else {
+					setErrorMsg("Username already Exist")
+				}
+			});
+        } else {
+			setErrorMsg("Invalid Username / Password")
+		}
+		setUserName("")
+		setPassword("")
+    }
 
   return(
     <div className="loginWrapper">
         <div className="loginDiv">
           <Form className="loginForm">
-            {showErrorMsg && 
+            {errorMsg && 
             <div className="loginFormDiv"> 
                   <p className="loginFormStatusMsg">
-                      Invalid Username/Password
+                      {errorMsg}
                   </p>
             </div>}
             <Form.Group className="mb-3" controlId="formGroupEmail">
                 <Form.Label>Username</Form.Label>
-                <Form.Control type="email" 
-                              placeholder="Enter username" 
+                <Form.Control placeholder="Enter username" 
                               value={username} 
                               onChange={e => setUserName(e.target.value)}
-                              required/>
+                              required
+                              minlength="4"/>
             </Form.Group>
             <Form.Group className="mb-3" 
                         controlId="formGroupPassword">
@@ -107,7 +123,8 @@ export default function Login({ setToken }) {
                               placeholder="Password" 
                               value={password} 
                               onChange={e => setPassword(e.target.value)}
-                              required/>
+                              required
+                              minlength="4"/>
             </Form.Group>
             <div className="linkDiv">
                 <a href="#" 

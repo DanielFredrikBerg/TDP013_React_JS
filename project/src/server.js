@@ -23,6 +23,7 @@ io.on("connection", (socket) => {
     socket.on("join_room", (roomId) => {
         socket.join(roomId);
         console.log(`User with ID: ${socket.id} joined room: ${roomId}`)
+        
     })
   
     // Listen for new messages
@@ -31,7 +32,7 @@ io.on("connection", (socket) => {
     });
   
     // Leave the room if the user closes the socket
-    socket.on("disconnect", (data) => {
+    socket.on("leave_room", (data) => {
         console.log(`User ${socket.id} disconnected.`)
         socket.leave(data.room);
     });

@@ -563,38 +563,3 @@ describe('Handlers', () => {
     })
 }) 
 
-
-describe('Chat', () => {
-
-    before( async () => {
-        await addUser()
-    })
-
-    beforeEach(() => {
-        server.startChatServer(true)
-    })
-
-    afterEach(() => {
-        server.stopChatServer(true)
-    })
-
-    describe('join_room', async () => {
-        it('try user connect to a chat room', async() => {
-
-        })
-    })
-
-    describe('send_message', async () => {
-        it('try user sending a message', async() => {
-
-        })
-
-    })
-
-    describe('disconnect', async () => {
-        it('try user disconnect', async() => {
-
-        })
-    })
-
-})
