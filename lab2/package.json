@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon --exec node app.js",
-    "test": "nyc --reporter=text --reporter=html mocha"
+    "test": "nyc --reporter=text --reporter=html mocha",
+    "db": "mongod --dbpath=./data"
   },
   "keywords": [],
   "author": "",

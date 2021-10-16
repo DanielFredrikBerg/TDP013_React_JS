@@ -14,7 +14,7 @@ const corsOptions = {
 }
 app.use(cors(corsOptions));
 
-var server
+let server
 function startServer(quietly = false) {
     server = app.listen(port)
     if (!quietly) {

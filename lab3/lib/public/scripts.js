@@ -8,10 +8,10 @@ function enter(event) {
 
 function tooLongMessage()
 {
-  var modal = document.getElementById("myModal");
+  let modal = document.getElementById("myModal");
   modal.style.display = "block";
 
-  var span = document.getElementsByClassName("close")[0];
+  let span = document.getElementsByClassName("close")[0];
 
   // When the user clicks on <span> (x), close the modal
   span.onclick = function() {
@@ -20,9 +20,9 @@ function tooLongMessage()
 }
 
 // Changed the msgbox color depending on change of checkbox.
-function markRead(dateID)
+function markRead(id)
 {
-  let msg = document.getElementById(dateID);
+  let msg = document.getElementById(id.id);
   if (msg.childNodes[0].checked == true)
   {
     msg.setAttribute("class", "readMsgBox");
@@ -35,23 +35,23 @@ function markRead(dateID)
   fetch('http://localhost:3000/flag', {
     headers: {'Content-Type' : 'application/json'},
     method: 'POST',
-    body: JSON.stringify({_id : dateID})
+    body: JSON.stringify({_id : id.id.substring(2)})
   })
 }
 
 function createMessage(msgData)
 {
   // Lägger in meddelanden på rad.
-  let dateId = msgData._id;
+  let id = msgData._id
   let message = msgData.msg;
   let msgRead = msgData.flag;
   let msgBox = document.createElement('div');
-  msgBox.setAttribute("id", dateId);
-  msgBox.textContent = message;  
+  msgBox.setAttribute("id", id);
+  msgBox.textContent = message; 
 
   let checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
-  checkbox.setAttribute("onchange", `markRead(${msgBox.id});`); // Adds a function dynamically to the checkbox.
+  checkbox.setAttribute("onchange", `markRead(${id});`); // Adds a function dynamically to the checkbox.
   
   if (msgRead) {
     msgBox.setAttribute("class", "readMsgBox");
@@ -70,14 +70,14 @@ function createMessage(msgData)
   messages.insertBefore(msgBox, messages.firstChild);
 }
 
-function addMsg()
+async function addMsg()
 {
   let textField = document.getElementById('postText');
   let msg = textField.value;
-  let data = {msg : msg, flag : false, _id : Date.now()}
+  let data = {msg : msg, flag : false}
   let body = JSON.stringify(data)
 
-  fetch('http://localhost:3000/save', { 
+  let result = await fetch('http://localhost:3000/save', { 
       headers: {
       'Content-Type': 'application/json'
       },
@@ -87,9 +87,12 @@ function addMsg()
     if (res.status == 400) {
       tooLongMessage()
     } else {
-      createMessage(data)
+      return res.json()
     }
-  })  
+  })
+  if (result) {
+    createMessage({_id : "id" + result.insertedId, ...data})
+  }
   textField.value=''
 }
 
@@ -104,5 +107,8 @@ async function listMsgs()
     return res.json()
   })
 
-  messages.forEach(message => createMessage(message))
+  messages.forEach(message => {
+    message._id = "id" + message._id
+    createMessage(message)
+  }) 
 }

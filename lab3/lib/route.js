@@ -8,9 +8,11 @@ router.use(express.json());
 router.post('/save', function(req, res) {
     if(req.body.msg.length < 1 || req.body.msg.length > 140){
         res.status(400).send("Invalid length of message error");
+    } else if (typeof req.body.msg != 'string') {
+        res.status(400).send("Invalid type of message error");
     } else { 
         handlers.saveMessage(sanitize(req.body)).then(function(result) {
-            res.status(200).send();
+            res.status(200).send(result);
         }).catch(function(err) {
             res.status(500).send("Status 500 Internal Server Error");
         })
