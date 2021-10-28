@@ -43,59 +43,83 @@ export default function Login({ setToken }) {
   const [errorMsg, setErrorMsg] = useState("")
 
   function validateUsername(username) {
-    const accpetedPattern = /^[A-Za-z0-9_]+$/
-    return username !== null
-        && typeof username === 'string'
-        && username.length > 3
-		&& username.length < 20
-        && username.match(accpetedPattern)
+    const acceptedPattern = /^[A-Za-z0-9_]+$/
+    if (username !== null && typeof username === 'string') {
+        if (username.length <= 3 || username.length >= 20)  {
+            return -1
+        } else if (!username.match(acceptedPattern)) {
+            return -2
+        }
+        return 1
+    } 
+    return 0
   }
 
   function validatePassword(password) {
-      const accpetedPattern = /^[A-Za-z0-9_]+$/
-      return password !== null
-          && typeof password === 'string'
-          && password.length > 3
-		  && password.length < 20
-          && password.match(accpetedPattern)
+    const acceptedPattern = /^[A-Za-z0-9_]+$/
+    if (password !== null && typeof username === 'string') {
+        if (password.length <= 5 || password.length >= 22) {
+            return -1
+        } else if  (!password.match(acceptedPattern)){
+            return -2
+        }
+        return 1
+    } 
+    return 0
   }
 
+    const errorMsgHelper = (usernameValidationCode, passwordValidationCode) => {
+      if (usernameValidationCode == -1) {
+        setErrorMsg("Username need to be 4-19 characters long.")
+      } else if (usernameValidationCode == -2) {
+        setErrorMsg("Username can only letters,\n numbers, and underscores.")
+      } else if (passwordValidationCode == -1) {
+        setErrorMsg("Password need to be 6-21 characters long.")
+      } else if (passwordValidationCode == -2) {  
+        setErrorMsg("Password can only letters,\n numbers, and underscores.")
+      }
+    }
+
   	const handleLogin = async () => {
-		if (validateUsername(username)  && validatePassword(password)) {
-			const md5password = md5(password)
-			loginUser({username, md5password}).then(token => {
-				setToken(token);
-				if (token) {
-					setErrorMsg("")
-					window.location.href="http://localhost:3000/Dashboard"
-				} else {
-					setErrorMsg("Invalid Username / Password")
-				}     
-			}).catch(err => console.log("loginUser in Login.js Error: ", err))
-		} else {
-			setErrorMsg("Invalid Username / Password")
-		}
-		setUserName("")
-		setPassword("")    
+      const usernameValidationCode = validateUsername(username)
+      const passwordValidationCode = validatePassword(password)
+      if (usernameValidationCode == 1 && passwordValidationCode == 1) {
+        const md5password = md5(password)
+        loginUser({username, md5password}).then(token => {
+          setToken(token);
+          if (token) {
+            setErrorMsg("")
+            setUserName("")
+            window.location.href="http://localhost:3000/Dashboard"
+          } else {
+            setErrorMsg("Invalid Username / Password")
+          }     
+        }).catch(err => console.log("loginUser in Login.js Error: ", err))
+      } else {
+        errorMsgHelper(usernameValidationCode, passwordValidationCode)
+      }
+      setPassword("")    
   	}
 
     const handleCreate = async () => {
-		if (validateUsername(username)  && validatePassword(password)) {
-			const md5password = md5(password)
-			createUser({username, md5password}).then(token => {
-				setToken(token);
-				if (token) {
-					setErrorMsg("")
-					window.location.href="http://localhost:3000/Dashboard"
-				} else {
-					setErrorMsg("Username already Exist")
-				}
-			});
-        } else {
-			setErrorMsg("Invalid Username / Password")
-		}
-		setUserName("")
-		setPassword("")
+      const usernameValidationCode = validateUsername(username)
+      const passwordValidationCode = validatePassword(password)
+      if (usernameValidationCode == 1 && passwordValidationCode == 1) {
+        const md5password = md5(password)
+        createUser({username, md5password}).then(token => {
+          setToken(token);
+          if (token) {
+            setErrorMsg("")
+            setUserName("")
+            window.location.href="http://localhost:3000/Dashboard"
+          } else {
+            setErrorMsg("Username already Exist")
+          }
+        });
+      } else {
+        errorMsgHelper(usernameValidationCode, passwordValidationCode)
+      }
+      setPassword("")
     }
 
   return(

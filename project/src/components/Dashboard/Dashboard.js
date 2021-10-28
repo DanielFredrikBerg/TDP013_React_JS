@@ -19,6 +19,7 @@ export default function Dashboard({loginName}) {
     const [friendList, setFriendList] = useState([])
     const [showChatWindow, setShowChatWindow] = useState(false)
     let [chatFriend, setChatFriend] = useState()
+    const [postErrorMessage, setPostErrorMessage] = useState()
 
     // up-to-state version of chatFriend
     const chatFriendRef = useRef()
@@ -47,12 +48,9 @@ export default function Dashboard({loginName}) {
     }
 
     function validateFindUser(username) {
-        const acceptedPattern = /^[A-Za-z0-9_]+$/
-        return username !== null
+        return username !== null 
             && typeof username === 'string'
-            && username.length > 3
-            && username.length < 20
-            && username.match(acceptedPattern)
+            && username.length > 0
     }
 
     function validatePostMessage(message) {
@@ -106,10 +104,14 @@ export default function Dashboard({loginName}) {
                 if (res.status === 200) {
                     let post = createPostElement(postData)
                     setUserPosts([post, ...userPosts])
+                    setPostText("") 
+                    setPostErrorMessage("")
                 } 
             }).catch(err => console.log("createPost() error: ", err))
-        } 
-        setPostText("") 
+        } else {
+            setPostErrorMessage("Message too long.")
+        }
+        
     }
 
     async function getFriendStatus(friend) {
@@ -160,9 +162,7 @@ export default function Dashboard({loginName}) {
                     setFindUserStatusMessage(`User ${findUserText} not found`)
                 }
             }).catch(err => console.log("findUser() Dashboard.js error", err)) 
-        } else {
-            setFindUserStatusMessage("Invalid Username")
-        }
+        } 
         setFindUserText("")
     }
 
@@ -374,13 +374,21 @@ export default function Dashboard({loginName}) {
                                 <Form.Control id="textField" 
                                               as="textarea" 
                                               rows="3"
+                                              resize="none"
                                               value={postText}
                                               onChange={e => setPostText(e.target.value)}/>
                             </Form.Group>
                             <Navbar.Text className="createPostText" >
-                                <input className="postButton" type="button" value="Post message" onClick={createPost}/>
+                                <input className="postButton" type="button" value="Post Message" onClick={createPost}/>
                             </Navbar.Text>
+                            {postErrorMessage && 
+                            <div className="postErrorDiv"> 
+                                <p className="postErrorMsg">
+                                    {postErrorMessage}
+                                </p>
+                            </div>}
                         </form>
+             
                     </div>}
                 </div>
                 <div className="postDiv">

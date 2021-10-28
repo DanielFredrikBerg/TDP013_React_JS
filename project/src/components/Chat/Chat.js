@@ -9,6 +9,7 @@ const socket = io.connect("http://localhost:3001")
 export default function Chat({loginName, chatFriend, setChatFriend, showChatWindow, setShowChatWindow}) {
     const [currentMessage, setCurrentMessage] = useState("");
     const [messageDict, setMessageDict] = useState([])
+    const [chatErrorMessage, setChatErrorMessage] = useState()
     
     // up-to-state version of messageDict
     const messageDictRef = useRef()
@@ -76,8 +77,14 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
                 time: new Date(Date.now()).getHours() + ":" + new Date(Date.now()).getMinutes(),
             }
             await socket.emit("send_message", messageData); 
+            setCurrentMessage("")
+            setChatErrorMessage("")
         }
-        setCurrentMessage("")
+        else if (currentMessage.length > 333) {
+            setChatErrorMessage("Message too long.")
+        } else {
+            setChatErrorMessage("")
+        }
     }
 
     async function closeChatWindow() {
@@ -110,6 +117,12 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
                            name="username"/>
                     <ArrowUpSquare className="sendMessageIcon" onClick={sendChatMessage}></ArrowUpSquare>
                 </label>
+                {chatErrorMessage && 
+                    <div className="chatErrorDiv"> 
+                        <p className="chatErrorMsg">
+                            {chatErrorMessage}
+                        </p>
+                    </div>}
             </form>
         </div>)
 }

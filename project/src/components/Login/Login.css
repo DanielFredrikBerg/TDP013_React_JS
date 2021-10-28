@@ -17,7 +17,7 @@
 .loginForm {
     background-color: #212529; 
     color: #8a9a93; 
-    height: 290px;
+    height: 300px;
     padding: 30px 50px 30px 50px; 
     border-radius: 15px;
 }
@@ -29,7 +29,9 @@
 
 .loginFormStatusMsg {
     color: red;
-    height: 8px
+    height: 8px;
+    max-width: 275px;
+    word-wrap: break-word;
 }
 
 .linkDiv {

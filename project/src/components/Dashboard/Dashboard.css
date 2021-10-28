@@ -47,11 +47,26 @@ a:hover {
 }
 
 .postButton {
-  background: none!important;
+  margin-top: 8px;
+  background: none;
   border: none;
-  padding: 0!important;
+  padding: 0;
   color: white;
   cursor: pointer;
+}
+
+.postButton:hover {
+  text-decoration: underline;
+}
+
+.postErrorDiv {
+  margin-top: 10px;
+}
+
+.postErrorMsg {
+  margin-left: 10px;
+  height: 8px;
+  color : red;
 }
 
 .postBubble {
@@ -177,6 +192,7 @@ a:hover {
 
 .createPostDiv {
   width: 600px;
+  height: 160px;
 }
 
 .createPostGroup {
@@ -185,6 +201,10 @@ a:hover {
 
 .createPostText {
   margin-left: 10px;
+}
+
+textarea {
+  resize: none;
 }
 
 .postDiv {
