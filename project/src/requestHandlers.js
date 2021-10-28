@@ -166,6 +166,22 @@ async function findUser(userData) {
     if( checkUserName(userData) ){
         const db = await MongoClient.connect(url)
         const dbo = db.db("tdp013")
+        const result = await dbo.collection("user_accounts").findOne( {username : userData.username } )
+        db.close()
+        if(result && checkDbEntry(result)){
+            return { username: result.username }
+        } else { 
+            throw new Error("User does not exist.") 
+        }
+    } else {
+        throw new Error("Invalid input in findUser.")
+    }   
+}
+
+async function findUsers(userData) {
+    if( checkUserName(userData) ){
+        const db = await MongoClient.connect(url)
+        const dbo = db.db("tdp013")
         const results = await dbo.collection("user_accounts").findOne( {username : userData.username } )
         db.close()
         for(const i=0; i < results.length(); i++){
