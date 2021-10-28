@@ -47,12 +47,12 @@ export default function Dashboard({loginName}) {
     }
 
     function validateFindUser(username) {
-        const accpetedPattern = /^[A-Za-z0-9_]+$/
+        const acceptedPattern = /^[A-Za-z0-9_]+$/
         return username !== null
             && typeof username === 'string'
             && username.length > 3
             && username.length < 20
-            && username.match(accpetedPattern)
+            && username.match(acceptedPattern)
     }
 
     function validatePostMessage(message) {
@@ -157,7 +157,7 @@ export default function Dashboard({loginName}) {
                     changeCurrentUser(findUserText)   
                     setFindUserStatusMessage("")
                 } else {
-                    setFindUserStatusMessage(`User ${findUserText} not Found`)
+                    setFindUserStatusMessage(`User ${findUserText} not found`)
                 }
             }).catch(err => console.log("findUser() Dashboard.js error", err)) 
         } else {
@@ -300,17 +300,14 @@ export default function Dashboard({loginName}) {
 
                         <Navbar.Collapse id="navbar-dark" className="justify-content-center">
                             <form className="findUserForm">
-                                <p>
-                                    <Navbar.Text id="findUserText">
-                                        Find User
-                                    </Navbar.Text>
+                                <p id="findUserText">
+                                    <label > Find User </label>
                                 </p>
-                                <label>          
                                     <input type="text" 
+                                           id="finduserinput"
                                            value={findUserText} 
                                            onKeyPress={e => onKeyPress(e)} 
                                            onChange={e => setFindUserText(e.target.value)}/>
-                                </label>
                                 <Navbar.Text>
                                     <a href='#' id="findUserLink" onClick={findUser}>
                                        Search
@@ -328,14 +325,15 @@ export default function Dashboard({loginName}) {
                                 <a href="#" onClick={() => changeCurrentUser(loginName)} id="logoutUserLink">
                                    {loginName}
                                 </a>
-                                <p>
+                                <p id="logoutp">
                                     <Navbar.Text onClick={() => sessionStorage.clear()} >
                                         <a href='http://localhost:3000/Login' id="logoutLink">
                                             Sign Out
                                         </a>
                                     </Navbar.Text>
-                                </p>
-                            </Navbar.Text>  
+                                </p> 
+                            </Navbar.Text>
+         
                         </Navbar.Collapse>
                     </Container>
                 </Navbar> 
@@ -379,10 +377,8 @@ export default function Dashboard({loginName}) {
                                               value={postText}
                                               onChange={e => setPostText(e.target.value)}/>
                             </Form.Group>
-                            <Navbar.Text className="createPostText">
-                                <a href='#' onClick={createPost}>
-                                   Post Message
-                                </a>
+                            <Navbar.Text className="createPostText" >
+                                <input className="postButton" type="button" value="Post message" onClick={createPost}/>
                             </Navbar.Text>
                         </form>
                     </div>}

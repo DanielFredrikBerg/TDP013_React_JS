@@ -46,6 +46,13 @@ a:hover {
     color: white
 }
 
+.postButton {
+  background: none!important;
+  border: none;
+  padding: 0!important;
+  color: white;
+  cursor: pointer;
+}
 
 .postBubble {
   background-color: #212529;
@@ -108,12 +115,11 @@ a:hover {
 }
 
 .findUserForm {
-  margin-top: 15px;
   text-align: center;
 }
 
 #findUserText {
-  margin-right: 10px;
+  margin-bottom: 5px;
   color: #8a9a93;
 }
 
@@ -124,7 +130,8 @@ a:hover {
 
 .findUserStatusMessage {
   color: red;
-  margin-top: 10px;
+  margin-top: 8px;
+  height: 5px;
 }
 
 .logout {
@@ -136,8 +143,11 @@ a:hover {
   color: #8a9a93;
 }
 
+#logoutp {
+  text-align : center;
+}
+
 #logoutLink {
-  margin-left: 20px;
   color: white;
 }
 

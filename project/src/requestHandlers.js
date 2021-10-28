@@ -166,10 +166,15 @@ async function findUser(userData) {
     if( checkUserName(userData) ){
         const db = await MongoClient.connect(url)
         const dbo = db.db("tdp013")
-        const result = await dbo.collection("user_accounts").findOne( {username : userData.username } )
+        const results = await dbo.collection("user_accounts").findOne( {username : userData.username } )
         db.close()
-        if(result && checkDbEntry(result)){
-            return { username: result.username }
+        for(const i=0; i < results.length(); i++){
+            if(!checkDbEntry(results[i])){
+                throw new Error("Invalid user entry in db.") 
+            }
+        }
+        if(results.length()>0){
+            return { results }
         } else { 
             throw new Error("User does not exist.") 
         }

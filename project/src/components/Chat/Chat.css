@@ -66,9 +66,8 @@
     height: 350px; 
     display: flex; 
     flex-direction: column-reverse; 
-    border-radius: 8px; 
     margin-left: 17px; 
-    overflow: scroll;
+    overflow: auto;
 }
 
 .messageLabel {
