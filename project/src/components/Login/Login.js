@@ -102,12 +102,6 @@ export default function Login({ setToken }) {
     <div className="loginWrapper">
         <div className="loginDiv">
           <Form className="loginForm">
-            {errorMsg && 
-            <div className="loginFormDiv"> 
-                  <p className="loginFormStatusMsg">
-                      {errorMsg}
-                  </p>
-            </div>}
             <Form.Group className="mb-3" controlId="formGroupEmail">
                 <Form.Label>Username</Form.Label>
                 <Form.Control placeholder="Enter username" 
@@ -137,7 +131,14 @@ export default function Login({ setToken }) {
                    Create Account
                 </a> 
             </div>
+            {errorMsg && 
+            <div className="loginFormDiv"> 
+                  <p className="loginFormStatusMsg">
+                      {errorMsg}
+                  </p>
+            </div>}
           </Form>
+
        </div>
     </div>
   )
