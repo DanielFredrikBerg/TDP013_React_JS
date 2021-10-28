@@ -17,6 +17,7 @@ export default function Dashboard({loginName}) {
     const [findUserStatusMessage, setFindUserStatusMessage] = useState()
     let [currentUserFriendStatus, setCurrentUserFriendStatus] = useState(-1)
     const [friendList, setFriendList] = useState([])
+    const [usersFoundList, setUsersFoundList] = useState([])
     const [showChatWindow, setShowChatWindow] = useState(false)
     let [chatFriend, setChatFriend] = useState()
 
@@ -47,12 +48,9 @@ export default function Dashboard({loginName}) {
     }
 
     function validateFindUser(username) {
-        const acceptedPattern = /^[A-Za-z0-9_]+$/
         return username !== null
             && typeof username === 'string'
-            && username.length > 3
-            && username.length < 20
-            && username.match(acceptedPattern)
+            && username.length > 0
     }
 
     function validatePostMessage(message) {
@@ -148,20 +146,26 @@ export default function Dashboard({loginName}) {
 
     async function findUser() {
         if (validateFindUser(findUserText)) {
-            await fetch('http://localhost:8080/FindUser', {
+            const usersFound = await fetch('http://localhost:8080/FindUsers', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({username : findUserText})
               }).then(res => {
                 if (res.status === 200) {
-                    changeCurrentUser(findUserText)   
+                    //changeCurrentUser(findUserText)   <- should show drop down of possible search results
                     setFindUserStatusMessage("")
+                    return res.json()
                 } else {
                     setFindUserStatusMessage(`User ${findUserText} not found`)
                 }
             }).catch(err => console.log("findUser() Dashboard.js error", err)) 
-        } else {
-            setFindUserStatusMessage("Invalid Username")
+            console.log(usersFound.results)
+            let updatedSearchList = []
+            usersFound.results.forEach((userFound) => {
+                const foundUser = createUserFoundItem(userFound) //createFriendlistItem
+                updatedSearchList.push(foundUser)
+            })
+            setUsersFoundList(updatedSearchList)
         }
         setFindUserText("")
     }
@@ -216,6 +220,16 @@ export default function Dashboard({loginName}) {
         }
     }
 
+    function createUserFoundItem(foundUser) {
+        return <div className="foundUserItem">
+            <Navbar.Text className="friendListText"> 
+                <a href='#' className="friendListUserLink" onClick={() => changeCurrentUser(foundUser.username)}>
+                    {foundUser.username}
+                </a>
+            </Navbar.Text>
+        </div>
+    }
+
     function createFriendlistItem(friendData, index) {
         if (friendData.friendstatus == 3) {
            return <div key={index} className="friendListItem">
@@ -247,6 +261,8 @@ export default function Dashboard({loginName}) {
                    </div>
         }
     }
+
+    
 
     async function populateFriendList() {
         const friendData = await fetch('http://localhost:8080/GetAllFriends', {
@@ -313,6 +329,9 @@ export default function Dashboard({loginName}) {
                                        Search
                                     </a>
                                 </Navbar.Text>
+                                <Dropdown.Menu className="friendList">
+                                    {friendList.length > 0 && usersFoundList}
+                                </Dropdown.Menu>
                                 <p className="findUserStatusMessage">
                                     {findUserStatusMessage}
                                 </p>
