@@ -194,6 +194,36 @@ describe('Routes', () => {
         
     })  
 
+    describe('/FindUsers', () => {
+        before( async () => {
+            await clearDb()
+            await addUser("AABB")
+            await addUser("BBCC")
+            await addUser("AACC")
+        })
+
+        it('find user by inserting a correct username', () => {
+            const credentials = { username : "BBCC" }
+            superagent.post('http://localhost:8080/FindUsers').send(credentials).end((err, res) => {
+                assert(res.status == 200)
+            })
+        })   
+        
+        it('find users by inserting partially correct username', () => {
+            const credentials = { username : "AA" }
+            superagent.post('http://localhost:8080/FindUsers').send(credentials).end((err, res) => {
+                assert(res.status == 200)
+            })
+        })
+
+        it('find user by inserting non-existent username', () => {
+            const credentials = { username : "UserB" }
+            superagent.post('http://localhost:8080/FindUsers').send(credentials).end((err, res) => {
+                assert(res.status == 400)
+            })
+        })
+    })
+
     describe('/FindUser', () => {
 
         before( async () => {
@@ -207,7 +237,6 @@ describe('Routes', () => {
             const credentials = { username : "UserB" }
             superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
                 assert(res.status == 200)
-                
             })
         })
 
@@ -215,7 +244,6 @@ describe('Routes', () => {
             const credentials = { username : "userC", md5password : md5("password")}
             superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
                 assert(res.status == 400)
-                
             })
         })
 
@@ -223,7 +251,6 @@ describe('Routes', () => {
             const credentials = { username : {} }
             superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
                 assert(res.status == 400)
-                
             })
         })
 
@@ -231,7 +258,6 @@ describe('Routes', () => {
             const credentials = { md5password : {} }
             superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
                 assert(res.status == 400)
-                
             })
         })
 
@@ -239,7 +265,6 @@ describe('Routes', () => {
             const credentials = { username: {}, md5password : {} }
             superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
                 assert(res.status == 400)
-                
             })
         })
 
@@ -247,10 +272,8 @@ describe('Routes', () => {
             const credentials = {}
             superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
                 assert(res.status == 400)
-                
             })
         })
-       
     })
 
     describe('/GetFriendStatus', () => {
@@ -450,28 +473,50 @@ describe('Handlers', () => {
         })
     })
 
-    describe('findUser', () => {
+    describe('findUsers', () => {
 
         before( async () => {
             await clearDb()
             await addUser("UserA")
+            await addUser("UserB")
+            await addUser("UserC")
+            await addUser("UserAa")
         })
 
-        it('try to find an user that exist', async () => {
-            const userData = {username : "UserA"}
-            const result = await handlers.findUser(userData)
-            assert(result.username === "UserA")
+        it('try to get two search results', async () => {
+            const searchQuery = {username : "UserA"}
+            const searchResults = await handlers.findUsers(searchQuery)
+            assert(searchResults.results.length === 2)
+            let foundUsers = []
+            searchResults.results.forEach((entry) => {
+                foundUsers.push(entry.username)
+            })
+            assert(foundUsers.includes("UserA"))
+            assert(foundUsers.includes("UserAa"))
         })
 
-        it("try to find an user that doesn't exist", async () => {
+        it("try to find a user that doesn't exist", async () => {
             try {
-                const userData = {username : "UserA"}
-                await handlers.findUser(userData)
+                const userData = { username : "UserX" }
+                await handlers.findUsers(userData)
             } catch (err) {
                 assert(err.message === "User does not exist.")
             }
         })
+
+        it("try to find user with invalid search query", async () => {
+            try {
+                const userData = { username : {} }
+                await handlers.findUsers(userData)
+            } catch (err) {
+                assert(err.message === "Invalid input in findUser.")
+            }
+        })
+
+        
     })
+
+
 
     describe('getFriendStatus', () => {
 

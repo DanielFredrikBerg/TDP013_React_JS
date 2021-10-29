@@ -191,12 +191,15 @@ async function findUsers(userData) {
     if( validateSearchQuery(userData) ){
         const db = await MongoClient.connect(url)
         const dbo = db.db("tdp013")
-        const results = await dbo.collection("user_accounts").find( {username : new RegExp(userData.username) } ).toArray()
-        console.log(results)
+        const results = await dbo.collection("user_accounts").find( 
+            { username : new RegExp(userData.username) },
+            { projection: { _id : 0, md5password : 0 } }
+            ).toArray()
+        //console.log("findUsers result: ")
+        //console.log(results)
         db.close()
-        
         for(let i=0; i < results.length; i++){
-            if(!checkDbEntry(results[i])){
+            if(!checkUserName(results[i])){
                 throw new Error("Invalid user entry in db.") 
             }
         }
