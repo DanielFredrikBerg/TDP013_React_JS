@@ -2,6 +2,7 @@ import React, {useState, useEffect, useRef} from 'react';
 
 import {Dropdown, Navbar, Container, Form} from 'react-bootstrap';
 import {CheckLg, XLg, ChatLeftText} from 'react-bootstrap-icons';
+import { Typeahead } from 'react-bootstrap-typeahead';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Dashboard.css';
@@ -21,6 +22,7 @@ export default function Dashboard({loginName}) {
     const [showChatWindow, setShowChatWindow] = useState(false)
     let [chatFriend, setChatFriend] = useState()
     const [postErrorMessage, setPostErrorMessage] = useState()
+    const [findUserSelected, setFindUserSelected] = useState([]);
 
     // up-to-state version of chatFriend
     const chatFriendRef = useRef()
@@ -150,6 +152,7 @@ export default function Dashboard({loginName}) {
     }
 
     async function findUser() {
+        alert(findUserText)
         if (validateFindUser(findUserText)) {
             const usersFound = await fetch('http://localhost:8080/FindUsers', {
                 method: 'POST',
@@ -320,14 +323,15 @@ export default function Dashboard({loginName}) {
 
                         <Navbar.Collapse id="navbar-dark" className="justify-content-center">
                             <form className="findUserForm">
-                                <p id="findUserText">
-                                    <label > Find User </label>
-                                </p>
-                                    <input type="text" 
-                                           id="finduserinput"
-                                           value={findUserText} 
-                                           onKeyPress={e => onKeyPress(e)} 
-                                           onChange={e => setFindUserText(e.target.value)}/>
+         
+                                <Typeahead
+                                    id="finduserinput"
+                                    onChange={e => setFindUserText(e)}
+                                    onKeyPress={e => alert(e)} 
+                                    options={["aaaaa"]}
+                                    placeholder="Find user..."
+                                    selected={findUserText}
+                                    value={findUserText} />
                                 <Navbar.Text>
                                     <a href='#' id="findUserLink" onClick={findUser}>
                                        Search
