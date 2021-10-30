@@ -87,6 +87,15 @@ function validateSetFriendStatusQuery(query) {
         && query.friendstatus < 4
 }
 
+function validateSearchQuery(query) {
+    return typeof query === "object"
+        && JSON.stringify(query) !== "{}"
+        && Object.keys(query).length === 1
+        && query.hasOwnProperty("username")
+        && typeof query.username === "string"
+        && query.username.length > 0
+}
+
 async function login(credentials) {
     if ( checkCredentials(credentials) )
         {
@@ -179,17 +188,19 @@ async function findUser(userData) {
 }
 
 async function findUsers(userData) {
-    if( checkUserName(userData) ){
+    if( validateSearchQuery(userData) ){
         const db = await MongoClient.connect(url)
         const dbo = db.db("tdp013")
-        const results = await dbo.collection("user_accounts").findOne( {username : userData.username } )
+        const results = await dbo.collection("user_accounts").find( {username : new RegExp(userData.username) } ).toArray()
+        console.log(results)
         db.close()
-        for(const i=0; i < results.length(); i++){
+        
+        for(let i=0; i < results.length; i++){
             if(!checkDbEntry(results[i])){
                 throw new Error("Invalid user entry in db.") 
             }
         }
-        if(results.length()>0){
+        if(results.length>0){
             return { results }
         } else { 
             throw new Error("User does not exist.") 
@@ -254,4 +265,4 @@ async function getAllFriends(userData) {
     }
 }
 
-module.exports = {login, createAccount, addMessage, getMessages, findUser, getFriendStatus, setFriendStatus, getAllFriends}
+module.exports = {login, createAccount, addMessage, getMessages, findUser, findUsers, getFriendStatus, setFriendStatus, getAllFriends}
