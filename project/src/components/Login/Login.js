@@ -69,13 +69,13 @@ export default function Login({ setToken }) {
   }
 
     const errorMsgHelper = (usernameValidationCode, passwordValidationCode) => {
-      if (usernameValidationCode == -1) {
+      if (usernameValidationCode === -1) {
         setErrorMsg("Username need to be 4-19 characters long.")
-      } else if (usernameValidationCode == -2) {
+      } else if (usernameValidationCode === -2) {
         setErrorMsg("Username can only letters,\n numbers, and underscores.")
-      } else if (passwordValidationCode == -1) {
+      } else if (passwordValidationCode === -1) {
         setErrorMsg("Password need to be 6-21 characters long.")
-      } else if (passwordValidationCode == -2) {  
+      } else if (passwordValidationCode === -2) {  
         setErrorMsg("Password can only letters,\n numbers, and underscores.")
       }
     }
@@ -83,7 +83,7 @@ export default function Login({ setToken }) {
   	const handleLogin = async () => {
       const usernameValidationCode = validateUsername(username)
       const passwordValidationCode = validatePassword(password)
-      if (usernameValidationCode == 1 && passwordValidationCode == 1) {
+      if (usernameValidationCode === 1 && passwordValidationCode === 1) {
         const md5password = md5(password)
         loginUser({username, md5password}).then(token => {
           setToken(token);
@@ -92,7 +92,7 @@ export default function Login({ setToken }) {
             setUserName("")
             window.location.href="http://localhost:3000/Dashboard"
           } else {
-            setErrorMsg("Invalid Username / Password")
+            setErrorMsg("Account not found")
           }     
         }).catch(err => console.log("loginUser in Login.js Error: ", err))
       } else {
@@ -104,7 +104,7 @@ export default function Login({ setToken }) {
     const handleCreate = async () => {
       const usernameValidationCode = validateUsername(username)
       const passwordValidationCode = validatePassword(password)
-      if (usernameValidationCode == 1 && passwordValidationCode == 1) {
+      if (usernameValidationCode === 1 && passwordValidationCode === 1) {
         const md5password = md5(password)
         createUser({username, md5password}).then(token => {
           setToken(token);

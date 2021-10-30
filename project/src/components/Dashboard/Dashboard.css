@@ -129,6 +129,12 @@ a:hover {
   border-color: #212529;
 }
 
+#finduserinput{
+ color : green !important;
+
+ 
+}
+
 .findUserForm {
   text-align: center;
   margin-top: 30px;
