@@ -49,7 +49,7 @@ export default function Dashboard({loginName}) {
     function onKeyPress(event) {
         if (event.which === 13 /* Enter */) {
           event.preventDefault();
-          //findUser()
+          findUser()
         }
     }
 
@@ -154,32 +154,13 @@ export default function Dashboard({loginName}) {
     }
 
 
-    /*
+    
     async function findUser() {
-        if (validateFindUser(findUserText)) {
-            const usersFound = await fetch('http://localhost:8080/FindUsers', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({username : findUserText})
-              }).then(res => {
-                if (res.status === 200) {
-                    //changeCurrentUser(findUserText)   <- should show drop down of possible search results
-                    setFindUserStatusMessage("")
-                    setFindUserText("")
-                    return res.json()
-                } else {
-                    setFindUserStatusMessage(`User ${findUserText} not found`)
-                }
-            }).catch(err => console.log("findUser() Dashboard.js error", err)) 
-            let updatedSearchList = []
-            if (usersFound) {
-                usersFound.results.forEach((userFound) => {
-                    updatedSearchList.push(foundUser.username)
-                })
-                return updatedSearchList
-            }
+        if (userList.includes(findUserText[0])) {
+            changeCurrentUser(findUserText[0])
+            setFindUserText("")
         }
-    } */
+    } 
 
     async function changeFriendStatus(user, friend, status) {
         await fetch('http://localhost:8080/SetFriendStatus', {
@@ -268,7 +249,6 @@ export default function Dashboard({loginName}) {
         const usersFound = await fetch('http://localhost:8080/FindUsers', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({username : findUserText})
             }).then(res => {
                 return res.json()
             }).catch(err => console.log("populateUserList() Dashboard.js error", err))
@@ -276,9 +256,9 @@ export default function Dashboard({loginName}) {
         if (usersFound) {
             usersFound.results.forEach((userFound) => {
                 updatedUserList.push(userFound.username)
-            })
-            setUsersFoundList(updatedUserList) 
+            })   
         } 
+        setUserList(updatedUserList) 
     }
 
 
@@ -338,14 +318,13 @@ export default function Dashboard({loginName}) {
                                 <Typeahead
                                     id="finduserinput"
                                     onInputChange={setFindUserText}
+                                    onChange={setFindUserText}
                                     onKeyDown={e => onKeyPress(e)} 
-                                    options={usersFoundList}
+                                    options={userList}
                                     placeholder="Find user..."
-                                    
-                                    
-                                     />
+                                    minLength={2}/>
                                 <Navbar.Text>
-                                    <a href='#' id="findUserLink"  /* onClick={} */ >
+                                    <a href='#' id="findUserLink"  onClick={findUser} >
                                        Search
                                     </a>
                                 </Navbar.Text>

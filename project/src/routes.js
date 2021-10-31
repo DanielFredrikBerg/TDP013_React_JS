@@ -31,12 +31,6 @@ router.post('/GetMessages', (req, res) => {
 
 })
 
-router.post('/FindUser', (req, res) => {
-    handlers.findUser(sanitize(req.body)).then(result => {
-        res.send(result);
-    }).catch((err) => res.status(400).send(err.message));
-})
-
 router.post('/FindUsers', (req, res) => {
     handlers.findUsers(sanitize(req.body)).then(result => {
         res.send(result);

@@ -194,58 +194,6 @@ describe('Routes', () => {
         
     })  
 
-    describe('/FindUser', () => {
-
-        before( async () => {
-            await clearDb()
-            await addUser("UserA")
-            await addUser("UserB")
-            await addUser("UserC")
-        })
-
-        it('find user by inserting only correct username', () => {
-            const credentials = { username : "UserB" }
-            superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
-                assert(res.status == 200)
-            })
-        })
-
-        it('try find user vid correct username & password', () => {
-            const credentials = { username : "userC", md5password : md5("password")}
-            superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
-                assert(res.status == 400)
-            })
-        })
-
-        it('find user by inserting only empty username', () => {
-            const credentials = { username : {} }
-            superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
-                assert(res.status == 400)
-            })
-        })
-
-        it('find user by inserting only empty password', () => {
-            const credentials = { md5password : {} }
-            superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
-                assert(res.status == 400)
-            })
-        })
-
-        it('find user by inserting empty username & empty password', () => {
-            const credentials = { username: {}, md5password : {} }
-            superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
-                assert(res.status == 400)
-            })
-        })
-
-        it('find user by inserting empty query', () => {
-            const credentials = {}
-            superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
-                assert(res.status == 400)
-            })
-        })
-    })
-
     describe('/FindUsers', () => {
         before( async () => {
             await clearDb()
@@ -254,26 +202,11 @@ describe('Routes', () => {
             await addUser("AACC")
         })
 
-        it('find user by inserting a correct username', () => {
-            const credentials = { username : "BBCC" }
-            superagent.post('http://localhost:8080/FindUsers').send(credentials).end((err, res) => {
+        it('find all users by calling route username', () => {
+            superagent.post('http://localhost:8080/FindUsers').send().end((err, res) => {
                 assert(res.status == 200)
             })
-        })   
-        
-        it('find users by inserting partially correct username', () => {
-            const credentials = { username : "AA" }
-            superagent.post('http://localhost:8080/FindUsers').send(credentials).end((err, res) => {
-                assert(res.status == 200)
-            })
-        })
-
-        it('find user by inserting non-existent username', () => {
-            const credentials = { username : "UserB" }
-            superagent.post('http://localhost:8080/FindUsers').send(credentials).end((err, res) => {
-                assert(res.status == 400)
-            })
-        })
+        })     
     })
 
     describe('/GetFriendStatus', () => {
@@ -483,41 +416,20 @@ describe('Handlers', () => {
             await addUser("UserAa")
         })
 
-        it('try to get two search results', async () => {
-            const searchQuery = {username : "UserA"}
-            const searchResults = await handlers.findUsers(searchQuery)
-            assert(searchResults.results.length === 2)
-            let foundUsers = []
-            searchResults.results.forEach((entry) => {
-                foundUsers.push(entry.username)
-            })
-            assert(foundUsers.includes("UserA"))
-            assert(foundUsers.includes("UserAa"))
+        it('try to get all usernames in db', async () => {
+            const usersInDb = await handlers.findUsers()
+            assert(usersInDb.results !== {})
+            assert(usersInDb.results.length === 4)
+            assert(usersInDb.results !== null)
         })
 
-        it("try to find a user that doesn't exist", async () => {
-            try {
-                const userData = { username : "UserX" }
-                await handlers.findUsers(userData)
-            } catch (err) {
-                assert(err.message === "User does not exist.")
-            }
-        })
-
-        it("try to find user with invalid search query", async () => {
-            try {
-                const userData = { username : {} }
-                await handlers.findUsers(userData)
-            } catch (err) {
-                assert(err.message === "Invalid input in findUser.")
-            }
-        })
-
-        
+        it("try to get empty array from empty db", async () => {
+            await clearDb()
+            const usersInDb = await handlers.findUsers()
+            assert(usersInDb.length === 0)
+        })      
     })
-
-
-
+    
     describe('getFriendStatus', () => {
 
         before( async () => {

@@ -171,22 +171,6 @@ async function getMessages(userData) {
     }
 }
 
-async function findUser(userData) {
-    if( checkUserName(userData) ){
-        const db = await MongoClient.connect(url)
-        const dbo = db.db("tdp013")
-        const result = await dbo.collection("user_accounts").findOne( {username : userData.username } )
-        db.close()
-        if(result && checkDbEntry(result)){
-            return { username: result.username }
-        } else { 
-            throw new Error("User does not exist.") 
-        }
-    } else {
-        throw new Error("Invalid input in findUser.")
-    }   
-}
-
 async function findUsers() {
         const db = await MongoClient.connect(url)
         const dbo = db.db("tdp013")
@@ -195,8 +179,7 @@ async function findUsers() {
             { projection: { _id : 0, md5password : 0 } }
             ).toArray()
         //console.log("findUsers result: ")
-        console.log("KUUUUUUUUUUUUUUUUUUUUUK")
-        console.log(results)
+        //console.log(results)
         db.close()
         for(let i=0; i < results.length; i++){
             if(!checkUserName(results[i])){
@@ -265,4 +248,4 @@ async function getAllFriends(userData) {
     }
 }
 
-module.exports = {login, createAccount, addMessage, getMessages, findUser, findUsers, getFriendStatus, setFriendStatus, getAllFriends}
+module.exports = {login, createAccount, addMessage, getMessages, findUsers, getFriendStatus, setFriendStatus, getAllFriends}
