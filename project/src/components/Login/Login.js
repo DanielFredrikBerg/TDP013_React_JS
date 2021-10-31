@@ -76,7 +76,6 @@ export default function Login({ setToken }) {
     } else {
       errorMsgHelper()
     }
-    setPassword("")    
   }
 
   const handleCreate = async () => {
@@ -95,7 +94,6 @@ export default function Login({ setToken }) {
     } else {
       errorMsgHelper()
     }
-    setPassword("")
   }
 
   return(
@@ -108,8 +106,8 @@ export default function Login({ setToken }) {
                               value={username} 
                               onChange={e => setUserName(e.target.value)}
                               required
-                              minlength="4"
-                              maxlength="19"
+                              minLength="4"
+                              maxLength="19"
                               pattern="^[A-Za-z0-9_]+$"/>
             </Form.Group>
             <Form.Group className="mb-3" 
@@ -120,8 +118,8 @@ export default function Login({ setToken }) {
                               value={password} 
                               onChange={e => setPassword(e.target.value)}
                               required
-                              minlength="6"
-                              maxlength="21"
+                              minLength="6"
+                              maxLength="21"
                               pattern="^[A-Za-z0-9_]+$"/>
             </Form.Group>
             <div className="linkDiv">
