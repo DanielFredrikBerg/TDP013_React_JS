@@ -30,6 +30,8 @@ export default function Dashboard({loginName}) {
     const chatFriendRef = useRef()
     chatFriendRef.current = chatFriend
 
+    const typeahead = useRef()
+
     useEffect(async () => {
         if (sessionStorage.getItem('currentUser')) {
             const storedCurrentUser = sessionStorage.getItem('currentUser')
@@ -51,12 +53,6 @@ export default function Dashboard({loginName}) {
           event.preventDefault();
           findUser()
         }
-    }
-
-    function validateFindUser(username) {
-        return username !== null 
-            && typeof username === 'string'
-            && username.length > 0
     }
 
     function validatePostMessage(message) {
@@ -153,12 +149,20 @@ export default function Dashboard({loginName}) {
         displayAllPosts(user) 
     }
 
-
-    
     async function findUser() {
-        if (userList.includes(findUserText[0])) {
-            changeCurrentUser(findUserText[0])
-            setFindUserText("")
+        if (findUserText.length > 0) {
+            if (userList.includes(findUserText[0])) {
+                changeCurrentUser(findUserText[0])
+                setFindUserText("")
+                setFindUserStatusMessage("")
+                typeahead["current"].clear()
+
+            } else {
+                setFindUserStatusMessage("User not found.")
+            } 
+        }
+        else {
+            setFindUserStatusMessage("")
         }
     } 
 
@@ -216,9 +220,9 @@ export default function Dashboard({loginName}) {
         if (friendData.friendstatus == 3) {
            return <div key={index} className="friendListItem">
                     <Navbar.Text className="friendListText"> 
-                        <a href='#' className="friendListUserLink" onClick={() => changeCurrentUser(friendData.friendname)}>
-                            {friendData.friendname}
-                        </a>
+                        <input id="friendListUserLink" className="postButton" type="button" value={friendData.friendname} 
+                            onClick={() => changeCurrentUser(loginName)}
+                        />
                         <a href="#" onClick={() => toggleChatWindow(friendData.friendname)}>
                             <ChatLeftText className="friendListChatIcon"></ChatLeftText>
                         </a> 
@@ -293,7 +297,7 @@ export default function Dashboard({loginName}) {
                         className="navBar">
                     <Container fluid>
                         <Navbar.Toggle aria-controls="navbar-dark" />
-                        <Navbar.Collapse>
+                        <Navbar.Collapse className="friendListCollapse">
                             <Dropdown>
                                 <Dropdown.Toggle 
                                     ariant="dark"
@@ -314,20 +318,18 @@ export default function Dashboard({loginName}) {
 
                         <Navbar.Collapse id="navbar-dark" className="justify-content-center">
                             <form className="findUserForm">
-         
-                                <Typeahead
-                                    id="finduserinput"
-                                    onInputChange={setFindUserText}
-                                    onChange={setFindUserText}
-                                    onKeyDown={e => onKeyPress(e)} 
-                                    options={userList}
-                                    placeholder="Find user..."
-                                    minLength={2}/>
-                                <Navbar.Text>
-                                    <a href='#' id="findUserLink"  onClick={findUser} >
-                                       Search
-                                    </a>
-                                </Navbar.Text>
+                                <div className="findUserDiv">
+                                    <Typeahead
+                                        id="finduserinput"
+                                        ref={typeahead}
+                                        onInputChange={setFindUserText}
+                                        onChange={setFindUserText}
+                                        onKeyDown={e => onKeyPress(e)} 
+                                        options={userList}
+                                        placeholder="Find user..."
+                                        minLength={2}/>
+                                </div>
+                                <input className="postButton findUserLink" type="button" value="Search" onClick={findUser}/>
                                 <Dropdown.Menu className="friendList">
                                     {friendList.length > 0 && usersFoundList}
                                 </Dropdown.Menu>
@@ -337,12 +339,10 @@ export default function Dashboard({loginName}) {
                             </form>
                         </Navbar.Collapse>
 
-                        <Navbar.Collapse className="justify-content-end logout">
+                        <Navbar.Collapse className="justify-content-end logoutCollapse">
                             <Navbar.Text id="logoutText">
                                 {"Signed in as: "}
-                                <a href="#" onClick={() => changeCurrentUser(loginName)} id="logoutUserLink">
-                                   {loginName}
-                                </a>
+                                    <input id="logoutUserLink" className="postButton" type="button" value={loginName} onClick={() => changeCurrentUser(loginName)}/>
                                 <p id="logoutp">
                                     <Navbar.Text onClick={() => sessionStorage.clear()} >
                                         <a href='http://localhost:3000/Login' id="logoutLink">

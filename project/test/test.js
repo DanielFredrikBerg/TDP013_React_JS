@@ -194,6 +194,58 @@ describe('Routes', () => {
         
     })  
 
+    describe('/FindUser', () => {
+
+        before( async () => {
+            await clearDb()
+            await addUser("UserA")
+            await addUser("UserB")
+            await addUser("UserC")
+        })
+
+        it('find user by inserting only correct username', () => {
+            const credentials = { username : "UserB" }
+            superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
+                assert(res.status == 200)
+            })
+        })
+
+        it('try find user vid correct username & password', () => {
+            const credentials = { username : "userC", md5password : md5("password")}
+            superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
+                assert(res.status == 400)
+            })
+        })
+
+        it('find user by inserting only empty username', () => {
+            const credentials = { username : {} }
+            superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
+                assert(res.status == 400)
+            })
+        })
+
+        it('find user by inserting only empty password', () => {
+            const credentials = { md5password : {} }
+            superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
+                assert(res.status == 400)
+            })
+        })
+
+        it('find user by inserting empty username & empty password', () => {
+            const credentials = { username: {}, md5password : {} }
+            superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
+                assert(res.status == 400)
+            })
+        })
+
+        it('find user by inserting empty query', () => {
+            const credentials = {}
+            superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
+                assert(res.status == 400)
+            })
+        })
+    })
+
     describe('/FindUsers', () => {
         before( async () => {
             await clearDb()

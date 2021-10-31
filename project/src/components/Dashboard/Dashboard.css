@@ -46,6 +46,24 @@ a:hover {
     color: white
 }
 
+.friendListCollapse {
+  width: 300px;
+}
+
+.friendListButton {
+  margin-top: 0px;
+  margin-left: 5px;
+  background: none;
+  border: none;
+  padding: 0;
+  color: white;
+  cursor: pointer;
+}
+
+.friendListButton:hover{
+  text-decoration: underline;
+}
+
 .postButton {
   margin-top: 8px;
   background: none;
@@ -96,7 +114,7 @@ a:hover {
 }
 
 .friendListUserLink {
-  color: white !important;
+  color: white;
   margin: 5px;
 }
 
@@ -134,27 +152,29 @@ a:hover {
  color : black;
 }
 
-
+.findUserDiv {
+  position: relative;
+  display: inline-block;
+  width: 300px;
+}
 
 .findUserForm {
   text-align: center;
   margin-top: 30px;
 }
 
-#findUserText {
-  margin-bottom: 5px;
-  color: #8a9a93;
-}
-
-#findUserLink {
+.findUserLink {
   margin-left: 10px;
-  color: white;
 }
 
 .findUserStatusMessage {
   color: red;
   margin-top: 8px;
   height: 5px;
+}
+
+.logoutCollapse {
+  width: 300px;
 }
 
 .logout {
