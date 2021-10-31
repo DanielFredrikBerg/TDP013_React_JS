@@ -64,7 +64,7 @@ a:hover {
   text-decoration: underline;
 }
 
-.postButton {
+.Button {
   margin-top: 8px;
   background: none;
   border: none;
@@ -73,7 +73,7 @@ a:hover {
   cursor: pointer;
 }
 
-.postButton:hover {
+.Button:hover {
   text-decoration: underline;
 }
 
@@ -120,19 +120,28 @@ a:hover {
 
 .friendListChatIcon {
   color: yellow;
-  margin: 5px;
+  margin: 3px;
+  border: none;
+  background-color: #212529;
   margin-left: 10px;
+  cursor: pointer;
 }
 
 .friendListRemoveIcon {
   color: red;
   margin: 5px;
+  border: none;
+  background-color: #212529;
+  cursor: pointer;
 }
 
 .friendListAcceptIcon {
   color: green;
-  margin: 5px;
+  margin: 3px;
+  border: none;
   margin-left: 10px;
+  background-color: #212529;
+  cursor: pointer;
 }
 
 .navBar {

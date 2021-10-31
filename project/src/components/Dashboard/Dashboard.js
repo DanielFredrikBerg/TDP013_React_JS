@@ -119,7 +119,6 @@ export default function Dashboard({loginName}) {
         if (friend === loginName) {
             return -1
         }
-        
         const result = await fetch('http://localhost:8080/getFriendStatus', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -150,13 +149,13 @@ export default function Dashboard({loginName}) {
     }
 
     async function findUser() {
+        await populateUserList()
         if (findUserText.length > 0) {
             if (userList.includes(findUserText[0])) {
                 changeCurrentUser(findUserText[0])
                 setFindUserText("")
                 setFindUserStatusMessage("")
-                typeahead["current"].clear()
-
+                typeahead.current.clear()
             } else {
                 setFindUserStatusMessage("User not found.")
             } 
@@ -205,6 +204,7 @@ export default function Dashboard({loginName}) {
     }
 
     function toggleChatWindow(friend) {
+        alert(friend)
         if (chatFriendRef === friend) {
             chatFriend = null
             setChatFriend(null)
@@ -220,29 +220,21 @@ export default function Dashboard({loginName}) {
         if (friendData.friendstatus == 3) {
            return <div key={index} className="friendListItem">
                     <Navbar.Text className="friendListText"> 
-                        <input id="friendListUserLink" className="postButton" type="button" value={friendData.friendname} 
-                            onClick={() => changeCurrentUser(loginName)}
-                        />
-                        <a href="#" onClick={() => toggleChatWindow(friendData.friendname)}>
-                            <ChatLeftText className="friendListChatIcon"></ChatLeftText>
-                        </a> 
-                        <a href="#" onClick={() => removeFriend(friendData.friendname)}>
-                            <XLg className="friendListRemoveIcon"></XLg>
-                        </a>    
+                        <button className="Button friendListUserLink"  onClick={() => changeCurrentUser(friendData.friendname   )}>
+                            {friendData.friendname} 
+                        </button>
+                        <ChatLeftText className="friendListChatIcon" onClick={() => toggleChatWindow(friendData.friendname)}></ChatLeftText>
+                        <XLg className="friendListRemoveIcon" onClick={() => removeFriend(friendData.friendname)}></XLg>  
                     </Navbar.Text>
                   </div>
         } else if (friendData.friendstatus === 2) {
             return <div key={index} className="friendListItem">
                         <Navbar.Text className="friendListText"> 
-                            <a href='#' className="friendListUserLink" onClick={() => changeCurrentUser(friendData.friendname)}>
-                                {friendData.friendname}
-                            </a> 
-                            <a href="#" onClick={() => acceptFriendRequest(friendData.friendname)}>
-                                <CheckLg className="friendListAcceptIcon"></CheckLg>
-                            </a>
-                            <a href="#" onClick={() => removeFriend(friendData.friendname)}>
-                                <XLg className="friendListRemoveIcon"></XLg>
-                            </a>    
+                            <button className="Button friendListUserLink"  onClick={() => changeCurrentUser(friendData.friendname   )}>
+                                {friendData.friendname} 
+                            </button>
+                            <CheckLg className="friendListAcceptIcon" onClick={() => acceptFriendRequest(friendData.friendname)}></CheckLg>
+                            <XLg className="friendListRemoveIcon" onClick={() => removeFriend(friendData.friendname)}></XLg>
                         </Navbar.Text>
                    </div>
         }
@@ -327,9 +319,9 @@ export default function Dashboard({loginName}) {
                                         onKeyDown={e => onKeyPress(e)} 
                                         options={userList}
                                         placeholder="Find user..."
-                                        minLength={2}/>
+                                        minLength={1}/>
                                 </div>
-                                <input className="postButton findUserLink" type="button" value="Search" onClick={findUser}/>
+                                <input className="Button findUserLink" type="button" value="Search" onClick={findUser}/>
                                 <Dropdown.Menu className="friendList">
                                     {friendList.length > 0 && usersFoundList}
                                 </Dropdown.Menu>
@@ -342,7 +334,7 @@ export default function Dashboard({loginName}) {
                         <Navbar.Collapse className="justify-content-end logoutCollapse">
                             <Navbar.Text id="logoutText">
                                 {"Signed in as: "}
-                                    <input id="logoutUserLink" className="postButton" type="button" value={loginName} onClick={() => changeCurrentUser(loginName)}/>
+                                    <input id="logoutUserLink" className="Button" type="button" value={loginName} onClick={() => changeCurrentUser(loginName)}/>
                                 <p id="logoutp">
                                     <Navbar.Text onClick={() => sessionStorage.clear()} >
                                         <a href='http://localhost:3000/Login' id="logoutLink">
@@ -368,9 +360,9 @@ export default function Dashboard({loginName}) {
 
                     {currentUserFriendStatus === 2 && 
                         <Navbar.Text>
-                            <a href='#' onClick={() => acceptFriendRequest(currentUser)}>
+                            <button className="Button" onClick={() => acceptFriendRequest(currentUser)}>
                                 Accept Friend Request
-                            </a> 
+                            </button> 
                         </Navbar.Text>}
 
                     {currentUserFriendStatus === 1 && 
@@ -380,9 +372,9 @@ export default function Dashboard({loginName}) {
 
                     {currentUserFriendStatus === 0 && 
                         <Navbar.Text>
-                            <a href='#' onClick={sendFriendRequest}> 
+                            <button className="Button" onClick={sendFriendRequest}> 
                                 Send Friend Request
-                            </a> 
+                            </button> 
                         </Navbar.Text>}
 
                     {(loginName === currentUser || currentUserFriendStatus === 3) && 
@@ -397,7 +389,7 @@ export default function Dashboard({loginName}) {
                                               onChange={e => setPostText(e.target.value)}/>
                             </Form.Group>
                             <Navbar.Text className="createPostText" >
-                                <input className="postButton" type="button" value="Post Message" onClick={createPost}/>
+                                <input className="Button" type="button" value="Post Message" onClick={createPost}/>
                             </Navbar.Text>
                             {postErrorMessage && 
                             <div className="postErrorDiv"> 

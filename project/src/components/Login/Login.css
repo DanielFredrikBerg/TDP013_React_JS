@@ -35,9 +35,22 @@
 }
 
 .linkDiv {
-    margin-top: 10px;
+    margin-top: -15px;
 }
 
 .createAccountLink {
     float : right;
 }
+
+.Button {
+    background: none;
+    border: none;
+    padding: 0;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .Button:hover {
+    text-decoration: underline;
+  }
+  

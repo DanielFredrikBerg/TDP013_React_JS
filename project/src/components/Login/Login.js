@@ -42,85 +42,61 @@ export default function Login({ setToken }) {
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("")
 
-  function validateUsername(username) {
+  function validateInput(input, minLength, maxLength) {
     const acceptedPattern = /^[A-Za-z0-9_]+$/
-    if (username !== null && typeof username === 'string') {
-        if (username.length <= 3 || username.length >= 20)  {
-            return -1
-        } else if (!username.match(acceptedPattern)) {
-            return -2
-        }
-        return 1
-    } 
-    return 0
+    return input !== null
+        && typeof input === 'string'
+        && input.length >= minLength
+        && input.length <= maxLength
+        && input.match(acceptedPattern)
   }
 
-  function validatePassword(password) {
+  const errorMsgHelper = () => {
     const acceptedPattern = /^[A-Za-z0-9_]+$/
-    if (password !== null && typeof username === 'string') {
-        if (password.length <= 5 || password.length >= 22) {
-            return -1
-        } else if  (!password.match(acceptedPattern)){
-            return -2
-        }
-        return 1
-    } 
-    return 0
+    if (username.length > 0 && !username.match(acceptedPattern)) {
+      setErrorMsg("Username can only contain letters,\n numbers, and underscores.")
+    } else if (password.length > 0 && !password.match(acceptedPattern)) {
+      setErrorMsg("Password can only contain letters,\n numbers, and underscores.")
+    }
   }
 
-    const errorMsgHelper = (usernameValidationCode, passwordValidationCode) => {
-      if (usernameValidationCode === -1) {
-        setErrorMsg("Username need to be 4-19 characters long.")
-      } else if (usernameValidationCode === -2) {
-        setErrorMsg("Username can only letters,\n numbers, and underscores.")
-      } else if (passwordValidationCode === -1) {
-        setErrorMsg("Password need to be 6-21 characters long.")
-      } else if (passwordValidationCode === -2) {  
-        setErrorMsg("Password can only letters,\n numbers, and underscores.")
-      }
+  const handleLogin = async () => {
+    if (validateInput(username, 4, 19) && validateInput(password, 6, 21)) {
+      const md5password = md5(password)
+      loginUser({username, md5password}).then(token => {
+        setToken(token);
+        if (token) {
+          setErrorMsg("")
+          setUserName("")
+          window.location.href="http://localhost:3000/Dashboard"
+        } else {
+          setErrorMsg("Account not found")
+        }     
+      }).catch(err => console.log("loginUser in Login.js Error: ", err))
+    } else {
+      errorMsgHelper()
     }
+    setPassword("")    
+  }
 
-  	const handleLogin = async () => {
-      const usernameValidationCode = validateUsername(username)
-      const passwordValidationCode = validatePassword(password)
-      if (usernameValidationCode === 1 && passwordValidationCode === 1) {
-        const md5password = md5(password)
-        loginUser({username, md5password}).then(token => {
-          setToken(token);
-          if (token) {
-            setErrorMsg("")
-            setUserName("")
-            window.location.href="http://localhost:3000/Dashboard"
-          } else {
-            setErrorMsg("Account not found")
-          }     
-        }).catch(err => console.log("loginUser in Login.js Error: ", err))
-      } else {
-        errorMsgHelper(usernameValidationCode, passwordValidationCode)
-      }
-      setPassword("")    
-  	}
-
-    const handleCreate = async () => {
-      const usernameValidationCode = validateUsername(username)
-      const passwordValidationCode = validatePassword(password)
-      if (usernameValidationCode === 1 && passwordValidationCode === 1) {
-        const md5password = md5(password)
-        createUser({username, md5password}).then(token => {
-          setToken(token);
-          if (token) {
-            setErrorMsg("")
-            setUserName("")
-            window.location.href="http://localhost:3000/Dashboard"
-          } else {
-            setErrorMsg("Username already Exist")
-          }
-        });
-      } else {
-        errorMsgHelper(usernameValidationCode, passwordValidationCode)
-      }
-      setPassword("")
+  const handleCreate = async () => {
+    if (validateInput(username, 4, 19) && validateInput(password, 6, 21)){
+      const md5password = md5(password)
+      createUser({username, md5password}).then(token => {
+        setToken(token);
+        if (token) {
+          setErrorMsg("")
+          setUserName("")
+          window.location.href="http://localhost:3000/Dashboard"
+        } else {
+          setErrorMsg("Username already Exist")
+        }
+      });
+    } else {
+      errorMsgHelper()
     }
+    setPassword("")
+  }
 
   return(
     <div className="loginWrapper">
@@ -132,7 +108,9 @@ export default function Login({ setToken }) {
                               value={username} 
                               onChange={e => setUserName(e.target.value)}
                               required
-                              minlength="4"/>
+                              minlength="4"
+                              maxlength="19"
+                              pattern="^[A-Za-z0-9_]+$"/>
             </Form.Group>
             <Form.Group className="mb-3" 
                         controlId="formGroupPassword">
@@ -142,18 +120,17 @@ export default function Login({ setToken }) {
                               value={password} 
                               onChange={e => setPassword(e.target.value)}
                               required
-                              minlength="4"/>
+                              minlength="6"
+                              maxlength="21"
+                              pattern="^[A-Za-z0-9_]+$"/>
             </Form.Group>
             <div className="linkDiv">
-                <a href="#" 
-                   onClick={handleLogin}>
+                <button className="Button" onClick={handleLogin}>
                    Log In
-                </a> 
-                <a href="#" 
-                   className="createAccountLink"
-                   onClick={handleCreate}>
+                </button> 
+                <button className="createAccountLink Button" onClick={handleCreate}>
                    Create Account
-                </a> 
+                </button> 
             </div>
             {errorMsg && 
             <div className="loginFormDiv"> 
