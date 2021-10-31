@@ -24,7 +24,7 @@ export default function Dashboard({loginName}) {
     const [showChatWindow, setShowChatWindow] = useState(false)
     let [chatFriend, setChatFriend] = useState()
     const [postErrorMessage, setPostErrorMessage] = useState()
-    const [findUserSelected, setFindUserSelected] = useState([]);
+    const [userList, setUserList] = useState([]);
 
     // up-to-state version of chatFriend
     const chatFriendRef = useRef()
@@ -43,12 +43,13 @@ export default function Dashboard({loginName}) {
             displayAllPosts(loginName)
         }
         populateFriendList()
+        populateUserList()
     },[])
 
     function onKeyPress(event) {
         if (event.which === 13 /* Enter */) {
           event.preventDefault();
-          findUser()
+          //findUser()
         }
     }
 
@@ -115,8 +116,7 @@ export default function Dashboard({loginName}) {
             }).catch(err => console.log("createPost() error: ", err))
         } else {
             setPostErrorMessage("Message too long.")
-        }
-        
+        }   
     }
 
     async function getFriendStatus(friend) {
@@ -153,6 +153,8 @@ export default function Dashboard({loginName}) {
         displayAllPosts(user) 
     }
 
+
+    /*
     async function findUser() {
         if (validateFindUser(findUserText)) {
             const usersFound = await fetch('http://localhost:8080/FindUsers', {
@@ -170,13 +172,14 @@ export default function Dashboard({loginName}) {
                 }
             }).catch(err => console.log("findUser() Dashboard.js error", err)) 
             let updatedSearchList = []
-            usersFound.results.forEach((userFound) => {
-                const foundUser = createUserFoundItem(userFound) //createFriendlistItem
-                updatedSearchList.push(foundUser)
-            })
-            setUsersFoundList(updatedSearchList)
+            if (usersFound) {
+                usersFound.results.forEach((userFound) => {
+                    updatedSearchList.push(foundUser.username)
+                })
+                return updatedSearchList
+            }
         }
-    }
+    } */
 
     async function changeFriendStatus(user, friend, status) {
         await fetch('http://localhost:8080/SetFriendStatus', {
@@ -228,16 +231,6 @@ export default function Dashboard({loginName}) {
         }
     }
 
-    function createUserFoundItem(foundUser) {
-        return <div className="foundUserItem">
-            <Navbar.Text className="friendListText"> 
-                <a href='#' className="friendListUserLink" onClick={() => changeCurrentUser(foundUser.username)}>
-                    {foundUser.username}
-                </a>
-            </Navbar.Text>
-        </div>
-    }
-
     function createFriendlistItem(friendData, index) {
         if (friendData.friendstatus == 3) {
            return <div key={index} className="friendListItem">
@@ -270,7 +263,24 @@ export default function Dashboard({loginName}) {
         }
     }
 
-    
+
+    async function populateUserList() {
+        const usersFound = await fetch('http://localhost:8080/FindUsers', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({username : findUserText})
+            }).then(res => {
+                return res.json()
+            }).catch(err => console.log("populateUserList() Dashboard.js error", err))
+        let updatedUserList = []
+        if (usersFound) {
+            usersFound.results.forEach((userFound) => {
+                updatedUserList.push(userFound.username)
+            })
+            setUsersFoundList(updatedUserList) 
+        } 
+    }
+
 
     async function populateFriendList() {
         const friendData = await fetch('http://localhost:8080/GetAllFriends', {
@@ -327,14 +337,15 @@ export default function Dashboard({loginName}) {
          
                                 <Typeahead
                                     id="finduserinput"
-                                    onInputChange={e => setFindUserText(e)}
+                                    onInputChange={setFindUserText}
                                     onKeyDown={e => onKeyPress(e)} 
-                                    options={["aaaaaaa"]}
+                                    options={usersFoundList}
                                     placeholder="Find user..."
+                                    
                                     
                                      />
                                 <Navbar.Text>
-                                    <a href='#' id="findUserLink" onClick={findUser}>
+                                    <a href='#' id="findUserLink"  /* onClick={} */ >
                                        Search
                                     </a>
                                 </Navbar.Text>

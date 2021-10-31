@@ -194,36 +194,6 @@ describe('Routes', () => {
         
     })  
 
-    describe('/FindUsers', () => {
-        before( async () => {
-            await clearDb()
-            await addUser("AABB")
-            await addUser("BBCC")
-            await addUser("AACC")
-        })
-
-        it('find user by inserting a correct username', () => {
-            const credentials = { username : "BBCC" }
-            superagent.post('http://localhost:8080/FindUsers').send(credentials).end((err, res) => {
-                assert(res.status == 200)
-            })
-        })   
-        
-        it('find users by inserting partially correct username', () => {
-            const credentials = { username : "AA" }
-            superagent.post('http://localhost:8080/FindUsers').send(credentials).end((err, res) => {
-                assert(res.status == 200)
-            })
-        })
-
-        it('find user by inserting non-existent username', () => {
-            const credentials = { username : "UserB" }
-            superagent.post('http://localhost:8080/FindUsers').send(credentials).end((err, res) => {
-                assert(res.status == 400)
-            })
-        })
-    })
-
     describe('/FindUser', () => {
 
         before( async () => {
@@ -271,6 +241,36 @@ describe('Routes', () => {
         it('find user by inserting empty query', () => {
             const credentials = {}
             superagent.post('http://localhost:8080/FindUser').send(credentials).end((err, res) => {
+                assert(res.status == 400)
+            })
+        })
+    })
+
+    describe('/FindUsers', () => {
+        before( async () => {
+            await clearDb()
+            await addUser("AABB")
+            await addUser("BBCC")
+            await addUser("AACC")
+        })
+
+        it('find user by inserting a correct username', () => {
+            const credentials = { username : "BBCC" }
+            superagent.post('http://localhost:8080/FindUsers').send(credentials).end((err, res) => {
+                assert(res.status == 200)
+            })
+        })   
+        
+        it('find users by inserting partially correct username', () => {
+            const credentials = { username : "AA" }
+            superagent.post('http://localhost:8080/FindUsers').send(credentials).end((err, res) => {
+                assert(res.status == 200)
+            })
+        })
+
+        it('find user by inserting non-existent username', () => {
+            const credentials = { username : "UserB" }
+            superagent.post('http://localhost:8080/FindUsers').send(credentials).end((err, res) => {
                 assert(res.status == 400)
             })
         })

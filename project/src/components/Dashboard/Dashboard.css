@@ -129,11 +129,12 @@ a:hover {
   border-color: #212529;
 }
 
-#finduserinput{
- color : green !important;
-
- 
+#finduserinput a:link,
+#finduserinput a:visited{
+ color : black;
 }
+
+
 
 .findUserForm {
   text-align: center;

@@ -187,30 +187,27 @@ async function findUser(userData) {
     }   
 }
 
-async function findUsers(userData) {
-    if( validateSearchQuery(userData) ){
+async function findUsers() {
         const db = await MongoClient.connect(url)
         const dbo = db.db("tdp013")
         const results = await dbo.collection("user_accounts").find( 
-            { username : new RegExp(userData.username) },
+            {},
             { projection: { _id : 0, md5password : 0 } }
             ).toArray()
         //console.log("findUsers result: ")
-        //console.log(results)
+        console.log("KUUUUUUUUUUUUUUUUUUUUUK")
+        console.log(results)
         db.close()
         for(let i=0; i < results.length; i++){
             if(!checkUserName(results[i])){
                 throw new Error("Invalid user entry in db.") 
             }
         }
-        if(results.length>0){
+        if(results.length>0) {
             return { results }
         } else { 
-            throw new Error("User does not exist.") 
-        }
-    } else {
-        throw new Error("Invalid input in findUser.")
-    }   
+            return [] 
+        } 
 }
 
 async function getFriendStatus(userData) {
