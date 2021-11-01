@@ -9,7 +9,6 @@ const socket = io.connect("http://localhost:3001")
 export default function Chat({loginName, chatFriend, setChatFriend, showChatWindow, setShowChatWindow}) {
     const [currentMessage, setCurrentMessage] = useState("");
     const [messageDict, setMessageDict] = useState([])
-    const [chatErrorMessage, setChatErrorMessage] = useState()
     
     // up-to-state version of messageDict
     const messageDictRef = useRef()
@@ -78,12 +77,6 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
             }
             await socket.emit("send_message", messageData); 
             setCurrentMessage("")
-            setChatErrorMessage("")
-        }
-        else if (currentMessage.length > 333) {
-            setChatErrorMessage("Message can max be 332 characters.")
-        } else {
-            setChatErrorMessage("")
         }
     }
 
@@ -114,15 +107,10 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
                            type="text" 
                            placeholder="Write message here..." 
                            onChange={(event) => {setCurrentMessage(event.target.value)}} 
-                           name="username"/>
+                           minLength={1}
+                           maxLength={332}/>
                     <ArrowUpSquare className="sendMessageIcon" onClick={sendChatMessage}></ArrowUpSquare>
                 </label>
-                {chatErrorMessage && 
-                    <div className="chatErrorDiv"> 
-                        <p className="chatErrorMsg">
-                            {chatErrorMessage}
-                        </p>
-                    </div>}
             </form>
         </div>)
 }

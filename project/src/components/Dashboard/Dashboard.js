@@ -23,7 +23,6 @@ export default function Dashboard({loginName}) {
     const [usersFoundList, setUsersFoundList] = useState([])
     const [showChatWindow, setShowChatWindow] = useState(false)
     let [chatFriend, setChatFriend] = useState()
-    const [postErrorMessage, setPostErrorMessage] = useState()
     const [userList, setUserList] = useState([]);
 
     const typeahead = useRef()
@@ -102,12 +101,9 @@ export default function Dashboard({loginName}) {
                     let post = createPostElement(postData)
                     setUserPosts([post, ...userPosts])
                     setPostText("") 
-                    setPostErrorMessage("")
                 } 
             }).catch(err => console.log("createPost() error: ", err))
-        } else {
-            setPostErrorMessage("Message has to be above 0, but below 1400 characters.")
-        }   
+        } 
     }
 
     async function getFriendStatus(friend) {
@@ -313,7 +309,8 @@ export default function Dashboard({loginName}) {
                                         onKeyDown={e => onKeyPress(e)} 
                                         options={userList}
                                         placeholder="Find user..."
-                                        minLength={1}/>
+                                        minLength={1}
+                                        maxLength={19}/>
                                 </div>
                                 <input className="Button findUserLink" type="button" value="Search" onClick={findUser}/>
                                 <Dropdown.Menu className="friendList">
@@ -380,17 +377,13 @@ export default function Dashboard({loginName}) {
                                               rows="3"
                                               resize="none"
                                               value={postText}
-                                              onChange={e => setPostText(e.target.value)}/>
+                                              onChange={e => setPostText(e.target.value)}
+                                              minLength={1}
+                                              maxLength={1399}/>
                             </Form.Group>
                             <Navbar.Text className="createPostText" >
                                 <input className="Button postButton" type="button" value="Post Message" onClick={createPost}/>
                             </Navbar.Text>
-                            {postErrorMessage && 
-                            <div className="postErrorDiv"> 
-                                <p className="postErrorMsg">
-                                    {postErrorMessage}
-                                </p>
-                            </div>}
                         </form>
              
                     </div>}
