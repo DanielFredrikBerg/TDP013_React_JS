@@ -72,11 +72,11 @@ export default function Login({ setToken }) {
     if (usernameValidationCode === -1) {
       setErrorMsg("Username need to be 4-19 characters long.")
     } else if (usernameValidationCode === -2) {
-      setErrorMsg("Username can only letters,\n numbers, and underscores.")
+      setErrorMsg("Username can only contain letters,\n numbers, and underscores.")
     } else if (passwordValidationCode === -1) {
       setErrorMsg("Password need to be 6-21 characters long.")
     } else if (passwordValidationCode === -2) {  
-      setErrorMsg("Password can only letters,\n numbers, and underscores.")
+      setErrorMsg("Password can only contain letters,\n numbers, and underscores.")
     }
   }
 
