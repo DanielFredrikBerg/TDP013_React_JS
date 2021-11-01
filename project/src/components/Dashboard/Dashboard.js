@@ -106,7 +106,7 @@ export default function Dashboard({loginName}) {
                 } 
             }).catch(err => console.log("createPost() error: ", err))
         } else {
-            setPostErrorMessage("Message too long.")
+            setPostErrorMessage("Message has to be above 0, but below 1400 characters.")
         }   
     }
 

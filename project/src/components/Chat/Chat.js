@@ -81,7 +81,7 @@ export default function Chat({loginName, chatFriend, setChatFriend, showChatWind
             setChatErrorMessage("")
         }
         else if (currentMessage.length > 333) {
-            setChatErrorMessage("Message too long.")
+            setChatErrorMessage("Message can max be 332 characters.")
         } else {
             setChatErrorMessage("")
         }
