@@ -47,6 +47,8 @@ export default function Dashboard({loginName}) {
         if (event.which === 13 /* Enter */) {
           event.preventDefault();
           findUser()
+        } else if (event.which !== 8 && typeahead.current.inputNode.value.length >= 19) { 
+            event.preventDefault();
         }
     }
 
@@ -299,10 +301,11 @@ export default function Dashboard({loginName}) {
                         </Navbar.Collapse>
 
                         <Navbar.Collapse id="navbar-dark" className="justify-content-center">
-                            <form className="findUserForm">
+                            <form className="findUserForm" >
                                 <div className="findUserDiv">
                                     <Typeahead
                                         id="finduserinput"
+                                        as="text"
                                         ref={typeahead}
                                         onInputChange={setFindUserText}
                                         onChange={setFindUserText}
@@ -310,7 +313,7 @@ export default function Dashboard({loginName}) {
                                         options={userList}
                                         placeholder="Find user..."
                                         minLength={1}
-                                        maxLength={19}/>
+                                        maxLength={10}/>
                                 </div>
                                 <input className="Button findUserLink" type="button" value="Search" onClick={findUser}/>
                                 <Dropdown.Menu className="friendList">
