@@ -62,6 +62,7 @@ export default function Login({ setToken }) {
 
   const handleLogin = async () => {
     if (validateInput(username, 4, 19) && validateInput(password, 6, 21)) {
+      alert("sdf")
       const md5password = md5(password)
       loginUser({username, md5password}).then(token => {
         setToken(token);
@@ -79,10 +80,13 @@ export default function Login({ setToken }) {
   }
 
   const handleCreate = async () => {
+    alert("1")
     if (validateInput(username, 4, 19) && validateInput(password, 6, 21)){
       const md5password = md5(password)
       createUser({username, md5password}).then(token => {
         setToken(token);
+        alert("sdf")
+        alert(token)
         if (token) {
           setErrorMsg("")
           setUserName("")
@@ -92,6 +96,7 @@ export default function Login({ setToken }) {
         }
       });
     } else {
+      
       errorMsgHelper()
     }
   }
@@ -123,10 +128,10 @@ export default function Login({ setToken }) {
                               pattern="^[A-Za-z0-9_]+$"/>
             </Form.Group>
             <div className="linkDiv">
-                <button className="Button" onClick={handleLogin}>
+                <button className="Button" type="button" onClick={handleLogin}>
                    Log In
                 </button> 
-                <button className="createAccountLink Button" onClick={handleCreate}>
+                <button className="createAccountLink Button" type="button" onClick={handleCreate}>
                    Create Account
                 </button> 
             </div>

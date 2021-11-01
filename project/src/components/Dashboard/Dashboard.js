@@ -220,7 +220,7 @@ export default function Dashboard({loginName}) {
         if (friendData.friendstatus == 3) {
            return <div key={index} className="friendListItem">
                     <Navbar.Text className="friendListText"> 
-                        <button className="Button friendListUserLink"  onClick={() => changeCurrentUser(friendData.friendname   )}>
+                        <button className="Button friendListUserLink"  onClick={() => changeCurrentUser(friendData.friendname)}>
                             {friendData.friendname} 
                         </button>
                         <ChatLeftText className="friendListChatIcon" onClick={() => toggleChatWindow(friendData.friendname)}></ChatLeftText>
@@ -230,7 +230,7 @@ export default function Dashboard({loginName}) {
         } else if (friendData.friendstatus === 2) {
             return <div key={index} className="friendListItem">
                         <Navbar.Text className="friendListText"> 
-                            <button className="Button friendListUserLink"  onClick={() => changeCurrentUser(friendData.friendname   )}>
+                            <button className="Button friendListUserLink"  onClick={() => changeCurrentUser(friendData.friendname)}>
                                 {friendData.friendname} 
                             </button>
                             <CheckLg className="friendListAcceptIcon" onClick={() => acceptFriendRequest(friendData.friendname)}></CheckLg>
