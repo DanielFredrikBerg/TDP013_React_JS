@@ -26,10 +26,6 @@ export default function Dashboard({loginName}) {
     const [postErrorMessage, setPostErrorMessage] = useState()
     const [userList, setUserList] = useState([]);
 
-    // up-to-state version of chatFriend
-    const chatFriendRef = useRef()
-    chatFriendRef.current = chatFriend
-
     const typeahead = useRef()
 
     useEffect(async () => {
@@ -66,10 +62,9 @@ export default function Dashboard({loginName}) {
         return (
             <div className="postBubble" key={index}>
                 <h4>
-                    <a href="#"
-                       onClick={() => changeCurrentUser(postData.creator)}>
+                    <button className="Button" onClick={() => changeCurrentUser(postData.creator)}>
                        {postData.creator}
-                    </a>
+                    </button>
                 </h4>
                 {postData.msg}
             </div>)
@@ -150,7 +145,7 @@ export default function Dashboard({loginName}) {
 
     async function findUser() {
         await populateUserList()
-        if (findUserText.length > 0) {
+        if (findUserText) {
             if (userList.includes(findUserText[0])) {
                 changeCurrentUser(findUserText[0])
                 setFindUserText("")
@@ -204,8 +199,7 @@ export default function Dashboard({loginName}) {
     }
 
     function toggleChatWindow(friend) {
-        alert(friend)
-        if (chatFriendRef === friend) {
+        if (chatFriend === friend) {
             chatFriend = null
             setChatFriend(null)
             setShowChatWindow(false)
@@ -389,7 +383,7 @@ export default function Dashboard({loginName}) {
                                               onChange={e => setPostText(e.target.value)}/>
                             </Form.Group>
                             <Navbar.Text className="createPostText" >
-                                <input className="Button" type="button" value="Post Message" onClick={createPost}/>
+                                <input className="Button postButton" type="button" value="Post Message" onClick={createPost}/>
                             </Navbar.Text>
                             {postErrorMessage && 
                             <div className="postErrorDiv"> 

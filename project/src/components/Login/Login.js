@@ -42,27 +42,49 @@ export default function Login({ setToken }) {
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("")
 
-  function validateInput(input, minLength, maxLength) {
+  function validateUsername(username) {
     const acceptedPattern = /^[A-Za-z0-9_]+$/
-    return input !== null
-        && typeof input === 'string'
-        && input.length >= minLength
-        && input.length <= maxLength
-        && input.match(acceptedPattern)
+    if (username !== null && typeof username === 'string') {
+        if (username.length <= 3 || username.length >= 20)  {
+            return -1
+        } else if (!username.match(acceptedPattern)) {
+            return -2
+        }
+        return 1
+    } 
+    return 0
   }
 
-  const errorMsgHelper = () => {
+  function validatePassword(password) {
     const acceptedPattern = /^[A-Za-z0-9_]+$/
-    if (username.length > 0 && !username.match(acceptedPattern)) {
-      setErrorMsg("Username can only contain letters,\n numbers, and underscores.")
-    } else if (password.length > 0 && !password.match(acceptedPattern)) {
-      setErrorMsg("Password can only contain letters,\n numbers, and underscores.")
+    if (password !== null && typeof username === 'string') {
+        if (password.length <= 5 || password.length >= 22) {
+            return -1
+        } else if  (!password.match(acceptedPattern)){
+            return -2
+        }
+        return 1
+    } 
+    return 0
+  }
+
+  const errorMsgHelper = (usernameValidationCode, passwordValidationCode) => {
+    if (usernameValidationCode === -1) {
+      setErrorMsg("Username need to be 4-19 characters long.")
+    } else if (usernameValidationCode === -2) {
+      setErrorMsg("Username can only letters,\n numbers, and underscores.")
+    } else if (passwordValidationCode === -1) {
+      setErrorMsg("Password need to be 6-21 characters long.")
+    } else if (passwordValidationCode === -2) {  
+      setErrorMsg("Password can only letters,\n numbers, and underscores.")
     }
   }
 
-  const handleLogin = async () => {
-    if (validateInput(username, 4, 19) && validateInput(password, 6, 21)) {
-      alert("sdf")
+  const handleLogin = async (e) => {
+    e.preventDefault()
+    const usernameValidationCode = validateUsername(username)
+    const passwordValidationCode = validatePassword(password)
+    if (usernameValidationCode === 1 && passwordValidationCode === 1) {
       const md5password = md5(password)
       loginUser({username, md5password}).then(token => {
         setToken(token);
@@ -75,18 +97,18 @@ export default function Login({ setToken }) {
         }     
       }).catch(err => console.log("loginUser in Login.js Error: ", err))
     } else {
-      errorMsgHelper()
+      errorMsgHelper(usernameValidationCode, passwordValidationCode)
     }
   }
 
-  const handleCreate = async () => {
-    alert("1")
-    if (validateInput(username, 4, 19) && validateInput(password, 6, 21)){
+  const handleCreate = async (e) => {
+    e.preventDefault()
+    const usernameValidationCode = validateUsername(username)
+    const passwordValidationCode = validatePassword(password)
+    if (usernameValidationCode === 1 && passwordValidationCode === 1) {
       const md5password = md5(password)
       createUser({username, md5password}).then(token => {
         setToken(token);
-        alert("sdf")
-        alert(token)
         if (token) {
           setErrorMsg("")
           setUserName("")
@@ -96,16 +118,15 @@ export default function Login({ setToken }) {
         }
       });
     } else {
-      
-      errorMsgHelper()
+      errorMsgHelper(usernameValidationCode, passwordValidationCode)
     }
   }
 
   return(
     <div className="loginWrapper">
         <div className="loginDiv">
-          <Form className="loginForm">
-            <Form.Group className="mb-3" controlId="formGroupEmail">
+          <Form className="loginForm" >
+            <Form.Group className="mb-3" controlId="formGroupEmail" >
                 <Form.Label>Username</Form.Label>
                 <Form.Control placeholder="Enter username" 
                               value={username} 
@@ -128,10 +149,10 @@ export default function Login({ setToken }) {
                               pattern="^[A-Za-z0-9_]+$"/>
             </Form.Group>
             <div className="linkDiv">
-                <button className="Button" type="button" onClick={handleLogin}>
+                <button className="Button" onClick={handleLogin}>
                    Log In
                 </button> 
-                <button className="createAccountLink Button" type="button" onClick={handleCreate}>
+                <button className="createAccountLink Button" onClick={handleCreate}>
                    Create Account
                 </button> 
             </div>
